@@ -21,35 +21,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.5/purify.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mermaid@10.4.0/dist/mermaid.min.js"></script>
     
-    <!-- MathJax 3 Configuration & Dependency -->
-    <script>
-        window.MathJax = {
-            tex: {
-                inlineMath: [['$', '$'], ['\\(', '\\)']],
-                displayMath: [['$$', '$$'], ['\\[', '\\]']],
-                processEscapes: true
-            },
-            svg: {
-                fontCache: 'global'
-            },
-            startup: {
-                typeset: false // Manual typesetting so it syncs perfectly with file swapping
-            }
-        };
-    </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+    <!-- Math Rendering Dependencies (KaTeX + Texmath) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/markdown-it-texmath/texmath.min.js"></script>
     
-    <!-- Advanced Visualization & Search Dependencies -->
+    <!-- Advanced Visualization Dependencies -->
     <script src="https://3Dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Search Dependency -->
     <script src="https://cdn.jsdelivr.net/npm/fuse.js/dist/fuse.min.js"></script>
 
     <style>
         :root {
-            --primary: #3b82f6;
-            --primary-hover: #2563eb;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --primary-light: #eff6ff;
-            --primary-border: #bfdbfe;
             --bg-app: #f8fafc;
             --bg-panel: #ffffff;
             --bg-hover: #f1f5f9;
@@ -61,7 +49,7 @@
             
             --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             --font-mono: 'Fira Code', monospace;
-            --radius: 8px;
+            --radius: 12px;
             --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.05);
             --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.05);
         }
@@ -78,280 +66,239 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* App Container */
-        .app-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; }
-        .main-layout { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-        /* Sidebar Styles */
+        /* Layout */
         .sidebar {
-            width: 300px; background-color: var(--bg-panel); border-right: 1px solid var(--border-color);
-            display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; transition: transform 0.3s ease;
+            width: 300px;
+            background-color: var(--bg-panel);
+            border-right: 1px solid var(--border-color);
+            display: flex; flex-direction: column; flex-shrink: 0; z-index: 10;
+            transition: transform 0.3s ease;
         }
         .sidebar.collapsed { transform: translateX(-100%); position: absolute; height: 100%; }
 
-        .sidebar-header { padding: 1.5rem 1rem; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 1rem; }
-        
-        .sidebar-title {
-            font-size: 0.9rem; font-weight: 600; color: var(--text-muted);
-            text-transform: uppercase; letter-spacing: 0.5px; display: flex; justify-content: space-between; align-items: center;
+        .toc-sidebar {
+            width: 250px;
+            background-color: var(--bg-panel);
+            border-left: 1px solid var(--border-color);
+            display: flex; flex-direction: column; flex-shrink: 0;
+            padding: 1.5rem;
+            overflow-y: auto;
+            display: none;
         }
 
-        /* Search Box */
-        .search-box { position: relative; width: 100%; }
+        .main-content {
+            flex: 1; display: flex; flex-direction: column; position: relative;
+            background-color: var(--bg-app);
+        }
+
+        /* Sidebar Elements */
+        .sidebar-header { padding: 1.5rem; display: flex; flex-direction: column; gap: 1rem; border-bottom: 1px solid var(--border-color); }
+        .branding { display: flex; justify-content: space-between; font-weight: 700; font-size: 1.1rem; color: #0f172a; }
+        
+        .search-box {
+            position: relative;
+            width: 100%;
+        }
         .search-box input {
-            width: 100%; padding: 0.5rem 0.75rem 0.5rem 2.2rem; border: 1px solid var(--border-color);
-            border-radius: var(--radius); font-family: var(--font-sans); font-size: 0.85rem;
-            outline: none; transition: border-color 0.2s; background-color: var(--bg-app); color: var(--text-main);
+            width: 100%; padding: 0.6rem 1rem 0.6rem 2.2rem;
+            border: 1px solid var(--border-color); border-radius: 8px;
+            font-family: var(--font-sans); font-size: 0.9rem;
+            outline: none; transition: border-color 0.2s;
         }
         .search-box input:focus { border-color: var(--primary); }
-        .search-box i { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.85rem; }
+        .search-box i { position: absolute; left: 0.8rem; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 0.9rem;}
 
-        .upload-input-wrapper { display: flex; gap: 0.5rem; }
-        .upload-input-label {
-            flex: 1; padding: 0.6rem 0.75rem; background-color: var(--primary); color: white;
-            border-radius: var(--radius); font-weight: 600; cursor: pointer; transition: background-color 0.3s;
-            text-align: center; font-size: 0.85rem; display: flex; align-items: center; justify-content: center; gap: 0.4rem;
+        .action-buttons { display: flex; gap: 0.5rem; }
+        .btn {
+            flex: 1; padding: 0.6rem; border: none; border-radius: 6px;
+            font-family: var(--font-sans); font-weight: 500; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            font-size: 0.85rem; box-shadow: var(--shadow-sm);
         }
-        .upload-input-label:hover { background-color: var(--primary-hover); }
-
-        .clear-all-btn {
-            padding: 0.6rem 0.75rem; background-color: transparent; color: var(--danger);
-            border: 1px solid var(--border-color); border-radius: var(--radius); cursor: pointer;
-            font-weight: 600; transition: all 0.3s; font-size: 0.85rem;
-        }
-        .clear-all-btn:hover:not(:disabled) { background-color: var(--danger-light); border-color: var(--danger); }
-        .clear-all-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        input[type="file"] { display: none; }
-
-        .sidebar-content { flex: 1; overflow-y: auto; padding: 0.5rem; }
-        .file-list { list-style: none; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); }
+        .btn-outline { background-color: white; border: 1px solid var(--border-color); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--bg-hover); }
+        .btn-danger { background: none; color: var(--danger); box-shadow: none; flex: 0 0 auto; padding: 0.6rem; }
+        
+        .file-list { flex: 1; overflow-y: auto; padding: 1rem; list-style: none; }
         .file-item {
-            padding: 0.75rem; margin-bottom: 0.5rem; background-color: var(--bg-app); border: 1px solid transparent;
-            border-radius: var(--radius); cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem;
+            padding: 0.75rem 1rem; margin-bottom: 0.5rem; border-radius: 8px;
+            cursor: pointer; display: flex; justify-content: space-between; align-items: center;
         }
-        .file-item:hover { background-color: var(--bg-hover); border-color: var(--border-color); }
-        .file-item.active { background-color: var(--primary-light); border-color: var(--primary-border); color: var(--primary-hover); font-weight: 600; }
-        .file-item-name { flex: 1; font-size: 0.9rem; word-break: break-word; display: flex; align-items: center; gap: 0.5rem; }
-        .file-item-icon { flex-shrink: 0; font-size: 1rem; color: var(--text-muted); }
-        .file-item.active .file-item-icon { color: var(--primary); }
-        .file-item-delete {
-            flex-shrink: 0; background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem;
-            padding: 0.2rem; display: flex; align-items: center; opacity: 0; transition: opacity 0.2s, color 0.2s; border-radius: 4px;
-        }
-        .file-item:hover .file-item-delete { opacity: 1; }
-        .file-item-delete:hover { color: var(--danger); background-color: var(--danger-light); }
-        .empty-sidebar { padding: 2rem 1rem; text-align: center; color: var(--text-muted); font-size: 0.9rem; }
+        .file-item:hover { background-color: var(--bg-hover); }
+        .file-item.active { background-color: var(--primary-light); color: var(--primary-hover); font-weight: 600; }
+        .file-name { display: flex; gap: 0.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 0.9rem; }
+        
+        .delete-file { background: none; border: none; color: var(--text-muted); cursor: pointer; opacity: 0; }
+        .file-item:hover .delete-file { opacity: 1; }
+        .delete-file:hover { color: var(--danger); }
 
-        /* Top Bar & Content Area */
-        .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative; }
+        /* Top Bar */
         .top-bar {
             height: 60px; background-color: var(--bg-panel); border-bottom: 1px solid var(--border-color);
-            display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; flex-shrink: 0; z-index: 5;
+            display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; z-index: 5;
         }
-        .top-bar-left { display: flex; align-items: center; gap: 1rem; }
-        .btn-icon {
-            background: var(--bg-app); border: 1px solid var(--border-color); color: var(--text-muted);
-            cursor: pointer; font-size: 1.1rem; border-radius: 8px; width: 36px; height: 36px;
-            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
-        }
-        .btn-icon:hover { color: var(--primary); border-color: var(--primary); background-color: var(--primary-light); }
-        .file-info { font-weight: 500; color: var(--text-muted); font-size: 0.95rem; }
-        .viewer-container { flex: 1; overflow-y: auto; padding: 2.5rem; background-color: var(--bg-app); position: relative; }
+        .btn-icon { background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1.1rem; padding: 0.5rem; border-radius: 6px; }
+        .btn-icon:hover { background-color: var(--bg-hover); color: var(--primary); }
 
-        /* Upload Drop Zone */
+        /* Viewer Area */
+        .viewer-container { flex: 1; overflow-y: auto; padding: 2rem; scroll-behavior: auto; }
+        
         .upload-zone {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 80%; max-width: 650px; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 3rem; text-align: center; border: 2px dashed var(--primary-border); background-color: var(--primary-light);
-            border-radius: var(--radius); cursor: pointer; transition: all 0.3s;
+            width: 100%; max-width: 500px; padding: 4rem 3rem;
+            border: 2px dashed #cbd5e1; border-radius: 16px; text-align: center;
+            background-color: var(--bg-panel); cursor: pointer;
         }
-        .upload-zone:hover, .upload-zone.drag-over { border-color: var(--primary); transform: translate(-50%, -50%) scale(1.01); }
-        .upload-icon { font-size: 4rem; margin-bottom: 1.2rem; }
-        .upload-zone h2 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.5rem; color: #0f172a; }
-        .upload-zone p { color: var(--text-muted); margin-bottom: 0.5rem; font-size: 0.95rem; }
-        .upload-hint { font-size: 0.85rem; color: var(--text-muted); margin-top: 0.75rem; }
-
-        /* Markdown Viewer Styles */
-        .markdown-viewer {
-            max-width: 850px; margin: 0 auto; padding: 3rem 4rem; background-color: var(--bg-panel);
-            border-radius: 12px; box-shadow: var(--shadow-sm); display: none; font-size: 1.05rem; line-height: 1.8;
-        }
-        .markdown-viewer.active { display: block; }
         
-        .markdown-viewer h1 { font-size: 2.2rem; font-weight: 700; margin: 2rem 0 1.2rem 0; color: #0f172a; border-bottom: 2px solid var(--border-color); padding-bottom: 0.6rem; }
-        .markdown-viewer h2 { font-size: 1.6rem; font-weight: 700; margin: 2rem 0 1rem 0; color: #0f172a; border-bottom: 1px solid var(--border-color); padding-bottom: 0.4rem; }
-        .markdown-viewer h3 { font-size: 1.3rem; font-weight: 600; margin: 1.5rem 0 0.75rem 0; color: #0f172a; }
-        .markdown-viewer p { margin-bottom: 1.25rem; color: var(--text-main); }
-        .markdown-viewer a { color: var(--primary); text-decoration: none; transition: color 0.2s; }
-        .markdown-viewer a:hover { text-decoration: underline; }
-        .markdown-viewer ul, .markdown-viewer ol { margin-left: 1.5rem; margin-bottom: 1.25rem; }
-        .markdown-viewer li { margin-bottom: 0.5rem; }
-        
-        .markdown-viewer code {
-            font-family: var(--font-mono); background-color: var(--bg-hover); padding: 0.2em 0.4em;
-            border-radius: 4px; font-size: 0.85em; color: #db2777; border: 1px solid var(--border-color);
+        /* Markdown Body */
+        .markdown-body {
+            max-width: 850px; margin: 0 auto; padding: 3rem 4rem;
+            background-color: var(--bg-panel); box-shadow: var(--shadow-md); border-radius: 16px;
+            font-size: 1.05rem; line-height: 1.8; display: none;
         }
-
-        /* Code Block Wrapper & Copy Button */
+        .markdown-body.active { display: block; }
+        
+        /* Typography Elements */
+        .markdown-body h1, .markdown-body h2, .markdown-body h3 { color: #0f172a; font-weight: 600; margin-top: 2rem; margin-bottom: 1rem; }
+        .markdown-body h1 { font-size: 2.2rem; border-bottom: 2px solid var(--border-color); padding-bottom: 0.5rem; }
+        .markdown-body h2 { font-size: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.5rem; }
+        
+        /* Code Blocks & Copy Button */
         .code-wrapper { position: relative; margin: 1.5rem 0; }
         .copy-code-btn {
             position: absolute; top: 0.5rem; right: 0.5rem; background: var(--bg-panel);
-            border: 1px solid var(--border-color); border-radius: 6px; padding: 0.3rem 0.6rem;
-            color: var(--text-muted); cursor: pointer; opacity: 0; transition: opacity 0.2s; font-size: 0.8rem; z-index: 2;
+            border: 1px solid var(--border-color); border-radius: 6px; padding: 0.4rem;
+            color: var(--text-muted); cursor: pointer; opacity: 0; transition: opacity 0.2s;
+            font-size: 0.8rem; z-index: 2;
         }
         .code-wrapper:hover .copy-code-btn { opacity: 1; }
         .copy-code-btn:hover { color: var(--primary); border-color: var(--primary); }
-
-        .markdown-viewer pre {
-            background-color: #f8fafc; padding: 1.25rem; border-radius: var(--radius);
-            overflow-x: auto; margin: 0; border: 1px solid var(--border-color);
-        }
-        .markdown-viewer pre code { background-color: transparent; color: inherit; padding: 0; font-size: 0.9rem; border: none; }
         
-        .markdown-viewer blockquote {
-            border-left: 4px solid var(--primary); padding: 1rem 1.25rem; margin: 1.5rem 0;
-            color: var(--text-muted); background-color: var(--primary-light); border-radius: 0 var(--radius) var(--radius) 0;
+        .markdown-body pre {
+            background-color: var(--bg-app); border: 1px solid var(--border-color);
+            border-radius: 12px; padding: 1.5rem; overflow-x: auto; font-size: 0.9em; margin: 0;
         }
-
-        .markdown-viewer img { max-width: 100%; height: auto; border-radius: var(--radius); margin: 1.5rem 0; border: 1px solid var(--border-color); }
+        .markdown-body code { font-family: var(--font-mono); font-size: 0.85em; }
+        .markdown-body p code { background-color: var(--bg-hover); padding: 0.2em 0.4em; border-radius: 4px; color: #db2777; border: 1px solid var(--border-color); }
+        
+        /* Math Equation Scrolling */
+        .markdown-body .katex-display {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 0.5rem;
+        }
 
         /* Tables */
-        .markdown-viewer table {
+        .markdown-body table {
             display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: nowrap;
-            border-collapse: collapse; margin: 1.5rem 0; font-size: 0.95em;
+            border-collapse: collapse; margin: 2rem 0; font-size: 0.95em;
         }
-        .markdown-viewer table th { padding: 0.75rem 1rem; text-align: left; font-weight: 600; background-color: var(--bg-hover); border: 1px solid var(--border-color); color: #0f172a; }
-        .markdown-viewer table td { padding: 0.75rem 1rem; border: 1px solid var(--border-color); }
-        .markdown-viewer hr { border: none; border-top: 1px solid var(--border-color); margin: 2rem 0; }
-
-        /* MathJax Scroll Fix */
-        mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-bottom: 5px; }
+        .markdown-body th, .markdown-body td { border: 1px solid var(--border-color); padding: 0.75rem 1rem; }
+        .markdown-body th { background-color: var(--bg-hover); }
 
         /* Custom Viz Containers */
-        .mol-viewer-container { height: 400px; border-radius: var(--radius); border: 1px solid var(--border-color); margin: 1.5rem 0; overflow: hidden; position: relative; background-color: #f8fafc; }
-        .chart-container { margin: 1.5rem 0; padding: 1rem; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: var(--radius); height: 350px; }
+        .mol-viewer-container { height: 450px; border-radius: 12px; border: 1px solid var(--border-color); margin: 2rem 0; overflow: hidden; position: relative; }
+        .chart-container { margin: 2rem 0; padding: 1rem; background: var(--bg-panel); border: 1px solid var(--border-color); border-radius: 12px; }
 
-        /* Table of Contents (ToC) Sidebar */
-        .toc-sidebar {
-            width: 240px; background-color: var(--bg-panel); border-left: 1px solid var(--border-color);
-            display: flex; flex-direction: column; flex-shrink: 0; padding: 1.5rem; overflow-y: auto; display: none;
-        }
-        .toc-title { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 1rem; }
-        .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.4rem; }
-        .toc-link { text-decoration: none; color: var(--text-main); font-size: 0.85rem; transition: color 0.2s; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        /* Table of Contents */
+        .toc-title { font-weight: 600; font-size: 0.9rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 1rem; letter-spacing: 0.5px; }
+        .toc-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+        .toc-link { text-decoration: none; color: var(--text-main); font-size: 0.9rem; transition: color 0.2s; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .toc-link:hover { color: var(--primary); }
-        .toc-h2 { padding-left: 0.75rem; color: var(--text-muted); }
-        .toc-h3 { padding-left: 1.5rem; font-size: 0.8rem; color: var(--text-muted); }
+        .toc-h2 { padding-left: 1rem; font-size: 0.85rem; color: var(--text-muted); }
+        .toc-h3 { padding-left: 2rem; font-size: 0.8rem; color: var(--text-muted); }
+        
+        /* Footnotes */
+        .footnotes { border-top: 1px solid var(--border-color); margin-top: 3rem; padding-top: 1rem; font-size: 0.9rem; color: var(--text-muted); }
 
-        .mermaid { background-color: #ffffff; padding: 1.5rem; border-radius: var(--radius); border: 1px solid var(--border-color); display: flex; justify-content: center; margin: 1.5rem 0; }
-
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-
-        @media (max-width: 768px) {
-            .sidebar { width: 100%; max-height: 30vh; border-right: none; border-bottom: 1px solid var(--border-color); }
-            .main-layout { flex-direction: column; }
-            .markdown-viewer { padding: 1.5rem; }
-            .toc-sidebar { display: none !important; }
-        }
+        input[type="file"] { display: none; }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="main-layout">
-            <!-- Sidebar -->
-            <div class="sidebar" id="sidebar">
-                <div class="sidebar-header">
-                    <div class="sidebar-title">
-                        <span>📝 Markdown Viewer - Multi-File</span>
-                    </div>
-                    
-                    <div class="search-box">
-                        <i class="fa-solid fa-magnifying-glass"></i>
-                        <input type="text" id="searchInput" placeholder="Search workspace..." />
-                    </div>
 
-                    <div class="upload-input-wrapper">
-                        <label for="fileInput" class="upload-input-label">
-                            <i class="fa-solid fa-plus"></i> Add Files
-                        </label>
-                        <button class="clear-all-btn" id="clearAllBtn" disabled title="Clear Workspace">Clear All</button>
-                    </div>
-                    <input type="file" id="fileInput" accept=".md,.markdown,.txt" multiple />
-                </div>
-
-                <div class="sidebar-content">
-                    <ul class="file-list" id="fileList"></ul>
-                    <div class="empty-sidebar" id="emptySidebar">
-                        No files imported yet
-                    </div>
-                </div>
+    <!-- Main Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="branding">
+                <span><i class="fa-solid fa-microscope text-primary"></i> Workspace</span>
+                <button class="btn-icon" id="syncBtn" title="Sync Status"><i class="fa-solid fa-cloud-check" style="color: var(--primary);"></i></button>
             </div>
-
-            <!-- Content Area -->
-            <div class="content-area">
-                <div class="top-bar">
-                    <div class="top-bar-left">
-                        <button class="btn-icon" id="toggleSidebarBtn" title="Toggle Sidebar">
-                            <i class="fa-solid fa-bars-staggered"></i>
-                        </button>
-                        <div class="file-info" id="currentFileName">No file selected</div>
-                    </div>
-                    <button class="btn-icon" id="printBtn" title="Print / Export PDF" style="display: none;">
-                        <i class="fa-solid fa-print"></i>
-                    </button>
-                </div>
-
-                <div class="viewer-container" id="viewerContainer">
-                    <div class="upload-zone" id="uploadZone">
-                        <div class="upload-icon">📤</div>
-                        <h2>Drop files here or click to browse</h2>
-                        <p>Import markdown files to start viewing</p>
-                        <label for="uploadZoneInput" class="upload-input-label">Browse Files</label>
-                        <input type="file" id="uploadZoneInput" accept=".md,.markdown,.txt" multiple />
-                        <p class="upload-hint">Supports .md, .markdown, and .txt files</p>
-                    </div>
-
-                    <div class="markdown-viewer" id="markdownViewer"></div>
-                </div>
+            
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Search documents..." />
             </div>
-
-            <!-- Right Sidebar for Table of Contents -->
-            <aside class="toc-sidebar" id="tocSidebar">
-                <div class="toc-title">On this page</div>
-                <ul class="toc-list" id="tocList"></ul>
-            </aside>
+            
+            <div class="action-buttons">
+                <label for="fileInput" class="btn btn-primary" title="Import Files">
+                    <i class="fa-solid fa-file-import"></i> Files
+                </label>
+                <label for="folderInput" class="btn btn-outline" title="Import Folder">
+                    <i class="fa-solid fa-folder-tree"></i> Folder
+                </label>
+                <button class="btn btn-danger" id="clearAllBtn" title="Clear Workspace">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+                <input type="file" id="fileInput" accept=".md,.markdown,.txt" multiple />
+                <input type="file" id="folderInput" webkitdirectory directory multiple /> 
+            </div>
         </div>
-    </div>
+
+        <ul class="file-list" id="fileList"></ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content" id="mainContent">
+        <div class="top-bar">
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <button class="btn-icon" id="toggleSidebarBtn"><i class="fa-solid fa-bars-staggered"></i></button>
+                <div style="font-weight: 500; color: var(--text-muted);" id="currentFileName">Welcome</div>
+            </div>
+            <button class="btn-icon" id="printBtn" style="display: none;"><i class="fa-solid fa-print"></i></button>
+        </div>
+
+        <div class="viewer-container" id="viewerContainer">
+            <div class="upload-zone" id="uploadZone">
+                <i class="fa-solid fa-database" style="font-size: 3rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                <h3>Drop files or folders here</h3>
+                <p style="color: var(--text-muted); font-size: 0.9rem;">Workspace automatically saves locally</p>
+                <input type="file" id="uploadZoneInput" accept=".md,.markdown,.txt" multiple />
+            </div>
+
+            <div class="markdown-body" id="markdownViewer"></div>
+        </div>
+    </main>
+
+    <!-- Right Sidebar for ToC -->
+    <aside class="toc-sidebar" id="tocSidebar">
+        <div class="toc-title">On this page</div>
+        <ul class="toc-list" id="tocList"></ul>
+    </aside>
 
     <script>
+        // DOM Elements
         const fileInput = document.getElementById('fileInput');
+        const folderInput = document.getElementById('folderInput');
         const uploadZoneInput = document.getElementById('uploadZoneInput');
         const uploadZone = document.getElementById('uploadZone');
         const markdownViewer = document.getElementById('markdownViewer');
         const fileList = document.getElementById('fileList');
-        const emptySidebar = document.getElementById('emptySidebar');
         const clearAllBtn = document.getElementById('clearAllBtn');
         const currentFileName = document.getElementById('currentFileName');
-        const printBtn = document.getElementById('printBtn');
         const viewerContainer = document.getElementById('viewerContainer');
         const searchInput = document.getElementById('searchInput');
         const tocSidebar = document.getElementById('tocSidebar');
         const tocList = document.getElementById('tocList');
-        const sidebar = document.getElementById('sidebar');
-        const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
-
+        
         let files = {};
         let currentFileId = null;
-        let fuse = null;
+        let fuse; // Search engine
 
-        // Initialize markdown-it
+        // Initialize Markdown-it with Footnotes and Texmath plugins
         const md = window.markdownit({
-            html: false,
+            html: false, 
             linkify: true,
             typographer: true,
             highlight: function (str, lang) {
@@ -360,27 +307,25 @@
                 }
                 return hljs.highlightAuto(str).value;
             }
-        }).use(window.markdownitFootnote);
+        })
+        .use(window.markdownitFootnote)
+        .use(window.texmath, { engine: window.katex, delimiters: 'dollars' }); // Added Texmath initialization
 
+        // PWA Service Worker Registration
         if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('sw.js').catch(err => console.error('SW Failed:', err));
+            });
         }
 
-        // Helper: Escape HTML so MathJax receives perfectly un-sanitized symbols
-        function escapeHtml(unsafe) {
-            return unsafe
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
-        }
-
+        // --- Workspace Persistence (LocalStorage) ---
         function saveWorkspace() {
             try {
                 localStorage.setItem('md_workspace', JSON.stringify(files));
                 localStorage.setItem('md_current', currentFileId);
-            } catch (e) { console.warn('Storage limit reached.'); }
+            } catch (e) {
+                console.warn('Storage quota exceeded, unable to save workspace.');
+            }
         }
 
         function loadWorkspace() {
@@ -389,10 +334,13 @@
             if (saved) {
                 files = JSON.parse(saved);
                 updateUI();
-                if (current && files[current]) loadFile(current);
+                if (current && files[current]) {
+                    loadFile(current);
+                }
             }
         }
 
+        // --- Search Initialization ---
         function initSearch() {
             const data = Object.keys(files).map(id => ({ id, name: files[id].name, content: files[id].content }));
             fuse = new Fuse(data, { keys: ['name', 'content'], threshold: 0.3 });
@@ -401,34 +349,40 @@
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value;
             if (!term) { updateUI(); return; }
-            if (fuse) renderFileList(fuse.search(term).map(r => r.item.id));
+            const results = fuse.search(term);
+            renderFileList(results.map(r => r.item.id));
         });
 
-        toggleSidebarBtn.addEventListener('click', () => sidebar.classList.toggle('collapsed'));
-
-        fileInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value = ''; });
-        uploadZoneInput.addEventListener('change', (e) => { handleFileSelection(e.target.files); e.target.value = ''; });
+        // --- File Handling ---
+        [fileInput, folderInput, uploadZoneInput].forEach(input => {
+            input.addEventListener('change', (e) => processFiles(e.target.files));
+        });
         
-        uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('drag-over'); });
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('drag-over'));
+        uploadZone.addEventListener('click', () => fileInput.click());
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
+            uploadZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
+        });
+        uploadZone.addEventListener('dragover', () => uploadZone.style.borderColor = 'var(--primary)');
+        uploadZone.addEventListener('dragleave', () => uploadZone.style.borderColor = '#cbd5e1');
         uploadZone.addEventListener('drop', (e) => {
-            e.preventDefault(); uploadZone.classList.remove('drag-over'); handleFileSelection(e.dataTransfer.files);
+            uploadZone.style.borderColor = '#cbd5e1';
+            processFiles(e.dataTransfer.files);
         });
 
-        function handleFileSelection(selectedFiles) {
-            for (let file of selectedFiles) {
-                if (file.type === 'text/plain' || file.name.match(/\.(md|markdown|txt|csv)$/i)) {
+        function processFiles(selectedFiles) {
+            Array.from(selectedFiles).forEach(file => {
+                if (file.name.match(/\.(md|markdown|txt|csv)$/i)) {
                     const reader = new FileReader();
                     const fileId = `file_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-
                     reader.onload = (e) => {
                         files[fileId] = { name: file.name, content: e.target.result, scrollTop: 0 };
-                        updateUI(); saveWorkspace();
+                        updateUI();
+                        saveWorkspace();
                         if (!currentFileId) loadFile(fileId);
                     };
                     reader.readAsText(file);
                 }
-            }
+            });
         }
 
         function updateUI() {
@@ -438,181 +392,117 @@
 
         function renderFileList(fileIds) {
             fileList.innerHTML = '';
-            
-            if (fileIds.length === 0) {
-                emptySidebar.style.display = 'block';
-                clearAllBtn.disabled = true;
-                uploadZone.style.display = 'flex';
+            if (Object.keys(files).length === 0) {
+                uploadZone.style.display = 'block';
                 markdownViewer.classList.remove('active');
                 tocSidebar.style.display = 'none';
-                printBtn.style.display = 'none';
-                currentFileName.textContent = 'No file selected';
-                currentFileId = null;
                 return;
             }
 
-            emptySidebar.style.display = 'none';
-            clearAllBtn.disabled = false;
-            printBtn.style.display = 'block';
-
-            fileIds.forEach((fileId) => {
-                const file = files[fileId];
-                if (!file) return;
-
+            fileIds.forEach(id => {
                 const li = document.createElement('li');
-                li.className = 'file-item' + (fileId === currentFileId ? ' active' : '');
+                li.className = `file-item ${id === currentFileId ? 'active' : ''}`;
                 li.innerHTML = `
-                    <div class="file-item-name"><span class="file-item-icon">📄</span><span>${file.name}</span></div>
-                    <button class="file-item-delete" data-id="${fileId}" title="Delete"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="file-name" title="${files[id].name}">
+                        <i class="fa-regular fa-file-lines"></i>
+                        <span>${files[id].name}</span>
+                    </div>
+                    <button class="delete-file" data-id="${id}"><i class="fa-solid fa-xmark"></i></button>
                 `;
-
                 li.addEventListener('click', (e) => {
-                    if (!e.target.closest('.file-item-delete') && fileId !== currentFileId) loadFile(fileId);
+                    if (!e.target.closest('.delete-file') && id !== currentFileId) loadFile(id);
                 });
-                li.querySelector('.file-item-delete').addEventListener('click', (e) => {
-                    e.stopPropagation(); deleteFile(fileId);
+                li.querySelector('.delete-file').addEventListener('click', (e) => {
+                    e.stopPropagation(); deleteFile(id);
                 });
                 fileList.appendChild(li);
             });
         }
 
-        function loadFile(fileId) {
-            if (currentFileId && files[currentFileId]) files[currentFileId].scrollTop = viewerContainer.scrollTop;
-            currentFileId = fileId;
-            currentFileName.textContent = files[fileId].name;
+        function loadFile(id) {
+            if (currentFileId && files[currentFileId]) {
+                files[currentFileId].scrollTop = viewerContainer.scrollTop;
+            }
+            currentFileId = id;
+            currentFileName.textContent = files[id].name;
             uploadZone.style.display = 'none';
-            updateUI(); saveWorkspace();
-            renderMarkdown(files[fileId].content, fileId);
+            updateUI();
+            saveWorkspace();
+            renderMarkdown(files[id].content, id);
         }
 
-        function deleteFile(fileId) {
-            delete files[fileId];
-            if (currentFileId === fileId) {
+        function deleteFile(id) {
+            delete files[id];
+            if (currentFileId === id) {
                 const remaining = Object.keys(files);
                 currentFileId = remaining.length > 0 ? remaining[0] : null;
             }
-            updateUI(); saveWorkspace();
-            if (currentFileId) loadFile(currentFileId);
-            else {
-                currentFileName.textContent = 'No file selected';
+            updateUI();
+            saveWorkspace();
+            if (currentFileId) { loadFile(currentFileId); }
+            else { 
+                currentFileName.textContent = 'Workspace';
                 markdownViewer.classList.remove('active');
                 tocSidebar.style.display = 'none';
-                uploadZone.style.display = 'flex';
+                uploadZone.style.display = 'block';
             }
         }
 
         clearAllBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete all files from workspace?')) {
-                files = {}; currentFileId = null; updateUI(); saveWorkspace();
+            if (confirm('Clear entire workspace?')) {
+                files = {}; currentFileId = null;
+                updateUI(); saveWorkspace();
+                currentFileName.textContent = 'Workspace';
             }
         });
 
-        printBtn.addEventListener('click', () => window.print());
-
-        // --- Foolproof Core Rendering Engine ---
-        async function renderMarkdown(markdown, targetFileId) {
+        // --- Core Rendering Engine ---
+        async function renderMarkdown(markdownText, targetFileId) {
             try {
-                let processedText = markdown;
-
-                // 1. Pre-process Mermaid diagrams so markdown-it ignores them entirely
-                processedText = processedText.replace(/```mermaid\n([\s\S]*?)\n```/g, '<div class="mermaid">$1</div>');
-
-                // 2. Protect Code Blocks from the Math regex (prevents standard bash variables like $PATH from triggering math logic)
-                const codeBlocks = [];
-                // Block code
-                processedText = processedText.replace(/```[\s\S]*?```/g, match => {
-                    codeBlocks.push(match); return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
-                });
-                // Inline code
-                processedText = processedText.replace(/`[^`\n]+`/g, match => {
-                    codeBlocks.push(match); return `__CODE_INLINE_${codeBlocks.length - 1}__`;
-                });
-
-                // 3. Extract Display Math ($$ ... $$)
-                const displayMath = [];
-                processedText = processedText.replace(/\$\$(.*?)\$\$/gs, (match) => {
-                    displayMath.push(match);
-                    return `__DISPLAY_MATH_${displayMath.length - 1}__`;
-                });
-
-                // 4. Extract Inline Math ($ ... $) 
-                // Uses negative lookaheads/behinds to safely ignore "$5 and $10" while perfectly capturing "$\vec{F}_i$"
-                const inlineMath = [];
-                processedText = processedText.replace(/\$(?!\s)((?:\\.|[^$\n])+?)(?<!\s)\$/g, (match) => {
-                    inlineMath.push(match);
-                    return `__INLINE_MATH_${inlineMath.length - 1}__`;
-                });
-
-                // 5. Restore Code Blocks so markdown-it can format them properly
-                processedText = processedText.replace(/__CODE_BLOCK_(\d+)__/g, (match, i) => codeBlocks[i]);
-                processedText = processedText.replace(/__CODE_INLINE_(\d+)__/g, (match, i) => codeBlocks[i]);
-
-                // 6. Parse the Markdown
-                const rawHtml = md.render(processedText);
+                // Pre-process Mermaid
+                markdownText = markdownText.replace(/```mermaid\n([\s\S]*?)\n```/g, '<div class="mermaid">$1</div>');
                 
-                // 7. Sanitize the HTML
+                let rawHtml = md.render(markdownText);
+                
+                // Configured DOMPurify to allow MathML structures and required inline styles
                 const cleanHtml = DOMPurify.sanitize(rawHtml, {
-                    USE_PROFILES: { html: true },
-                    ADD_ATTR: ['target', 'rel', 'id', 'class'],
+                    USE_PROFILES: { html: true, mathMl: true },
+                    ADD_ATTR: ['target', 'rel', 'id', 'class', 'style', 'aria-hidden'],
+                    ADD_TAGS: ['div', 'span', 'eq', 'eqn'], // Allow tags output by Texmath
                     ADD_CLASSES: { div: ['mermaid'] }
                 });
 
-                // 8. Safely inject the equations back into the DOM where DOMPurify can no longer touch them
-                let finalHtml = cleanHtml;
-                displayMath.forEach((math, i) => {
-                    finalHtml = finalHtml.replace(`__DISPLAY_MATH_${i}__`, `<span class="math-display">${escapeHtml(math)}</span>`);
-                });
-                inlineMath.forEach((math, i) => {
-                    finalHtml = finalHtml.replace(`__INLINE_MATH_${i}__`, `<span class="math-inline">${escapeHtml(math)}</span>`);
-                });
-
-                markdownViewer.innerHTML = finalHtml;
+                markdownViewer.innerHTML = cleanHtml;
                 markdownViewer.classList.add('active');
 
-                // Feature integrations
+                // 1. Generate ToC & Assign IDs
                 generateTableOfContents();
+
+                // 2. Add Copy Buttons to Code Blocks
                 addCopyButtons();
+
+                // 3. Process 3D Molecular Views (Structural Bioinformatics)
                 process3Dmol();
+
+                // 4. Process Data Charts (Simulation Metrics)
                 processCharts();
 
-                // External Links
-                markdownViewer.querySelectorAll('a').forEach((link) => {
-                    if (link.hostname !== window.location.hostname) {
-                        link.setAttribute('target', '_blank');
-                        link.setAttribute('rel', 'noopener noreferrer');
-                    }
-                });
-
-                // Safely trigger MathJax. Includes a retry mechanism in case the user instantly switches files while the MathJax CDN is still downloading.
-                function typesetMath() {
-                    if (window.MathJax && window.MathJax.typesetPromise) {
-                        window.MathJax.typesetPromise([markdownViewer]).catch(err => console.error("MathJax Rendering Error:", err));
-                    } else {
-                        setTimeout(typesetMath, 50); 
-                    }
-                }
-                typesetMath();
-
-                // Render Mermaid Diagrams
+                // Render Mermaid Diagrams dynamically
                 if (markdownViewer.querySelector('.mermaid')) {
                     mermaid.initialize({ startOnLoad: false, theme: 'default' });
                     await mermaid.run({ nodes: markdownViewer.querySelectorAll('.mermaid') });
                 }
 
-                // Restore previous exact scroll position
-                if (targetFileId && files[targetFileId] && files[targetFileId].scrollTop !== undefined) {
-                    viewerContainer.scrollTop = files[targetFileId].scrollTop;
-                } else {
-                    viewerContainer.scrollTop = 0;
-                }
+                // Restore Scroll State
+                viewerContainer.scrollTop = (targetFileId && files[targetFileId] && files[targetFileId].scrollTop) ? files[targetFileId].scrollTop : 0;
 
-            } catch (error) {
-                markdownViewer.innerHTML = `<div style="color: var(--danger); padding: 2rem;"><h2>Error rendering markdown</h2><p>${error.message}</p></div>`;
-                markdownViewer.classList.add('active');
+            } catch (err) {
+                console.error("Rendering error:", err);
             }
         }
 
-        // Table of Contents
+        // --- Feature Integrations ---
+
         function generateTableOfContents() {
             tocList.innerHTML = '';
             const headings = markdownViewer.querySelectorAll('h1, h2, h3');
@@ -625,29 +515,39 @@
                     
                     const li = document.createElement('li');
                     const link = document.createElement('a');
-                    link.href = `#${id}`; link.innerText = heading.innerText;
+                    link.href = `#${id}`;
+                    link.innerText = heading.innerText;
                     link.className = `toc-link toc-${heading.tagName.toLowerCase()}`;
                     
                     link.addEventListener('click', (e) => {
                         e.preventDefault();
-                        viewerContainer.scrollTo({ top: heading.offsetTop - 80, behavior: 'smooth' });
+                        viewerContainer.scrollTo({
+                            top: heading.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
                     });
                     
-                    li.appendChild(link); tocList.appendChild(li);
+                    li.appendChild(link);
+                    tocList.appendChild(li);
                 });
-            } else { tocSidebar.style.display = 'none'; }
+            } else {
+                tocSidebar.style.display = 'none';
+            }
         }
 
-        // Copy button script generator
         function addCopyButtons() {
             markdownViewer.querySelectorAll('pre').forEach(pre => {
-                if (pre.parentNode.classList.contains('code-wrapper')) return;
-                const wrapper = document.createElement('div'); wrapper.className = 'code-wrapper';
-                pre.parentNode.insertBefore(wrapper, pre); wrapper.appendChild(pre);
+                const wrapper = document.createElement('div');
+                wrapper.className = 'code-wrapper';
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
 
-                const btn = document.createElement('button'); btn.className = 'copy-code-btn'; btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
+                const btn = document.createElement('button');
+                btn.className = 'copy-code-btn';
+                btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy';
                 btn.addEventListener('click', () => {
-                    navigator.clipboard.writeText(pre.querySelector('code').innerText);
+                    const code = pre.querySelector('code').innerText;
+                    navigator.clipboard.writeText(code);
                     btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied';
                     setTimeout(() => btn.innerHTML = '<i class="fa-regular fa-copy"></i> Copy', 2000);
                 });
@@ -657,33 +557,71 @@
 
         function process3Dmol() {
             markdownViewer.querySelectorAll('.language-pdb').forEach((block, idx) => {
-                const wrapper = block.closest('.code-wrapper'); if (!wrapper) return;
-                const container = document.createElement('div'); container.id = 'viewer3d_' + idx; container.className = 'mol-viewer-container';
+                const wrapper = block.closest('.code-wrapper');
+                if(!wrapper) return;
+                
+                const pdbData = block.innerText;
+                const container = document.createElement('div');
+                container.id = 'viewer3d_' + idx;
+                container.className = 'mol-viewer-container';
+                
                 wrapper.replaceWith(container);
+
                 let viewer = $3Dmol.createViewer(container, { backgroundColor: '#f8fafc' });
-                viewer.addModel(block.innerText, 'pdb'); viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { radius: 0.1 } });
-                viewer.zoomTo(); viewer.render();
+                viewer.addModel(pdbData, 'pdb');
+                viewer.setStyle({}, { cartoon: { color: 'spectrum' }, stick: { radius: 0.1 } });
+                viewer.zoomTo();
+                viewer.render();
             });
         }
 
         function processCharts() {
-            markdownViewer.querySelectorAll('.language-chart').forEach((block) => {
-                const wrapper = block.closest('.code-wrapper'); if (!wrapper) return;
-                const lines = block.innerText.trim().split('\n'); if (lines.length < 3) return;
+            markdownViewer.querySelectorAll('.language-chart').forEach((block, idx) => {
+                const wrapper = block.closest('.code-wrapper');
+                if(!wrapper) return;
+
+                const lines = block.innerText.trim().split('\n');
+                if(lines.length < 3) return;
+
+                const type = lines[0].trim();
+                const labels = lines[1].split(',').slice(1);
                 
-                const type = lines[0].trim(), labels = lines[1].split(',').slice(1), datasets = [], colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b'];
-                for (let i = 2; i < lines.length; i++) {
+                const datasets = [];
+                const colors = ['#2563eb', '#ef4444', '#10b981', '#f59e0b'];
+
+                for(let i = 2; i < lines.length; i++) {
                     const row = lines[i].split(',');
-                    datasets.push({ label: row[0], data: row.slice(1).map(Number), borderColor: colors[(i-2) % colors.length], backgroundColor: colors[(i-2) % colors.length] + '33', tension: 0.3 });
+                    datasets.push({
+                        label: row[0],
+                        data: row.slice(1).map(Number),
+                        borderColor: colors[(i-2) % colors.length],
+                        backgroundColor: colors[(i-2) % colors.length] + '33',
+                        tension: 0.3
+                    });
                 }
 
-                const container = document.createElement('div'); container.className = 'chart-container';
-                const canvas = document.createElement('canvas'); container.appendChild(canvas); wrapper.replaceWith(container);
-                new Chart(canvas, { type: type, data: { labels: labels, datasets: datasets }, options: { responsive: true, maintainAspectRatio: false } });
+                const container = document.createElement('div');
+                container.className = 'chart-container';
+                const canvas = document.createElement('canvas');
+                container.appendChild(canvas);
+                
+                wrapper.replaceWith(container);
+
+                new Chart(canvas, {
+                    type: type,
+                    data: { labels: labels, datasets: datasets },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
             });
         }
 
+        document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
+            document.getElementById('sidebar').classList.toggle('collapsed');
+        });
+
+        // Init
         loadWorkspace();
+
     </script>
 </body>
 </html>
