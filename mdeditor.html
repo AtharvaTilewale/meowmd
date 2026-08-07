@@ -1,22 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="MeowMD is a free, offline-capable Markdown toolkit — instantly view and edit .md files in your browser with live preview, syntax highlighting, Mermaid diagrams, LaTeX math, and 3D molecule rendering. No sign-up, no install.">
+    <meta name="keywords"
+        content="markdown viewer, markdown editor, online markdown, md to html, markdown preview, free markdown tool, markdown live preview">
+    <meta name="author" content="MeowMD">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/mdeditor.html">
+
+    <!-- Open Graph / Facebook / LinkedIn -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="MeowMD | Purr-fect Markdown Tools">
+    <meta property="og:description"
+        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
+    <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
+    <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+    <meta property="og:site_name" content="MeowMD">
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="MeowMD | Purr-fect Markdown Tools">
+    <meta name="twitter:description"
+        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
+    <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+    <!-- Structured data (JSON-LD) so Google can show a rich result -->
+    <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "MeowMD Editor",
+  "url": "https://atharvatilewale.github.io/meowmd/mdeditor.html",
+  "applicationCategory": "Utility",
+  "operatingSystem": "Any (Web Browser)",
+  "description": "A free, offline-capable Markdown viewer and editor with live preview, diagrams, math rendering, and 3D molecule support.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "USD"
+  }
+}
+</script>
     <title>MeowMD | Professional Markdown Generator</title>
-    
+
     <!-- Quill.js Theme -->
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-    
+
     <!-- Soft, readable font from index2.html -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
             /* MeowMD Theme Variables */
-            --primary-color: #fe6b5e; 
+            --primary-color: #fe6b5e;
             --primary-hover: #ff7163;
             --border-color: #fad1cd;
             --bg-color: #fff9f5;
@@ -32,7 +74,8 @@
             color: #ffffff;
         }
 
-        body, html {
+        body,
+        html {
             margin: 0;
             padding: 0;
             font-family: var(--font-main);
@@ -62,73 +105,73 @@
         }
 
         /* Unified MeowMD Navbar */
-.navbar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 70px;
-    background-color: var(--bg-color, var(--bg-panel));
-    border-bottom: 1px solid var(--border-color, transparent);
-    flex-shrink: 0;
-    z-index: 100;
-}
+        .navbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 40px;
+            height: 70px;
+            background-color: var(--bg-color, var(--bg-panel));
+            border-bottom: 1px solid var(--border-color, transparent);
+            flex-shrink: 0;
+            z-index: 100;
+        }
 
-.navbar .logo {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-size: 22px;
-    font-weight: 800;
-    color: var(--text-main);
-    text-decoration: none;
-}
+        .navbar .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
+        }
 
-.logo svg {
-    /* Automatically falls back to whichever variable the page uses */
-    color: var(--accent-color, var(--primary-color, var(--primary)));
-}
+        .logo svg {
+            /* Automatically falls back to whichever variable the page uses */
+            color: var(--accent-color, var(--primary-color, var(--primary)));
+        }
 
-.nav-links {
-    display: flex;
-    gap: 32px;
-    font-size: 16px;
-    font-weight: 800;
-}
+        .nav-links {
+            display: flex;
+            gap: 32px;
+            font-size: 16px;
+            font-weight: 800;
+        }
 
-.nav-links a {
-    color: var(--text-muted);
-    text-decoration: none;
-    transition: color 0.3s ease;
-    position: relative;
-}
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            position: relative;
+        }
 
-.nav-links a:hover, 
-.nav-links a.active {
-    color: var(--accent-color, var(--primary-color, var(--primary)));
-}
+        .nav-links a:hover,
+        .nav-links a.active {
+            color: var(--accent-color, var(--primary-color, var(--primary)));
+        }
 
-/* Active State Underline */
-.nav-links a.active::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 100%;
-    height: 2px;
-    background-color: var(--accent-color, var(--primary-color, var(--primary)));
-    border-radius: 2px;
-}
+        /* Active State Underline */
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color, var(--primary-color, var(--primary)));
+            border-radius: 2px;
+        }
 
-/* Mobile Responsiveness */
-@media (max-width: 600px) {
-    .navbar {
-        padding: 15px 20px;
-        flex-direction: column;
-        gap: 16px;
-        height: auto;
-    }
-}
+        /* Mobile Responsiveness */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 15px 20px;
+                flex-direction: column;
+                gap: 16px;
+                height: auto;
+            }
+        }
 
         .export-btn {
             background-color: var(--primary-color);
@@ -179,7 +222,7 @@
             border-top-left-radius: 12px;
             border-top-right-radius: 12px;
         }
-        
+
         .ql-container {
             border-color: var(--border-color) !important;
             border-bottom-left-radius: 12px;
@@ -191,24 +234,24 @@
             flex: 1;
             display: flex;
             flex-direction: column;
-            background: var(--card-bg); 
+            background: var(--card-bg);
             border-radius: 12px;
             box-shadow: 0 10px 30px rgba(74, 64, 58, 0.05);
             border: 1px solid var(--border-color);
             overflow: hidden;
         }
 
-       .md-header {
-    background: var(--bg-color);
-    color: var(--text-main);
-    padding: 0.75rem 1rem;
-    font-size: 0.875rem;
-    font-weight: 800;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
+        .md-header {
+            background: var(--bg-color);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 800;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
         #md-output {
             flex: 1;
@@ -222,43 +265,49 @@
             line-height: 1.6;
             outline: none;
         }
+
         /* Window Resizer Handle */
-/* Window Resizer Handle Container */
-.resizer {
-    width: 16px;
-    cursor: col-resize;
-    margin: 0 -0.5rem; /* Absorbs the 1rem gap from workspace */
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+        /* Window Resizer Handle Container */
+        .resizer {
+            width: 16px;
+            cursor: col-resize;
+            margin: 0 -0.5rem;
+            /* Absorbs the 1rem gap from workspace */
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* Permanent subtle visual indicator (a small pill) */
-.resizer::after {
-    content: '';
-    width: 4px;
-    height: 50px;
-    background-color: var(--border-color, #fad1cd);
-    border-radius: 4px;
-    transition: all 0.2s ease;
-}
+        /* Permanent subtle visual indicator (a small pill) */
+        .resizer::after {
+            content: '';
+            width: 4px;
+            height: 50px;
+            background-color: var(--border-color, #fad1cd);
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
 
-/* Expands and lights up when hovered or actively dragging */
-.resizer:hover::after, 
-.resizer.resizing::after {
-    background-color: var(--accent-color, #fe6b5e);
-    height: 100%;
-    width: 8px;
-}
+        /* Expands and lights up when hovered or actively dragging */
+        .resizer:hover::after,
+        .resizer.resizing::after {
+            background-color: var(--accent-color, #fe6b5e);
+            height: 100%;
+            width: 8px;
+        }
     </style>
 </head>
+
 <body>
 
     <nav class="navbar">
-        <a href="index2.html" class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z"></path>
+        <a href="index.html" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path
+                    d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
+                </path>
             </svg>
             MeowMD
         </a>
@@ -273,104 +322,105 @@
 
     <!-- Workspace Section -->
     <!-- Workspace Section -->
-<div class="workspace">
-    
-    <!-- Left: WYSIWYG Editor -->
-    <div class="editor-container" id="left-pane">
-        <div id="toolbar-container">
-            <span class="ql-formats">
-                <select class="ql-header">
-                    <option value="1">Heading 1</option>
-                    <option value="2">Heading 2</option>
-                    <option value="3">Heading 3</option>
-                    <option selected>Normal</option>
-                </select>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-bold"></button>
-                <button class="ql-italic"></button>
-                <button class="ql-underline"></button>
-                <button class="ql-strike"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-list" value="ordered"></button>
-                <button class="ql-list" value="bullet"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-blockquote"></button>
-                <button class="ql-code-block"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-link"></button>
-                <button class="ql-image"></button>
-            </span>
-            <span class="ql-formats">
-                <button class="ql-clean"></button>
-            </span>
+    <div class="workspace">
+
+        <!-- Left: WYSIWYG Editor -->
+        <div class="editor-container" id="left-pane">
+            <div id="toolbar-container">
+                <span class="ql-formats">
+                    <select class="ql-header">
+                        <option value="1">Heading 1</option>
+                        <option value="2">Heading 2</option>
+                        <option value="3">Heading 3</option>
+                        <option selected>Normal</option>
+                    </select>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-bold"></button>
+                    <button class="ql-italic"></button>
+                    <button class="ql-underline"></button>
+                    <button class="ql-strike"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-list" value="ordered"></button>
+                    <button class="ql-list" value="bullet"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-blockquote"></button>
+                    <button class="ql-code-block"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-link"></button>
+                    <button class="ql-image"></button>
+                </span>
+                <span class="ql-formats">
+                    <button class="ql-clean"></button>
+                </span>
+            </div>
+            <div id="quill-editor"></div>
         </div>
-        <div id="quill-editor"></div>
-    </div>
 
-    <!-- DRAG HANDLE -->
-    <div class="resizer" id="dragMe"></div>
+        <!-- DRAG HANDLE -->
+        <div class="resizer" id="dragMe"></div>
 
-    <!-- Right: Markdown Preview -->
-    <div class="markdown-container">
-        <div class="md-header">
-            <span>Real-Time MD Preview</span>
-            <!-- Failsafe Button Styles to ensure visibility -->
-            <button onclick="exportMarkdown()" style="background-color: var(--accent-color, #fe6b5e); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; z-index: 50;">
-                Export .MD
-            </button>
+        <!-- Right: Markdown Preview -->
+        <div class="markdown-container">
+            <div class="md-header">
+                <span>Real-Time MD Preview</span>
+                <!-- Failsafe Button Styles to ensure visibility -->
+                <button onclick="exportMarkdown()"
+                    style="background-color: var(--accent-color, #fe6b5e); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; z-index: 50;">
+                    Export .MD
+                </button>
+            </div>
+            <textarea id="md-output" readonly placeholder="Your generated markdown will appear here..."></textarea>
         </div>
-        <textarea id="md-output" readonly placeholder="Your generated markdown will appear here..."></textarea>
-    </div>
 
-</div>
+    </div>
 
     <!-- Load Libraries -->
     <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
     <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
     <script>
-    // --- Window Resize Logic ---
-    const resizer = document.getElementById('dragMe');
-    const leftPane = document.getElementById('left-pane');
-    let startX = 0;
-    let startWidth = 0;
+        // --- Window Resize Logic ---
+        const resizer = document.getElementById('dragMe');
+        const leftPane = document.getElementById('left-pane');
+        let startX = 0;
+        let startWidth = 0;
 
-    const mouseDownHandler = function(e) {
-        startX = e.clientX;
-        startWidth = leftPane.getBoundingClientRect().width;
-        
-        resizer.classList.add('resizing');
-        document.addEventListener('mousemove', mouseMoveHandler);
-        document.addEventListener('mouseup', mouseUpHandler);
-        
-        // Prevent accidental text highlighting while dragging
-        document.body.style.userSelect = 'none';
-        document.body.style.cursor = 'col-resize';
-    };
+        const mouseDownHandler = function (e) {
+            startX = e.clientX;
+            startWidth = leftPane.getBoundingClientRect().width;
 
-    const mouseMoveHandler = function(e) {
-        const dx = e.clientX - startX;
-        // Calculate new width as a percentage of the workspace
-        const newLeftWidth = ((startWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
-        // Apply the new width via flex-basis
-        leftPane.style.flex = `0 0 ${newLeftWidth}%`;
-    };
+            resizer.classList.add('resizing');
+            document.addEventListener('mousemove', mouseMoveHandler);
+            document.addEventListener('mouseup', mouseUpHandler);
 
-    const mouseUpHandler = function() {
-        resizer.classList.remove('resizing');
-        document.removeEventListener('mousemove', mouseMoveHandler);
-        document.removeEventListener('mouseup', mouseUpHandler);
-        
-        // Restore normal mouse behavior
-        document.body.style.userSelect = '';
-        document.body.style.cursor = '';
-    };
+            // Prevent accidental text highlighting while dragging
+            document.body.style.userSelect = 'none';
+            document.body.style.cursor = 'col-resize';
+        };
 
-    resizer.addEventListener('mousedown', mouseDownHandler);
-</script>
+        const mouseMoveHandler = function (e) {
+            const dx = e.clientX - startX;
+            // Calculate new width as a percentage of the workspace
+            const newLeftWidth = ((startWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
+            // Apply the new width via flex-basis
+            leftPane.style.flex = `0 0 ${newLeftWidth}%`;
+        };
+
+        const mouseUpHandler = function () {
+            resizer.classList.remove('resizing');
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            document.removeEventListener('mouseup', mouseUpHandler);
+
+            // Restore normal mouse behavior
+            document.body.style.userSelect = '';
+            document.body.style.cursor = '';
+        };
+
+        resizer.addEventListener('mousedown', mouseDownHandler);
+    </script>
 
     <script>
         // 1. Initialize Turndown (HTML to MD converter)
@@ -393,10 +443,10 @@
         const mdOutput = document.getElementById('md-output');
 
         // 3. Listen for changes in the editor and update Markdown in real-time
-        quill.on('text-change', function() {
+        quill.on('text-change', function () {
             // Get the HTML content from Quill
             const htmlContent = quill.root.innerHTML;
-            
+
             // If the editor is empty (Quill leaves a blank <p><br></p>), clear output
             if (htmlContent === '<p><br></p>') {
                 mdOutput.value = '';
@@ -411,7 +461,7 @@
         // 4. Export Functionality
         function exportMarkdown() {
             const mdText = mdOutput.value;
-            
+
             if (!mdText.trim()) {
                 alert('The editor is empty. Write something before exporting!');
                 return;
@@ -419,13 +469,13 @@
 
             // Create a Blob containing the markdown text
             const blob = new Blob([mdText], { type: 'text/markdown' });
-            
+
             // Create a temporary link element to trigger the download
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
             a.download = 'document.md'; // Default file name
-            
+
             // Trigger click and cleanup
             document.body.appendChild(a);
             a.click();
@@ -434,4 +484,5 @@
         }
     </script>
 </body>
+
 </html>
