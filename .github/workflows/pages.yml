@@ -1,0 +1,59 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Verify build files exist
+        run: |
+          echo "Checking for required files..."
+          test -f index.html && echo "✓ index.html found" || (echo "✗ index.html missing" && exit 1)
+          test -f editor.html && echo "✓ editor.html found" || (echo "✗ editor.html missing" && exit 1)
+          test -f manifest.json && echo "✓ manifest.json found" || (echo "✗ manifest.json missing" && exit 1)
+          test -f sw.js && echo "✓ sw.js found" || (echo "✗ sw.js missing" && exit 1)
+          echo "✅ All required files present!"
+      
+      - name: Validate manifest.json
+        run: |
+          echo "🔍 Validating JSON files..."
+          python3 -m json.tool manifest.json > /dev/null && echo "✓ manifest.json is valid JSON"
+      
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: build
+    
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
