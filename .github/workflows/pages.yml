@@ -29,7 +29,7 @@ jobs:
         run: |
           echo "Checking for required files..."
           test -f index.html && echo "✓ index.html found" || (echo "✗ index.html missing" && exit 1)
-          test -f editor.html && echo "✓ editor.html found" || (echo "✗ editor.html missing" && exit 1)
+          test -f mdeditor.html && echo "✓ mdeditor.html found" || (echo "✗ mdeditor.html missing" && exit 1)
           test -f manifest.json && echo "✓ manifest.json found" || (echo "✗ manifest.json missing" && exit 1)
           test -f sw.js && echo "✓ sw.js found" || (echo "✗ sw.js missing" && exit 1)
           echo "✅ All required files present!"
@@ -45,6 +45,7 @@ jobs:
           path: '.'
 
   deploy:
+    if: github.event_name != 'pull_request'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
