@@ -425,6 +425,67 @@ input:checked + .slider:before { transform: translateX(20px); }
         max-width: 100% !important;
     }
 }
+/* Full-Screen Global Drag Overlay */
+.drag-overlay {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    /* Soft MeowMD background with semi-transparency */
+    background: rgba(255, 249, 245, 0.85); 
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.drag-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* The animated drop box */
+.drag-overlay-content {
+    text-align: center;
+    border: 3px dashed var(--primary);
+    border-radius: 24px;
+    padding: 4rem 6rem;
+    background: var(--bg-panel);
+    box-shadow: 0 30px 60px rgba(254, 107, 94, 0.25);
+    /* Starts slightly smaller for the spring effect */
+    transform: scale(0.9);
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* Prevents the box itself from interrupting mouse hover events */
+    pointer-events: none; 
+}
+
+.drag-overlay.active .drag-overlay-content {
+    /* Springs to full size when active */
+    transform: scale(1);
+}
+
+.drag-overlay-content i {
+    font-size: 4.5rem;
+    color: var(--primary);
+    margin-bottom: 1rem;
+    animation: pulseDrag 1.5s infinite ease-in-out;
+}
+
+.drag-overlay-content h2 {
+    color: var(--text-main);
+    font-weight: 800;
+    margin: 0;
+    font-size: 2rem;
+}
+
+.drag-overlay-content p {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-top: 0.5rem;
+    font-size: 1.1rem;
+}
 /* ToC Resizer Handle */
 .toc-resizer {
     width: 16px;
@@ -474,10 +535,6 @@ input:checked + .slider:before { transform: translateX(20px); }
     background-color: var(--bg-hover);
 }
 
-/* CSS Magic: If sidebar is collapsed, show the floating button next to it */
-.sidebar.collapsed + .floating-toggle {
-    display: block;
-}
     </style>
 </head>
 <body>
@@ -515,7 +572,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="branding">
-                <span><i class="fa-solid fa-microscope text-primary"></i> Workspace</span>
+                <span><i class="fa-solid fa-microscope text-primary"></i> Meows-Space</span>
                 <!-- Moved Hamburger Menu Here -->
                 <div style="display: flex; gap: 0.25rem;">
                     <button class="btn-icon" id="toggleSidebarBtn" title="Collapse Sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
@@ -557,7 +614,18 @@ input:checked + .slider:before { transform: translateX(20px); }
     <button class="floating-toggle" id="floatingToggleBtn" title="Open Sidebar"><i class="fa-solid fa-bars"></i></button>
 
     <!-- Main Content -->
+    <!-- Main Content -->
     <main class="main-content" id="mainContent">
+        
+        <!-- NEW: Full-Screen Global Drop Overlay -->
+        <div class="drag-overlay" id="dragOverlay">
+            <div class="drag-overlay-content">
+                <h2>Drop to Import</h2>
+                <p>Release your file to instantly add it to your workspace</p>
+            </div>
+        </div>
+
+        <!-- ... your existing top-bar code ... -->
         <!-- Added id="topBar" and display:none -->
         <div class="top-bar" id="topBar" style="display: none;">
             <div style="display: flex; align-items: center; gap: 1rem;">
@@ -729,19 +797,42 @@ input:checked + .slider:before { transform: translateX(20px); }
         });
         
         uploadZone.addEventListener('click', () => fileInput.click());
+        // --- Global Drag and Drop Logic ---
+        let dragCounter = 0;
+        const dragOverlay = document.getElementById('dragOverlay');
+
+        // Prevent browser from opening the file in a new tab by default
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
-            uploadZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
+            document.body.addEventListener(evt, (e) => { 
+                e.preventDefault(); 
+                e.stopPropagation(); 
+            });
         });
-        
-        // Trigger the animation class when dragging starts
-        uploadZone.addEventListener('dragenter', () => uploadZone.classList.add('active-drag'));
-        uploadZone.addEventListener('dragover', () => uploadZone.classList.add('active-drag'));
-        
-        // Remove the animation class when dragging stops
-        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('active-drag'));
-        uploadZone.addEventListener('drop', (e) => {
-            uploadZone.classList.remove('active-drag');
-            processFiles(e.dataTransfer.files);
+
+        document.body.addEventListener('dragenter', (e) => {
+            // Check if the dragged item is a file (prevents text-selection drags from triggering it)
+            if (e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                dragCounter++;
+                dragOverlay.classList.add('active');
+            }
+        });
+
+        document.body.addEventListener('dragleave', (e) => {
+            if (e.dataTransfer.types && Array.from(e.dataTransfer.types).includes('Files')) {
+                dragCounter--;
+                // Only hide when leaving the actual browser window
+                if (dragCounter === 0) {
+                    dragOverlay.classList.remove('active');
+                }
+            }
+        });
+
+        document.body.addEventListener('drop', (e) => {
+            dragCounter = 0;
+            dragOverlay.classList.remove('active');
+            if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                processFiles(e.dataTransfer.files);
+            }
         });
 
         function processFiles(selectedFiles) {
@@ -993,8 +1084,21 @@ input:checked + .slider:before { transform: translateX(20px); }
             });
         }
 
+        // --- Sidebar Toggle Logic ---
+        const sidebar = document.getElementById('sidebar');
+        const floatingToggleBtn = document.getElementById('floatingToggleBtn');
+        const topBar = document.getElementById('topBar'); // Ensure topBar is defined
+
+        // Button inside sidebar (Collapses it and shows floating button)
         document.getElementById('toggleSidebarBtn').addEventListener('click', () => {
-            document.getElementById('sidebar').classList.toggle('collapsed');
+            sidebar.classList.add('collapsed');
+            floatingToggleBtn.style.display = 'block'; 
+        });
+
+        // Floating button (Opens sidebar and hides itself)
+        floatingToggleBtn.addEventListener('click', () => {
+            sidebar.classList.remove('collapsed');
+            floatingToggleBtn.style.display = 'none'; 
         });
 
         // Init
