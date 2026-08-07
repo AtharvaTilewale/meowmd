@@ -184,6 +184,41 @@ input:checked + .slider:before { transform: translateX(20px); }
     }
 }
 
+/* Drag and Drop Animations */
+@keyframes pulseDrag {
+    0% { transform: translate(-50%, -50%) scale(1); box-shadow: var(--shadow-md); }
+    50% { transform: translate(-50%, -50%) scale(1.02); box-shadow: 0 20px 40px rgba(254, 107, 94, 0.15); }
+    100% { transform: translate(-50%, -50%) scale(1); box-shadow: var(--shadow-md); }
+}
+
+/* Enhanced Drag and Drop Transitions */
+/* Smooth, Slow, and Large Drag and Drop Transitions */
+.upload-zone {
+    /* Slowed down to 0.6s with a smooth 'ease' instead of a sudden bounce */
+    transition: border-color 0.6s ease, 
+                background-color 0.6s ease, 
+                transform 0.6s ease, 
+                box-shadow 0.6s ease;
+}
+
+.upload-zone i {
+    transition: transform 0.6s ease;
+}
+
+/* The class applied when a file is dragged over */
+.upload-zone.active-drag {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+    
+    /* Enlarge the box much more (15% bigger) while keeping it centered */
+    transform: translate(-50%, -50%) scale(1.15); 
+    /* Slightly larger shadow to match the bigger box */
+    box-shadow: 0 30px 60px rgba(254, 107, 94, 0.25); 
+}
+
+.upload-zone.active-drag i {
+    transform: scale(1.3) translateY(-12px) rotate(-5deg);
+}
         /* Layout */
         .sidebar {
             width: 300px;
@@ -430,7 +465,7 @@ input:checked + .slider:before { transform: translateX(20px); }
             MeowMD
         </a>
         <div class="nav-links">
-            <a href="index2.html" class="active">Home</a>
+            <a href="index.html" class="active">Home</a>
             <a href="mdviewer.html">MD Viewer</a>
             <a href="mdeditor.html">MD Generator</a>
         </div>
@@ -664,10 +699,15 @@ input:checked + .slider:before { transform: translateX(20px); }
         ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(evt => {
             uploadZone.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); });
         });
-        uploadZone.addEventListener('dragover', () => uploadZone.style.borderColor = 'var(--primary)');
-        uploadZone.addEventListener('dragleave', () => uploadZone.style.borderColor = '#cbd5e1');
+        
+        // Trigger the animation class when dragging starts
+        uploadZone.addEventListener('dragenter', () => uploadZone.classList.add('active-drag'));
+        uploadZone.addEventListener('dragover', () => uploadZone.classList.add('active-drag'));
+        
+        // Remove the animation class when dragging stops
+        uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('active-drag'));
         uploadZone.addEventListener('drop', (e) => {
-            uploadZone.style.borderColor = '#cbd5e1';
+            uploadZone.classList.remove('active-drag');
             processFiles(e.dataTransfer.files);
         });
 

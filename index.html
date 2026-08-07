@@ -3,20 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MeowMD | Every tool you need to work with Markdown in one place</title>
+    <title>MeowMD | Purr-fect Markdown Tools</title>
+    
+    <!-- Cat Face Favicon -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff8a80' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+    
+    <!-- Soft, readable font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
+    
     <style>
-        /* Base Reset & Typography */
+        /* Base Reset & Variables */
+        :root {
+            --bg-color: #fff9f5;
+            --card-bg: #ffffff;
+            --text-main: #4a403a; 
+            --text-muted: #8c7e77;
+            --accent-color: #fe6b5e; 
+            --accent-hover: #ff7163;
+            --border-radius: 24px; 
+            --font-main: 'Nunito', sans-serif;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        ::selection {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+        ::-moz-selection {
+            background-color: var(--accent-color);
+            color: #ffffff;
         }
 
         body {
-            background-color: #faf6f6; /* Faint pinkish-gray background mimicking the image */
-            color: #333333;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: var(--font-main);
             line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
         a {
@@ -24,177 +57,197 @@
             color: inherit;
         }
 
-        /* Navigation Bar */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 24px;
-            height: 70px;
-            background-color: #ffffff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
+        /* Unified MeowMD Navbar */
+.navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 70px;
+    background-color: var(--bg-color, var(--bg-panel));
+    border-bottom: 1px solid var(--border-color, transparent);
+    flex-shrink: 0;
+    z-index: 100;
+}
 
-        .navbar .logo {
-            font-size: 24px;
-            font-weight: 800;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: #111;
-        }
+.navbar .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-main);
+    text-decoration: none;
+}
 
-        .navbar .logo span {
-            color: #e53935; /* Red accent similar to the image's heart */
-        }
+.logo svg {
+    /* Automatically falls back to whichever variable the page uses */
+    color: var(--accent-color, var(--primary-color, var(--primary)));
+}
 
-        .nav-links {
-            display: flex;
-            gap: 24px;
-            font-weight: 600;
-            font-size: 14px;
-        }
+.nav-links {
+    display: flex;
+    gap: 32px;
+    font-size: 16px;
+    font-weight: 800;
+}
 
-        .nav-links a:hover {
-            color: #e53935;
-        }
+.nav-links a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    position: relative;
+}
 
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            font-size: 15px;
-            font-weight: 600;
-        }
+.nav-links a:hover, 
+.nav-links a.active {
+    color: var(--accent-color, var(--primary-color, var(--primary)));
+}
 
-        .btn-signup {
-            background-color: #e53935;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            transition: background-color 0.2s;
-        }
+/* Active State Underline */
+.nav-links a.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--accent-color, var(--primary-color, var(--primary)));
+    border-radius: 2px;
+}
 
-        .btn-signup:hover {
-            background-color: #c62828;
-            color: white;
-        }
+/* Mobile Responsiveness */
+@media (max-width: 600px) {
+    .navbar {
+        padding: 15px 20px;
+        flex-direction: column;
+        gap: 16px;
+        height: auto;
+    }
+}
 
         /* Hero Section */
         .hero {
             text-align: center;
-            padding: 60px 20px 40px;
-            max-width: 900px;
+            padding: 80px 20px 60px;
+            max-width: 800px;
             margin: 0 auto;
         }
 
         .hero h1 {
             font-size: 42px;
             font-weight: 800;
-            margin-bottom: 16px;
-            color: #222;
+            margin-bottom: 20px;
+            color: var(--text-main);
+            line-height: 1.2;
+        }
+
+        .hero h1 span {
+            color: var(--accent-color);
         }
 
         .hero p {
-            font-size: 20px;
-            color: #555;
-            margin-bottom: 32px;
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 600;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        /* Filter Pills */
-        .filters {
+        /* Tools Container */
+        .tools-container {
             display: flex;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 40px;
-        }
-
-        .filter-pill {
-            padding: 8px 16px;
-            background-color: #ffffff;
-            border: 1px solid #e0e0e0;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .filter-pill.active {
-            background-color: #333333;
-            color: #ffffff;
-            border-color: #333333;
-        }
-
-        .filter-pill:hover:not(.active) {
-            background-color: #f0f0f0;
-        }
-
-        /* Tools Grid */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-            max-width: 1200px;
+            gap: 32px;
+            padding: 0 24px 80px;
+            max-width: 900px;
             margin: 0 auto;
-            padding: 0 24px 60px;
+            flex-wrap: wrap;
         }
 
         .tool-card {
-            background-color: #ffffff;
-            border: 1px solid #eaeaea;
-            border-radius: 12px;
-            padding: 24px;
-            transition: box-shadow 0.2s, transform 0.2s;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
+            background-color: var(--card-bg);
+            border-radius: var(--border-radius);
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 380px;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(74, 64, 58, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 2px solid transparent;
         }
 
         .tool-card:hover {
-            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(74, 64, 58, 0.1);
+            border-color: #fad1cd;
         }
 
-        .tool-icon {
-            width: 48px;
-            height: 48px;
-            background-color: #fbe9e7;
-            color: #e53935;
+        .icon-wrapper {
+            background-color: #fff0ee;
+            color: var(--accent-color);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            font-size: 24px;
-            margin-bottom: 8px;
+            margin: 0 auto 24px;
+            transition: transform 0.3s ease;
+        }
+
+        .tool-card:hover .icon-wrapper {
+            transform: scale(1.1);
+            background-color: var(--accent-color);
+            color: #ffffff;
         }
 
         .tool-card h3 {
-            font-size: 18px;
-            font-weight: 700;
-            color: #222;
+            font-size: 22px;
+            font-weight: 800;
+            margin-bottom: 12px;
         }
 
         .tool-card p {
+            font-size: 15px;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: auto;
+            text-align: center;
+            padding: 30px;
             font-size: 14px;
-            color: #666;
-            line-height: 1.5;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        footer svg {
+            vertical-align: middle;
+            margin: 0 4px;
         }
 
         /* Responsive */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none; /* Hide on mobile for simplicity */
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 0 20px;
+                flex-direction: column;
+                gap: 16px;
+                height: auto;
+                padding-top: 20px;
+            }
+            .hero {
+                padding: 50px 16px 40px;
             }
             .hero h1 {
                 font-size: 32px;
             }
-            .hero p {
-                font-size: 16px;
+            .tools-container {
+                flex-direction: column;
+                align-items: center;
             }
         }
     </style>
@@ -202,82 +255,67 @@
 <body>
 
     <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="logo">
-            <!-- Simulated Logo -->
-            M<span>♥</span>MD
-        </div>
-        <div class="nav-links">
-            <!-- Linking to your existing files -->
-            <a href="mdviewer.html">MD VIEWER</a>
-            <a href="mdeditor.html">MD GENERATOR</a>
-            <a href="#">CONVERT MD &or;</a>
-            <a href="#">ALL MD TOOLS &or;</a>
-        </div>
-        <div class="nav-actions">
-            <a href="#" class="login">Login</a>
-            <a href="#" class="btn-signup">Sign up</a>
-        </div>
-    </nav>
+    <!-- Navigation Bar -->
+<nav class="navbar">
+    <a href="index2.html" class="logo">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z"></path>
+        </svg>
+        MeowMD
+    </a>
+    <div class="nav-links">
+        <a href="index.html" class="active">Home</a>
+        <a href="mdviewer.html">MD Viewer</a>
+        <a href="mdeditor.html">MD Generator</a>
+    </div>
+</nav>
 
     <!-- Hero Section -->
     <header class="hero">
-        <h1>Every tool you need to work with MD in one place</h1>
-        <p>Every tool you need to use Markdown, at your fingertips. All are 100% FREE and easy to use! Edit, view, convert, and format Markdown files with just a few clicks.</p>
-        
-        <!-- Filter Pills -->
-        <div class="filters">
-            <div class="filter-pill active">All</div>
-            <div class="filter-pill">Format MD</div>
-            <div class="filter-pill">Convert MD</div>
-            <div class="filter-pill">MD Security</div>
-        </div>
+        <h1>The <span>purr-fect</span> way to handle Markdown</h1>
+        <p>Optimize your documentation workflow with intuitive, professional-grade Markdown tools.</p>
     </header>
 
-    <!-- Tools Grid -->
-    <main class="tools-grid">
-        <!-- Tool 1: Viewer -->
+    <!-- Tools Container -->
+    <main class="tools-container">
+        
+        <!-- Markdown Viewer Card -->
         <a href="mdviewer.html" class="tool-card">
-            <div class="tool-icon">👁️</div>
-            <h3>Markdown Viewer</h3>
-            <p>Render and preview your Markdown files instantly with our clean, distraction-free viewer interface.</p>
+            <div class="icon-wrapper">
+                <!-- Browser Window / UI SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
+                    <line x1="2" y1="8" x2="22" y2="8"></line>
+                    <circle cx="6" cy="5.5" r="1.5" fill="currentColor"></circle>
+                    <circle cx="10" cy="5.5" r="1.5" fill="currentColor"></circle>
+                </svg>
+            </div>
+            <h3>MD Viewer</h3>
+            <p>Paste or upload your Markdown to instantly render it into clean, readable HTML. Perfect for quick reading and proofing.</p>
         </a>
 
-        <!-- Tool 2: Generator/Editor -->
+        <!-- Markdown Generator Card -->
         <a href="mdeditor.html" class="tool-card">
-            <div class="tool-icon">📝</div>
-            <h3>Markdown Generator</h3>
-            <p>Create and edit Markdown files easily. Generate standard syntax with a live side-by-side preview.</p>
+            <div class="icon-wrapper">
+                <!-- Edit / Pen Tool SVG -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            </div>
+            <h3>MD Generator</h3>
+            <p>Draft and edit your `.md` files directly in your browser. Scratch down your ideas with a live, side-by-side preview.</p>
         </a>
 
-        <!-- Placeholder Tool 3 -->
-        <a href="#" class="tool-card">
-            <div class="tool-icon">📄</div>
-            <h3>MD to PDF</h3>
-            <p>Easily convert your Markdown files into ready-to-share PDF documents with accurate formatting.</p>
-        </a>
-
-        <!-- Placeholder Tool 4 -->
-        <a href="#" class="tool-card">
-            <div class="tool-icon">🌐</div>
-            <h3>HTML to MD</h3>
-            <p>Pull formatting and data straight from HTML code into clean Markdown syntax in a few short seconds.</p>
-        </a>
-
-        <!-- Placeholder Tool 5 -->
-        <a href="#" class="tool-card">
-            <div class="tool-icon">✂️</div>
-            <h3>Split MD</h3>
-            <p>Separate a large Markdown document into smaller, independent files based on headings or line counts.</p>
-        </a>
-
-        <!-- Placeholder Tool 6 -->
-        <a href="#" class="tool-card">
-            <div class="tool-icon">🔗</div>
-            <h3>Merge MD</h3>
-            <p>Combine multiple Markdown files in the order you want with the easiest MD merger available.</p>
-        </a>
     </main>
+
+    <footer>
+        Made with 
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="var(--accent-color)" stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg> 
+        by MeowMD
+    </footer>
 
 </body>
 </html>
