@@ -453,6 +453,31 @@ input:checked + .slider:before { transform: translateX(20px); }
     height: 100%;
     width: 8px;
 }
+/* Floating Toggle Button (Visible only when sidebar is collapsed) */
+.floating-toggle {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 100;
+    background-color: var(--bg-panel);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.5rem 0.75rem;
+    cursor: pointer;
+    color: var(--text-main);
+    box-shadow: var(--shadow-sm);
+    display: none; /* Hidden by default */
+}
+
+.floating-toggle:hover {
+    color: var(--primary);
+    background-color: var(--bg-hover);
+}
+
+/* CSS Magic: If sidebar is collapsed, show the floating button next to it */
+.sidebar.collapsed + .floating-toggle {
+    display: block;
+}
     </style>
 </head>
 <body>
@@ -465,8 +490,8 @@ input:checked + .slider:before { transform: translateX(20px); }
             MeowMD
         </a>
         <div class="nav-links">
-            <a href="index.html" class="active">Home</a>
-            <a href="mdviewer.html">MD Viewer</a>
+            <a href="index.html">Home</a>
+            <a href="mdviewer.html" class="active">MD Viewer</a>
             <a href="mdeditor.html">MD Generator</a>
         </div>
     </nav>
@@ -483,6 +508,7 @@ input:checked + .slider:before { transform: translateX(20px); }
         </div>
     </div>
     <!-- Wrap the rest of the application -->
+    <!-- Wrap the rest of the application -->
     <div class="app-container">
         
         <!-- Main Sidebar -->
@@ -490,7 +516,11 @@ input:checked + .slider:before { transform: translateX(20px); }
         <div class="sidebar-header">
             <div class="branding">
                 <span><i class="fa-solid fa-microscope text-primary"></i> Workspace</span>
-                <button class="btn-icon" id="syncBtn" title="Sync Status"><i class="fa-solid fa-cloud-check" style="color: var(--primary);"></i></button>
+                <!-- Moved Hamburger Menu Here -->
+                <div style="display: flex; gap: 0.25rem;">
+                    <button class="btn-icon" id="toggleSidebarBtn" title="Collapse Sidebar"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <button class="btn-icon" id="syncBtn" title="Sync Status"><i class="fa-solid fa-cloud-check" style="color: var(--primary);"></i></button>
+                </div>
             </div>
             
             <div class="search-box">
@@ -523,11 +553,14 @@ input:checked + .slider:before { transform: translateX(20px); }
         <ul class="file-list" id="fileList"></ul>
     </aside>
 
+    <!-- NEW: Floating Toggle Button -->
+    <button class="floating-toggle" id="floatingToggleBtn" title="Open Sidebar"><i class="fa-solid fa-bars"></i></button>
+
     <!-- Main Content -->
     <main class="main-content" id="mainContent">
-        <div class="top-bar">
+        <!-- Added id="topBar" and display:none -->
+        <div class="top-bar" id="topBar" style="display: none;">
             <div style="display: flex; align-items: center; gap: 1rem;">
-                <button class="btn-icon" id="toggleSidebarBtn"><i class="fa-solid fa-bars-staggered"></i></button>
                 <div style="font-weight: 500; color: var(--text-muted);" id="currentFileName">Welcome</div>
             </div>
             
@@ -738,7 +771,10 @@ input:checked + .slider:before { transform: translateX(20px); }
                 uploadZone.style.display = 'block';
                 markdownViewer.classList.remove('active');
                 tocSidebar.style.display = 'none';
+                topBar.style.display = 'none'; // Hides Top Bar (Print/Welcome)
                 return;
+            } else {
+                topBar.style.display = 'flex'; // Shows Top Bar when files exist
             }
 
             fileIds.forEach(id => {
