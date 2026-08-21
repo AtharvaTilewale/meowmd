@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -9,9 +9,9 @@
   <title>MeowMD Live Editor — Visual WYSIWYG to Markdown Generator</title>
   <meta name="title" content="MeowMD Live Editor — Visual WYSIWYG to Markdown Generator">
   <meta name="description"
-    content="Write visually with rich text formatting and instantly generate clean GitHub Flavored Markdown. Real-time split preview, hotkeys, word counter, and instant download.">
+    content="Write visually with rich text formatting and instantly generate clean GitHub Flavored Markdown. Features real-time split preview, tables, check lists, callouts, hotkeys, and instant export.">
   <meta name="keywords"
-    content="markdown generator, rich text to markdown, wysiwyg markdown editor, online markdown creator, convert html to markdown, live markdown editor">
+    content="markdown generator, rich text to markdown, wysiwyg markdown editor, online markdown creator, convert html to markdown, live markdown editor, gfm table generator">
   <meta name="author" content="MeowMD">
   <meta name="robots" content="index, follow">
   <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/mdeditor.html">
@@ -21,7 +21,7 @@
   <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
   <meta property="og:title" content="MeowMD Live Editor — Visual Markdown Generator">
   <meta property="og:description"
-    content="Draft rich text visually and get clean, standard Markdown with real-time split preview.">
+    content="Draft rich text visually and get clean, standard Markdown with real-time split preview and GitHub table support.">
   <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
 
   <!-- Twitter / X Card -->
@@ -29,7 +29,7 @@
   <meta name="twitter:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
   <meta name="twitter:title" content="MeowMD Live Editor — Visual Markdown Generator">
   <meta name="twitter:description"
-    content="Draft rich text visually and get clean, standard Markdown with real-time split preview.">
+    content="Draft rich text visually and get clean, standard Markdown with real-time split preview and GitHub table support.">
   <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
 
   <!-- PWA Manifest & Theme -->
@@ -43,12 +43,11 @@
   <!-- Resource Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://cdn.quilljs.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
-  <!-- Google Fonts & Quill Stylesheet -->
+  <!-- Google Fonts & Icons -->
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
 
   <!-- App Stylesheets -->
   <link rel="stylesheet" href="assets/css/core.css">
@@ -106,8 +105,21 @@
         <h2>Markdown Generator</h2>
       </div>
 
+      <!-- View Switcher Controls -->
+      <div class="view-switchers" aria-label="Layout View Modes">
+        <button class="view-btn active" id="viewSplitBtn" title="Split Dual Pane View">
+          <i class="fa-solid fa-table-columns"></i> Split
+        </button>
+        <button class="view-btn" id="viewVisualBtn" title="Visual Editor Only">
+          <i class="fa-solid fa-pen-to-square"></i> Visual
+        </button>
+        <button class="view-btn" id="viewMdBtn" title="Markdown Output Only">
+          <i class="fa-brands fa-markdown"></i> Markdown
+        </button>
+      </div>
+
       <div class="editor-actions">
-        <label for="editorFileInput" class="btn btn-outline" title="Import File">
+        <label for="editorFileInput" class="btn btn-outline" title="Import Markdown or Text File">
           <i class="fa-solid fa-file-import"></i> Import .md
         </label>
         <input type="file" id="editorFileInput" accept=".md,.markdown,.txt" />
@@ -125,47 +137,284 @@
     </div>
 
     <!-- Dual Pane Split Workspace -->
-    <div class="editor-workspace">
+    <div class="editor-workspace view-split">
+      
       <!-- Visual Editor Pane -->
-      <section class="pane" aria-label="Visual Rich Text Editor">
-        <div class="pane-header">
-          <span><i class="fa-solid fa-pen-to-square"></i> Visual Editor</span>
+      <section class="pane" id="visualPane" aria-label="Visual Rich Text Editor">
+        
+        <!-- WYSIWYG Action Toolbar -->
+        <div class="visual-toolbar" id="visualToolbar" role="toolbar" aria-label="Visual Formatting Tools">
+          
+          <!-- History -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnUndo" title="Undo (Ctrl+Z)" aria-label="Undo"><i class="fa-solid fa-rotate-left"></i></button>
+            <button class="tool-btn" id="btnRedo" title="Redo (Ctrl+Y)" aria-label="Redo"><i class="fa-solid fa-rotate-right"></i></button>
+          </div>
+
+          <!-- Paragraph & Headings -->
+          <div class="toolbar-group">
+            <select class="tool-select" id="headingSelect" title="Select Heading Level" aria-label="Heading Level">
+              <option value="p">Normal text</option>
+              <option value="h1">Heading 1 (#)</option>
+              <option value="h2">Heading 2 (##)</option>
+              <option value="h3">Heading 3 (###)</option>
+              <option value="h4">Heading 4 (####)</option>
+            </select>
+          </div>
+
+          <!-- Text Formatting -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnBold" title="Bold (**text** - Ctrl+B)" aria-label="Bold"><i class="fa-solid fa-bold"></i></button>
+            <button class="tool-btn" id="btnItalic" title="Italic (*text* - Ctrl+I)" aria-label="Italic"><i class="fa-solid fa-italic"></i></button>
+            <button class="tool-btn" id="btnUnderline" title="Underline (&lt;u&gt;text&lt;/u&gt; - Ctrl+U)" aria-label="Underline"><i class="fa-solid fa-underline"></i></button>
+            <button class="tool-btn" id="btnStrike" title="Strikethrough (~~text~~)" aria-label="Strikethrough"><i class="fa-solid fa-strikethrough"></i></button>
+          </div>
+
+          <!-- Sub / Super / Highlight / Kbd -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnSubscript" title="Subscript (&lt;sub&gt;text&lt;/sub&gt;)" aria-label="Subscript"><i class="fa-solid fa-subscript"></i></button>
+            <button class="tool-btn" id="btnSuperscript" title="Superscript (&lt;sup&gt;text&lt;/sup&gt;)" aria-label="Superscript"><i class="fa-solid fa-superscript"></i></button>
+            <button class="tool-btn" id="btnMark" title="Highlight Text (&lt;mark&gt;)" aria-label="Highlight"><i class="fa-solid fa-highlighter"></i></button>
+            <button class="tool-btn" id="btnKbd" title="Keyboard Tag (&lt;kbd&gt;)" aria-label="Keyboard Tag"><i class="fa-solid fa-keyboard"></i></button>
+          </div>
+
+          <!-- Code & Quotes -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnInlineCode" title="Inline Code (`code`)" aria-label="Inline Code"><i class="fa-solid fa-code"></i></button>
+            <button class="tool-btn" id="btnCodeBlock" title="Code Block (```language)" aria-label="Code Block"><i class="fa-solid fa-file-code"></i></button>
+            <button class="tool-btn" id="btnQuote" title="Blockquote (&gt; text)" aria-label="Blockquote"><i class="fa-solid fa-quote-left"></i></button>
+          </div>
+
+          <!-- Lists & Tasks -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnUl" title="Bulleted List (- item)" aria-label="Bulleted List"><i class="fa-solid fa-list-ul"></i></button>
+            <button class="tool-btn" id="btnOl" title="Numbered List (1. item)" aria-label="Numbered List"><i class="fa-solid fa-list-ol"></i></button>
+            <button class="tool-btn" id="btnChecklist" title="Task / Checkbox List (- [ ] item)" aria-label="Task List"><i class="fa-solid fa-list-check"></i></button>
+          </div>
+
+          <!-- Alignment -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnAlignLeft" title="Align Left" aria-label="Align Left"><i class="fa-solid fa-align-left"></i></button>
+            <button class="tool-btn" id="btnAlignCenter" title="Align Center" aria-label="Align Center"><i class="fa-solid fa-align-center"></i></button>
+            <button class="tool-btn" id="btnAlignRight" title="Align Right" aria-label="Align Right"><i class="fa-solid fa-align-right"></i></button>
+          </div>
+
+          <!-- GFM Elements -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnTable" title="Insert GFM Table (| col | col |)" aria-label="Insert Table"><i class="fa-solid fa-table-cells"></i></button>
+            <button class="tool-btn" id="btnAlert" title="Insert GitHub Callout Alert (&gt; [!NOTE])" aria-label="Insert Alert"><i class="fa-solid fa-bell"></i></button>
+            <button class="tool-btn" id="btnDetails" title="Collapsible Details (&lt;details&gt;)" aria-label="Collapsible Details"><i class="fa-solid fa-square-caret-down"></i></button>
+            <button class="tool-btn" id="btnLink" title="Insert Link ([text](url))" aria-label="Insert Link"><i class="fa-solid fa-link"></i></button>
+            <button class="tool-btn" id="btnImage" title="Insert Image (![alt](url))" aria-label="Insert Image"><i class="fa-solid fa-image"></i></button>
+            <button class="tool-btn" id="btnHr" title="Horizontal Divider (---)" aria-label="Horizontal Divider"><i class="fa-solid fa-minus"></i></button>
+            <button class="tool-btn" id="btnFootnote" title="Footnote ([^1])" aria-label="Footnote"><i class="fa-solid fa-asterisk"></i></button>
+          </div>
+
+          <!-- Reset -->
+          <div class="toolbar-group">
+            <button class="tool-btn" id="btnClearFormat" title="Clear Formatting" aria-label="Clear Formatting"><i class="fa-solid fa-text-slash"></i></button>
+          </div>
+
         </div>
+
         <div class="pane-body">
-          <div id="quillEditor"></div>
+          <div id="visualEditor" class="visual-editor" contenteditable="true" spellcheck="true" aria-label="Visual WYSIWYG Editor"></div>
         </div>
       </section>
 
       <!-- Markdown Code Output Pane -->
-      <section class="pane" aria-label="Generated Markdown Output">
+      <section class="pane" id="mdPane" aria-label="Generated Markdown Output">
         <div class="pane-header">
-          <span><i class="fa-brands fa-markdown"></i> Markdown Output</span>
+          <span><i class="fa-brands fa-markdown"></i> Markdown Output (GFM)</span>
+          <div class="pane-header-actions">
+            <button class="btn-subtle" id="syncToVisualBtn" title="Parse Markdown back into Visual Editor">
+              <i class="fa-solid fa-rotate"></i> Sync to Visual
+            </button>
+          </div>
         </div>
         <div class="pane-body">
-          <textarea id="markdownOutput" class="markdown-output-area" spellcheck="false" aria-label="Generated Markdown"></textarea>
+          <textarea id="markdownOutput" class="markdown-output-area" spellcheck="false" aria-label="Generated Markdown" placeholder="Generated GitHub Flavored Markdown appears here in real time..."></textarea>
         </div>
       </section>
+
     </div>
 
     <!-- Status Bar -->
     <div class="editor-status-bar">
       <div class="status-stats">
-        <span id="statWords">0 Words</span>
+        <span id="statWords"><i class="fa-regular fa-file-lines"></i> 0 Words</span>
         <span id="statChars">0 Characters</span>
         <span id="statLines">0 Lines</span>
       </div>
-      <div>
-        <span><i class="fa-solid fa-bolt" style="color: var(--success);"></i> Live Syncing</span>
+      <div class="status-indicator">
+        <span><i class="fa-solid fa-bolt" style="color: var(--success);"></i> Live GFM Syncing</span>
       </div>
     </div>
   </main>
 
+  <!-- Modal: Insert Table -->
+  <div class="modal-overlay" id="tableModal" role="dialog" aria-modal="true" aria-labelledby="tableModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="tableModalTitle"><i class="fa-solid fa-table-cells" style="color: var(--primary);"></i> Insert GFM Table</h3>
+        <button class="modal-close-btn" aria-label="Close Table Modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="tableModalForm">
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="tableRowsInput">Number of Rows</label>
+              <input type="number" id="tableRowsInput" min="1" max="50" value="3" required />
+            </div>
+            <div class="form-group">
+              <label for="tableColsInput">Number of Columns</label>
+              <input type="number" id="tableColsInput" min="1" max="20" value="3" required />
+            </div>
+          </div>
+          <p class="form-hint">Generates standard GitHub Flavored Markdown table syntax.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Insert Table</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Insert Alert / Callout -->
+  <div class="modal-overlay" id="alertModal" role="dialog" aria-modal="true" aria-labelledby="alertModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="alertModalTitle"><i class="fa-solid fa-bell" style="color: var(--primary);"></i> Insert GitHub Callout Alert</h3>
+        <button class="modal-close-btn" aria-label="Close Alert Modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert-grid">
+          <button type="button" class="alert-option-btn alert-note" data-type="NOTE">
+            <i class="fa-solid fa-circle-info"></i>
+            <div>
+              <strong>NOTE</strong>
+              <span>General helpful information or context</span>
+            </div>
+          </button>
+          <button type="button" class="alert-option-btn alert-tip" data-type="TIP">
+            <i class="fa-solid fa-lightbulb"></i>
+            <div>
+              <strong>TIP</strong>
+              <span>Helpful advice for better productivity</span>
+            </div>
+          </button>
+          <button type="button" class="alert-option-btn alert-important" data-type="IMPORTANT">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <div>
+              <strong>IMPORTANT</strong>
+              <span>Crucial details necessary to know</span>
+            </div>
+          </button>
+          <button type="button" class="alert-option-btn alert-warning" data-type="WARNING">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <div>
+              <strong>WARNING</strong>
+              <span>Critical guidance demanding attention</span>
+            </div>
+          </button>
+          <button type="button" class="alert-option-btn alert-caution" data-type="CAUTION">
+            <i class="fa-solid fa-fire"></i>
+            <div>
+              <strong>CAUTION</strong>
+              <span>Potential risks or negative consequences</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Insert Link -->
+  <div class="modal-overlay" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="linkModalTitle"><i class="fa-solid fa-link" style="color: var(--primary);"></i> Insert Link</h3>
+        <button class="modal-close-btn" aria-label="Close Link Modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="linkModalForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="linkTextInput">Display Text</label>
+            <input type="text" id="linkTextInput" placeholder="Link text" required />
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="linkUrlInput">Target URL</label>
+            <input type="url" id="linkUrlInput" placeholder="https://example.com" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Insert Image -->
+  <div class="modal-overlay" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="imageModalTitle"><i class="fa-solid fa-image" style="color: var(--primary);"></i> Insert Image</h3>
+        <button class="modal-close-btn" aria-label="Close Image Modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="imageModalForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="imageAltInput">Alt Text / Description</label>
+            <input type="text" id="imageAltInput" placeholder="Image description" />
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="imageUrlInput">Image URL</label>
+            <input type="url" id="imageUrlInput" placeholder="https://example.com/image.png" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Image</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Insert Code Block -->
+  <div class="modal-overlay" id="codeBlockModal" role="dialog" aria-modal="true" aria-labelledby="codeBlockModalTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="codeBlockModalTitle"><i class="fa-solid fa-file-code" style="color: var(--primary);"></i> Insert Code Block</h3>
+        <button class="modal-close-btn" aria-label="Close Code Block Modal"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <form id="codeBlockModalForm">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="codeLangInput">Language (e.g. js, python, html, bash)</label>
+            <input type="text" id="codeLangInput" placeholder="javascript" />
+          </div>
+          <div class="form-group" style="margin-top: 1rem;">
+            <label for="codeSnippetInput">Code Snippet</label>
+            <textarea id="codeSnippetInput" rows="5" style="width: 100%; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.9rem; background-color: var(--bg-surface); color: var(--text-main);" placeholder="// Paste or type code here..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Insert Code</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Performance Optimized Scripts -->
-  <script src="https://cdn.quilljs.com/1.3.6/quill.js" defer></script>
-  <script src="https://unpkg.com/turndown/dist/turndown.js" defer></script>
-  <script src="assets/js/common.js" defer></script>
-  <script src="assets/js/editor.js" defer></script>
-  <script src="assets/js/sw-register.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.3/markdown-it-footnote.min.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script src="assets/js/editor.js"></script>
+  <script src="assets/js/sw-register.js"></script>
 </body>
 
 </html>
