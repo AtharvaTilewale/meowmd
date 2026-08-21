@@ -1,6 +1,9 @@
 const CACHE_NAME = 'md-workspace-v1';
 const ASSETS_TO_CACHE = [
+  './',
   './index.html',
+  './mdviewer.html',
+  './mdeditor.html',
   './manifest.json',
   // Cache core markdown engines
   'https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js',
