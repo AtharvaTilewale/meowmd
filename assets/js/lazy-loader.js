@@ -1,6 +1,6 @@
 /**
  * MeowMD Lazy Loader (lazy-loader.js)
- * Dynamically loads heavy external libraries on-demand to achieve ultra-fast page speeds.
+ * Dynamically loads heavy external libraries on demand.
  */
 
 const loadedScripts = new Map();
@@ -60,15 +60,17 @@ const LazyEngines = {
     return window.mermaid;
   },
 
-  // Math Rendering (KaTeX + texmath)
+  // Math Rendering (KaTeX + Auto-render extension)
   async ensureKaTeX() {
-    if (window.katex && window.texmath) return { katex: window.katex, texmath: window.texmath };
+    if (window.katex && window.renderMathInElement) {
+      return { katex: window.katex, renderMathInElement: window.renderMathInElement };
+    }
     await Promise.all([
       loadCSS('https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css'),
       loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js')
     ]);
-    await loadScript('https://cdn.jsdelivr.net/npm/markdown-it-texmath/texmath.min.js');
-    return { katex: window.katex, texmath: window.texmath };
+    await loadScript('https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js');
+    return { katex: window.katex, renderMathInElement: window.renderMathInElement };
   },
 
   // 3D Molecular Viewer (~2MB WebGL deferred)

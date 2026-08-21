@@ -31,7 +31,7 @@ class MeowEditor {
 
     this.quill = new window.Quill(editorContainer, {
       theme: 'snow',
-      placeholder: 'Type or paste rich text here... It will automatically convert to clean Markdown!',
+      placeholder: 'Type or paste rich text here... It will automatically convert to clean Markdown.',
       modules: {
         toolbar: [
           [{ header: [1, 2, 3, false] }],
@@ -50,16 +50,16 @@ class MeowEditor {
       this.updateStats();
     });
 
-    // Sample starter text
+    // Clean starter text without emojis
     this.quill.root.innerHTML = `
-      <h1>🚀 Welcome to MeowMD Markdown Generator</h1>
-      <p>Draft your documents visually with this rich-text editor. Your formatting is instantly converted to <strong>clean GitHub Flavored Markdown</strong> on the right!</p>
+      <h1>Welcome to MeowMD Markdown Generator</h1>
+      <p>Draft your documentation visually with this rich-text editor. Your formatting is instantly converted to <strong>clean GitHub Flavored Markdown</strong> on the right.</p>
       <ul>
-        <li>Fast and lightweight</li>
+        <li>Fast client-side conversion</li>
         <li>Instant real-time copy and download</li>
         <li>Clean, standard syntax</li>
       </ul>
-      <blockquote>"Markdown is a text-to-HTML conversion tool for web writers."</blockquote>
+      <blockquote>"Markdown allows you to write using an easy-to-read, easy-to-write plain text format."</blockquote>
     `;
     this.syncQuillToMarkdown();
   }
@@ -80,7 +80,7 @@ class MeowEditor {
     if (copyBtn) {
       copyBtn.onclick = () => {
         if (this.markdownOutput) {
-          copyToClipboard(this.markdownOutput.value, 'Markdown copied to clipboard!');
+          copyToClipboard(this.markdownOutput.value, 'Markdown copied');
         }
       };
     }

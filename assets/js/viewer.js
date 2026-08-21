@@ -72,7 +72,7 @@ class MeowViewer {
           showToast('Auto-Save enabled', 'success');
         } else {
           localStorage.removeItem('meowmd_workspace_files');
-          showToast('Auto-Save disabled. Files kept in memory.', 'info');
+          showToast('Auto-Save disabled. Files kept in memory only.', 'info');
         }
       };
     }
@@ -89,7 +89,7 @@ class MeowViewer {
     if (this.clearAllBtn) {
       this.clearAllBtn.onclick = () => {
         if (this.files.length === 0) return;
-        if (confirm('Are you sure you want to clear all files from your workspace?')) {
+        if (confirm('Clear all files from your workspace?')) {
           this.files = [];
           this.activeFileId = null;
           if (this.autoSave) localStorage.removeItem('meowmd_workspace_files');
@@ -110,14 +110,14 @@ class MeowViewer {
     if (copyMdBtn) {
       copyMdBtn.onclick = () => {
         const active = this.getActiveFile();
-        if (active) copyToClipboard(active.content, 'Raw Markdown copied!');
+        if (active) copyToClipboard(active.content, 'Raw Markdown copied');
       };
     }
 
     const copyHtmlBtn = document.getElementById('copyHtmlBtn');
     if (copyHtmlBtn) {
       copyHtmlBtn.onclick = () => {
-        if (this.contentEl) copyToClipboard(this.contentEl.innerHTML, 'Rendered HTML copied!');
+        if (this.contentEl) copyToClipboard(this.contentEl.innerHTML, 'Rendered HTML copied');
       };
     }
 
@@ -217,15 +217,15 @@ class MeowViewer {
       id: 'demo_welcome',
       name: 'Welcome_to_MeowMD.md',
       path: 'Welcome_to_MeowMD.md',
-      content: `# Welcome to MeowMD Workspace 🐱
+      content: `# Welcome to MeowMD Workspace
 
-MeowMD is a high-speed, offline-first technical Markdown viewer and documentation workstation.
+MeowMD is an offline-capable technical Markdown documentation viewer and workstation.
 
 ---
 
-### 🌟 Interactive Features Built-in:
+### Features and Capabilities
 
-1. **Diagrams & Flowcharts** (Powered by Mermaid):
+1. **Diagrams and Flowcharts** (Powered by Mermaid):
 \`\`\`mermaid
 graph LR
     A[Raw Markdown] --> B(Parser Engine)
@@ -233,7 +233,7 @@ graph LR
     C -->|Math| D[KaTeX]
     C -->|Flowcharts| E[Mermaid]
     C -->|Structures| F[3Dmol.js]
-    D --> G[Instant Beautiful Preview]
+    D --> G[Instant Clean Preview]
     E --> G
     F --> G
 \`\`\`
@@ -244,19 +244,19 @@ Inline equation: $f(x) = \\frac{1}{\\sigma \\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left
 Display equation:
 $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}$$
 
-3. **Tables & Checklist**:
-| Column 1 | Column 2 | Status |
+3. **Tables and Checklists**:
+| Feature | Details | Status |
 | :--- | :--- | :---: |
-| Offline Ready | Full PWA Support | ✅ |
-| Speed | Zero-blocking Lazy Load | ⚡ |
-| Privacy | 100% Client-Side | 🔒 |
+| Offline Ready | Full PWA Service Worker | Yes |
+| Speed | On-demand Lazy Loading | Yes |
+| Privacy | 100% Client-Side | Yes |
 
-- [x] High performance rendering
-- [x] PDF & HTML export
+- [x] High-performance rendering
+- [x] Vector-grade PDF export
 - [x] Multi-file workspace search
 
 ---
-*Tip: Drag & drop any \`.md\` file or folder anywhere onto this page to start reading!*
+*Tip: Drag and drop any Markdown files or folders anywhere onto this screen to start reading.*
 `,
       size: 1024,
       lastModified: Date.now()
@@ -316,6 +316,10 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
   }
 
   async renderActiveFile() {
+    if (!this.md && window.markdownit) {
+      this.initMarkdownParser();
+    }
+
     const file = this.getActiveFile();
     if (!file) {
       this.docTitleEl.innerText = 'No Document Selected';
@@ -376,7 +380,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
           wrapper.innerHTML = `<div class="mermaid">${node.textContent}</div>`;
           node.closest('pre').replaceWith(wrapper);
         });
-        mermaid.run();
+        mermaid.run({ querySelector: '.mermaid' });
       } catch (err) {
         console.error('Mermaid render error:', err);
       }
@@ -386,13 +390,13 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
     if (raw.includes('$')) {
       try {
         await window.LazyEngines.ensureKaTeX();
-        // Fallback DOM math scanning if texmath plugin wasn't hooked at parser start
         if (window.renderMathInElement) {
           window.renderMathInElement(this.contentEl, {
             delimiters: [
               { left: '$$', right: '$$', display: true },
               { left: '$', right: '$', display: false }
-            ]
+            ],
+            throwOnError: false
           });
         }
       } catch (err) {
@@ -451,7 +455,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
     const file = this.getActiveFile();
     if (!file) return;
 
-    showToast('Preparing PDF...', 'info');
+    showToast('Preparing PDF export...', 'info');
     try {
       await window.LazyEngines.ensurePDF();
       const opt = {
@@ -462,7 +466,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
       await window.html2pdf().set(opt).from(this.contentEl).save();
-      showToast('PDF Export complete!', 'success');
+      showToast('PDF Export complete', 'success');
     } catch (err) {
       console.error('PDF export failed:', err);
       showToast('Failed to export PDF', 'danger');
@@ -508,7 +512,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
 // Global Pre Code Copier
 window.copyCodeFromPre = function(btn) {
   const code = btn.nextElementSibling.innerText;
-  copyToClipboard(code, 'Code copied to clipboard!');
+  copyToClipboard(code, 'Code copied');
 };
 
 document.addEventListener('DOMContentLoaded', () => {
