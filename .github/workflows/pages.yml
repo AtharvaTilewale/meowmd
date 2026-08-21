@@ -29,14 +29,19 @@ jobs:
         run: |
           echo "Checking for required files..."
           test -f index.html && echo "✓ index.html found" || (echo "✗ index.html missing" && exit 1)
+          test -f mdviewer.html && echo "✓ mdviewer.html found" || (echo "✗ mdviewer.html missing" && exit 1)
           test -f mdeditor.html && echo "✓ mdeditor.html found" || (echo "✗ mdeditor.html missing" && exit 1)
           test -f manifest.json && echo "✓ manifest.json found" || (echo "✗ manifest.json missing" && exit 1)
           test -f sw.js && echo "✓ sw.js found" || (echo "✗ sw.js missing" && exit 1)
-          echo "✅ All required files present!"
+          test -f sitemap.xml && echo "✓ sitemap.xml found" || (echo "✗ sitemap.xml missing" && exit 1)
+          test -f robots.txt && echo "✓ robots.txt found" || (echo "✗ robots.txt missing" && exit 1)
+          test -d assets/css && echo "✓ assets/css found" || (echo "✗ assets/css missing" && exit 1)
+          test -d assets/js && echo "✓ assets/js found" || (echo "✗ assets/js missing" && exit 1)
+          echo "✅ All required files and directories are present!"
       
       - name: Validate manifest.json
         run: |
-          echo "🔍 Validating JSON files..."
+          echo "Validating JSON files..."
           python3 -m json.tool manifest.json > /dev/null && echo "✓ manifest.json is valid JSON"
       
       - name: Upload Pages artifact
@@ -51,7 +56,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     
     runs-on: ubuntu-latest
-    timeout-minutes: 10
     needs: build
     
     steps:

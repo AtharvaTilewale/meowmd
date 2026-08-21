@@ -2,487 +2,170 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="MeowMD is a free, offline-capable Markdown toolkit — instantly view and edit .md files in your browser with live preview, syntax highlighting, Mermaid diagrams, LaTeX math, and 3D molecule rendering. No sign-up, no install.">
-    <meta name="keywords"
-        content="markdown viewer, markdown editor, online markdown, md to html, markdown preview, free markdown tool, markdown live preview">
-    <meta name="author" content="MeowMD">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/mdeditor.html">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="MeowMD | Purr-fect Markdown Tools">
-    <meta property="og:description"
-        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
-    <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
-    <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
-    <meta property="og:site_name" content="MeowMD">
+  <!-- Primary SEO Meta Tags -->
+  <title>MeowMD Live Editor — Visual WYSIWYG to Markdown Generator</title>
+  <meta name="title" content="MeowMD Live Editor — Visual WYSIWYG to Markdown Generator">
+  <meta name="description"
+    content="Write visually with rich text formatting and instantly generate clean GitHub Flavored Markdown. Real-time split preview, hotkeys, word counter, and instant download.">
+  <meta name="keywords"
+    content="markdown generator, rich text to markdown, wysiwyg markdown editor, online markdown creator, convert html to markdown, live markdown editor">
+  <meta name="author" content="MeowMD">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/mdeditor.html">
 
-    <!-- Twitter / X Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="MeowMD | Purr-fect Markdown Tools">
-    <meta name="twitter:description"
-        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
-    <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
+  <meta property="og:title" content="MeowMD Live Editor — Visual Markdown Generator">
+  <meta property="og:description"
+    content="Draft rich text visually and get clean, standard Markdown with real-time split preview.">
+  <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
 
-    <!-- Structured data (JSON-LD) so Google can show a rich result -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "MeowMD Editor",
-  "url": "https://atharvatilewale.github.io/meowmd/mdeditor.html",
-  "applicationCategory": "Utility",
-  "operatingSystem": "Any (Web Browser)",
-  "description": "A free, offline-capable Markdown viewer and editor with live preview, diagrams, math rendering, and 3D molecule support.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://atharvatilewale.github.io/meowmd/mdeditor.html">
+  <meta name="twitter:title" content="MeowMD Live Editor — Visual Markdown Generator">
+  <meta name="twitter:description"
+    content="Draft rich text visually and get clean, standard Markdown with real-time split preview.">
+  <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fe6b5e">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+
+  <!-- Resource Hints -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.quilljs.com">
+
+  <!-- Google Fonts & Quill Stylesheet -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.6/quill.snow.css">
+
+  <!-- App Stylesheets -->
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/editor.css">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "MeowMD Editor",
+    "url": "https://atharvatilewale.github.io/meowmd/mdeditor.html",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "All",
+    "description": "A visual WYSIWYG editor that instantly converts formatted rich text to clean standard GitHub Flavored Markdown."
   }
-}
-</script>
-    <title>MeowMD | Professional Markdown Generator</title>
-
-    <!-- Quill.js Theme -->
-    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
-
-    <!-- Soft, readable font from index2.html -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            /* MeowMD Theme Variables */
-            --primary-color: #fe6b5e;
-            --primary-hover: #ff7163;
-            --border-color: #fad1cd;
-            --bg-color: #fff9f5;
-            --card-bg: #ffffff;
-            --text-main: #4a403a;
-            --text-muted: #8c7e77;
-            --font-main: 'Nunito', sans-serif;
-            --border-radius: 24px;
-        }
-
-        ::selection {
-            background-color: var(--primary-color);
-            color: #ffffff;
-        }
-
-        body,
-        html {
-            margin: 0;
-            padding: 0;
-            font-family: var(--font-main);
-            color: var(--text-main);
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-color);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Top Navigation Bar */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 1rem 2rem;
-            background: var(--bg-color);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .header h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-main);
-        }
-
-        /* Unified MeowMD Navbar */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            height: 70px;
-            background-color: var(--bg-color, var(--bg-panel));
-            border-bottom: 1px solid var(--border-color, transparent);
-            flex-shrink: 0;
-            z-index: 100;
-        }
-
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-main);
-            text-decoration: none;
-        }
-
-        .logo svg {
-            /* Automatically falls back to whichever variable the page uses */
-            color: var(--accent-color, var(--primary-color, var(--primary)));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            font-size: 16px;
-            font-weight: 800;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--accent-color, var(--primary-color, var(--primary)));
-        }
-
-        /* Active State Underline */
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--accent-color, var(--primary-color, var(--primary)));
-            border-radius: 2px;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 16px;
-                height: auto;
-            }
-        }
-
-        .export-btn {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            font-family: var(--font-main);
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .export-btn:hover {
-            background-color: var(--primary-hover);
-        }
-
-        /* Split Screen Container */
-        .workspace {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-            padding: 1rem;
-            gap: 1rem;
-        }
-
-        /* Left Side: Rich Text Editor */
-        .editor-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(74, 64, 58, 0.05);
-            border: 2px solid transparent;
-            overflow: hidden;
-        }
-
-        #quill-editor {
-            flex: 1;
-            font-size: 1rem;
-            font-family: var(--font-main);
-        }
-
-        .ql-toolbar {
-            background: var(--bg-color);
-            border-color: var(--border-color) !important;
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
-        }
-
-        .ql-container {
-            border-color: var(--border-color) !important;
-            border-bottom-left-radius: 12px;
-            border-bottom-right-radius: 12px;
-        }
-
-        /* Right Side: Markdown Output */
-        .markdown-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--card-bg);
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(74, 64, 58, 0.05);
-            border: 1px solid var(--border-color);
-            overflow: hidden;
-        }
-
-        .md-header {
-            background: var(--bg-color);
-            color: var(--text-main);
-            padding: 0.75rem 1rem;
-            font-size: 0.875rem;
-            font-weight: 800;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        #md-output {
-            flex: 1;
-            background: transparent;
-            color: var(--text-main);
-            padding: 1rem;
-            border: none;
-            resize: none;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            outline: none;
-        }
-
-        /* Window Resizer Handle */
-        /* Window Resizer Handle Container */
-        .resizer {
-            width: 16px;
-            cursor: col-resize;
-            margin: 0 -0.5rem;
-            /* Absorbs the 1rem gap from workspace */
-            z-index: 10;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Permanent subtle visual indicator (a small pill) */
-        .resizer::after {
-            content: '';
-            width: 4px;
-            height: 50px;
-            background-color: var(--border-color, #fad1cd);
-            border-radius: 4px;
-            transition: all 0.2s ease;
-        }
-
-        /* Expands and lights up when hovered or actively dragging */
-        .resizer:hover::after,
-        .resizer.resizing::after {
-            background-color: var(--accent-color, #fe6b5e);
-            height: 100%;
-            width: 8px;
-        }
-    </style>
+  </script>
 </head>
 
 <body>
 
-    <nav class="navbar">
-        <a href="https://atharvatilewale.github.io/meowmd/" class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                    d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
-                </path>
-            </svg>
-            MeowMD
-        </a>
-        <div class="nav-links">
-            <a href="https://atharvatilewale.github.io/meowmd/">Home</a>
-            <a href="mdviewer.html">MD Viewer</a>
-            <a href="mdeditor.html" class="active">MD Generator</a>
-        </div>
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
+            </path>
+          </svg>
+        </span>
+        MeowMD
+      </a>
+
+      <div class="nav-links">
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link">Home</a>
+        <a href="mdviewer.html" class="nav-link">MD Viewer</a>
+        <a href="mdeditor.html" class="nav-link active">MD Generator</a>
+        <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+      </div>
     </nav>
+  </header>
 
+  <!-- Main Editor Application -->
+  <main class="editor-app">
 
+    <!-- Action Toolbar Header -->
+    <div class="editor-header">
+      <div class="editor-title">
+        <i class="fa-solid fa-pen-nib" style="color: var(--primary); font-size: 1.25rem;"></i>
+        <h2>Markdown Generator</h2>
+      </div>
 
-    <!-- Workspace Section -->
-    <!-- Workspace Section -->
-    <div class="workspace">
+      <div class="editor-actions">
+        <label for="editorFileInput" class="btn btn-outline" title="Import File">
+          <i class="fa-solid fa-file-import"></i> Import .md
+        </label>
+        <input type="file" id="editorFileInput" accept=".md,.markdown,.txt" />
 
-        <!-- Left: WYSIWYG Editor -->
-        <div class="editor-container" id="left-pane">
-            <div id="toolbar-container">
-                <span class="ql-formats">
-                    <select class="ql-header">
-                        <option value="1">Heading 1</option>
-                        <option value="2">Heading 2</option>
-                        <option value="3">Heading 3</option>
-                        <option selected>Normal</option>
-                    </select>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-bold"></button>
-                    <button class="ql-italic"></button>
-                    <button class="ql-underline"></button>
-                    <button class="ql-strike"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-list" value="ordered"></button>
-                    <button class="ql-list" value="bullet"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-blockquote"></button>
-                    <button class="ql-code-block"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-link"></button>
-                    <button class="ql-image"></button>
-                </span>
-                <span class="ql-formats">
-                    <button class="ql-clean"></button>
-                </span>
-            </div>
-            <div id="quill-editor"></div>
-        </div>
-
-        <!-- DRAG HANDLE -->
-        <div class="resizer" id="dragMe"></div>
-
-        <!-- Right: Markdown Preview -->
-        <div class="markdown-container">
-            <div class="md-header">
-                <span>Real-Time MD Preview</span>
-                <!-- Failsafe Button Styles to ensure visibility -->
-                <button onclick="exportMarkdown()"
-                    style="background-color: var(--accent-color, #fe6b5e); color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 6px; font-weight: 800; font-size: 0.8rem; cursor: pointer; z-index: 50;">
-                    Export .MD
-                </button>
-            </div>
-            <textarea id="md-output" readonly placeholder="Your generated markdown will appear here..."></textarea>
-        </div>
-
+        <button class="btn btn-outline" id="clearEditorBtn" title="Clear Content">
+          <i class="fa-solid fa-trash-can"></i> Clear
+        </button>
+        <button class="btn btn-outline" id="copyMdBtn" title="Copy Markdown to Clipboard">
+          <i class="fa-regular fa-copy"></i> Copy Markdown
+        </button>
+        <button class="btn btn-primary" id="downloadMdBtn" title="Download .md File">
+          <i class="fa-solid fa-download"></i> Download .md
+        </button>
+      </div>
     </div>
 
-    <!-- Load Libraries -->
-    <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
-    <script src="https://unpkg.com/turndown/dist/turndown.js"></script>
-    <script>
-        // --- Window Resize Logic ---
-        const resizer = document.getElementById('dragMe');
-        const leftPane = document.getElementById('left-pane');
-        let startX = 0;
-        let startWidth = 0;
+    <!-- Dual Pane Split Workspace -->
+    <div class="editor-workspace">
+      <!-- Visual Editor Pane -->
+      <section class="pane" aria-label="Visual Rich Text Editor">
+        <div class="pane-header">
+          <span><i class="fa-solid fa-pen-to-square"></i> Visual Editor</span>
+        </div>
+        <div class="pane-body">
+          <div id="quillEditor"></div>
+        </div>
+      </section>
 
-        const mouseDownHandler = function (e) {
-            startX = e.clientX;
-            startWidth = leftPane.getBoundingClientRect().width;
+      <!-- Markdown Code Output Pane -->
+      <section class="pane" aria-label="Generated Markdown Output">
+        <div class="pane-header">
+          <span><i class="fa-brands fa-markdown"></i> Markdown Output</span>
+        </div>
+        <div class="pane-body">
+          <textarea id="markdownOutput" class="markdown-output-area" spellcheck="false" aria-label="Generated Markdown"></textarea>
+        </div>
+      </section>
+    </div>
 
-            resizer.classList.add('resizing');
-            document.addEventListener('mousemove', mouseMoveHandler);
-            document.addEventListener('mouseup', mouseUpHandler);
+    <!-- Status Bar -->
+    <div class="editor-status-bar">
+      <div class="status-stats">
+        <span id="statWords">0 Words</span>
+        <span id="statChars">0 Characters</span>
+        <span id="statLines">0 Lines</span>
+      </div>
+      <div>
+        <span><i class="fa-solid fa-bolt" style="color: var(--success);"></i> Live Syncing</span>
+      </div>
+    </div>
+  </main>
 
-            // Prevent accidental text highlighting while dragging
-            document.body.style.userSelect = 'none';
-            document.body.style.cursor = 'col-resize';
-        };
-
-        const mouseMoveHandler = function (e) {
-            const dx = e.clientX - startX;
-            // Calculate new width as a percentage of the workspace
-            const newLeftWidth = ((startWidth + dx) * 100) / resizer.parentNode.getBoundingClientRect().width;
-            // Apply the new width via flex-basis
-            leftPane.style.flex = `0 0 ${newLeftWidth}%`;
-        };
-
-        const mouseUpHandler = function () {
-            resizer.classList.remove('resizing');
-            document.removeEventListener('mousemove', mouseMoveHandler);
-            document.removeEventListener('mouseup', mouseUpHandler);
-
-            // Restore normal mouse behavior
-            document.body.style.userSelect = '';
-            document.body.style.cursor = '';
-        };
-
-        resizer.addEventListener('mousedown', mouseDownHandler);
-    </script>
-
-    <script>
-        // 1. Initialize Turndown (HTML to MD converter)
-        const turndownService = new TurndownService({
-            headingStyle: 'atx',      // Use '#' for headings
-            codeBlockStyle: 'fenced', // Use '```' for code blocks
-            bulletListMarker: '-'     // Use '-' for bullets
-        });
-
-        // 2. Initialize Quill (Rich Text Editor)
-        const quill = new Quill('#quill-editor', {
-            modules: {
-                toolbar: '#toolbar-container'
-            },
-            placeholder: 'Start writing your professional document here...',
-            theme: 'snow'
-        });
-
-        // DOM Element for output
-        const mdOutput = document.getElementById('md-output');
-
-        // 3. Listen for changes in the editor and update Markdown in real-time
-        quill.on('text-change', function () {
-            // Get the HTML content from Quill
-            const htmlContent = quill.root.innerHTML;
-
-            // If the editor is empty (Quill leaves a blank <p><br></p>), clear output
-            if (htmlContent === '<p><br></p>') {
-                mdOutput.value = '';
-                return;
-            }
-
-            // Convert to Markdown and display
-            const markdown = turndownService.turndown(htmlContent);
-            mdOutput.value = markdown;
-        });
-
-        // 4. Export Functionality
-        function exportMarkdown() {
-            const mdText = mdOutput.value;
-
-            if (!mdText.trim()) {
-                alert('The editor is empty. Write something before exporting!');
-                return;
-            }
-
-            // Create a Blob containing the markdown text
-            const blob = new Blob([mdText], { type: 'text/markdown' });
-
-            // Create a temporary link element to trigger the download
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'document.md'; // Default file name
-
-            // Trigger click and cleanup
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-    </script>
+  <!-- Performance Optimized Scripts -->
+  <script src="https://cdn.quilljs.com/1.3.6/quill.js" defer></script>
+  <script src="https://unpkg.com/turndown/dist/turndown.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/editor.js" defer></script>
+  <script src="assets/js/sw-register.js" defer></script>
 </body>
 
 </html>

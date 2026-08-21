@@ -2,379 +2,511 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="MeowMD is a free, offline-capable Markdown toolkit — instantly view and edit .md files in your browser with live preview, syntax highlighting, Mermaid diagrams, LaTeX math, and 3D molecule rendering. No sign-up, no install.">
-    <meta name="keywords"
-        content="markdown viewer, markdown editor, online markdown, md to html, markdown preview, free markdown tool, markdown live preview">
-    <meta name="author" content="MeowMD">
-    <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Open Graph / Facebook / LinkedIn -->
-    <meta property="og:type" content="website">
-    <meta property="og:title" content="MeowMD | Purr-fect Markdown Tools">
-    <meta property="og:description"
-        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
-    <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/">
-    <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
-    <meta property="og:site_name" content="MeowMD">
+  <!-- Primary SEO Meta Tags -->
+  <title>MeowMD — Free Online Markdown Viewer, Live Editor & Diagram Tools</title>
+  <meta name="title" content="MeowMD — Free Online Markdown Viewer, Live Editor & Diagram Tools">
+  <meta name="description"
+    content="Free, fast, and privacy-first online Markdown viewer and editor. Instantly render Markdown with Mermaid diagrams, LaTeX math, 3D molecules, and PDF export. 100% offline-ready.">
+  <meta name="keywords"
+    content="markdown viewer, online markdown editor, markdown to pdf, markdown live preview, mermaid diagrams markdown, latex math markdown, free markdown tool, github flavored markdown">
+  <meta name="author" content="MeowMD">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/">
 
-    <!-- Twitter / X Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="MeowMD | Purr-fect Markdown Tools">
-    <meta name="twitter:description"
-        content="View and edit Markdown instantly in your browser — with diagrams, math, and syntax highlighting built in.">
-    <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <!-- Open Graph / Facebook / LinkedIn -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/">
+  <meta property="og:title" content="MeowMD — Free Online Markdown Viewer & Editor">
+  <meta property="og:description"
+    content="Instantly view and edit Markdown files in your browser. Complete with live preview, Mermaid charts, KaTeX equations, 3D molecular structures, and PDF export.">
+  <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:site_name" content="MeowMD">
 
-    <!-- Structured data (JSON-LD) so Google can show a rich result -->
-    <script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "MeowMD",
-  "url": "https://atharvatilewale.github.io/meowmd/",
-  "applicationCategory": "Utility",
-  "operatingSystem": "Any (Web Browser)",
-  "description": "A free, offline-capable Markdown viewer and editor with live preview, diagrams, math rendering, and 3D molecule support.",
-  "offers": {
-    "@type": "Offer",
-    "price": "0",
-    "priceCurrency": "USD"
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://atharvatilewale.github.io/meowmd/">
+  <meta name="twitter:title" content="MeowMD — Free Online Markdown Viewer & Editor">
+  <meta name="twitter:description"
+    content="View and edit Markdown files instantly in your browser with diagramming, math rendering, and zero tracking.">
+  <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+  <!-- PWA Manifest & Theme -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fe6b5e">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+
+  <!-- Resource Hints for High Performance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Core & Page Stylesheets -->
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/landing.css">
+
+  <!-- Structured Data: WebApplication + FAQPage + BreadcrumbList -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://atharvatilewale.github.io/meowmd/#webapp",
+        "name": "MeowMD",
+        "url": "https://atharvatilewale.github.io/meowmd/",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "All (Web Browser)",
+        "description": "A privacy-first, offline-capable Markdown workstation with live WYSIWYG editor, technical viewer, Mermaid diagrams, LaTeX math, and PDF export.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Instant GitHub Flavored Markdown (GFM) Preview",
+          "Mermaid Flowcharts & Sequence Diagrams",
+          "LaTeX Mathematical Equation Rendering",
+          "3D Molecular Structure Visualization",
+          "Interactive Markdown to PDF Exporter",
+          "Offline PWA Support & Local Auto-Save"
+        ]
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          {
+            "@type": "ListItem",
+            "position": 1,
+            "name": "Home",
+            "item": "https://atharvatilewale.github.io/meowmd/"
+          }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          {
+            "@type": "Question",
+            "name": "Is MeowMD completely free to use?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, MeowMD is 100% free and open-source with no subscription, account creation, or usage limits."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Is my Markdown data private and secure?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes, MeowMD processes 100% of your documents locally in your browser. None of your data, files, or notes are uploaded to any external server."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Does MeowMD work offline?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Yes! MeowMD is built as a Progressive Web App (PWA) with service worker caching, allowing full offline editing and viewing."
+            }
+          },
+          {
+            "@type": "Question",
+            "name": "Can I render Mermaid diagrams and LaTeX math in Markdown?",
+            "acceptedAnswer": {
+              "@type": "Answer",
+              "text": "Absolutely. MeowMD includes built-in smart support for Mermaid.js diagrams, KaTeX mathematical equations, and 3D molecular structures."
+            }
+          }
+        ]
+      }
+    ]
   }
-}
-</script>
-    <title>MeowMD | Purr-fect Markdown Tools</title>
-
-    <!-- Cat Face Favicon -->
-    <link rel="icon" type="image/svg+xml"
-        href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ff8a80' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
-
-    <!-- Soft, readable font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap" rel="stylesheet">
-
-    <style>
-        /* Base Reset & Variables */
-        :root {
-            --bg-color: #fff9f5;
-            --card-bg: #ffffff;
-            --text-main: #4a403a;
-            --text-muted: #8c7e77;
-            --accent-color: #fe6b5e;
-            --accent-hover: #ff7163;
-            --border-radius: 24px;
-            --font-main: 'Nunito', sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        ::selection {
-            background-color: var(--accent-color);
-            color: #ffffff;
-        }
-
-        ::-moz-selection {
-            background-color: var(--accent-color);
-            color: #ffffff;
-        }
-
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            font-family: var(--font-main);
-            line-height: 1.6;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
-        }
-
-        a {
-            text-decoration: none;
-            color: inherit;
-        }
-
-        /* Unified MeowMD Navbar */
-        .navbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0 40px;
-            height: 70px;
-            background-color: var(--bg-color, var(--bg-panel));
-            border-bottom: 1px solid var(--border-color, transparent);
-            flex-shrink: 0;
-            z-index: 100;
-        }
-
-        .navbar .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text-main);
-            text-decoration: none;
-        }
-
-        .logo svg {
-            /* Automatically falls back to whichever variable the page uses */
-            color: var(--accent-color, var(--primary-color, var(--primary)));
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 32px;
-            font-size: 16px;
-            font-weight: 800;
-        }
-
-        .nav-links a {
-            color: var(--text-muted);
-            text-decoration: none;
-            transition: color 0.3s ease;
-            position: relative;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.active {
-            color: var(--accent-color, var(--primary-color, var(--primary)));
-        }
-
-        /* Active State Underline */
-        .nav-links a.active::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            width: 100%;
-            height: 2px;
-            background-color: var(--accent-color, var(--primary-color, var(--primary)));
-            border-radius: 2px;
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 15px 20px;
-                flex-direction: column;
-                gap: 16px;
-                height: auto;
-            }
-        }
-
-        /* Hero Section */
-        .hero {
-            text-align: center;
-            padding: 80px 20px 60px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        .hero h1 {
-            font-size: 42px;
-            font-weight: 800;
-            margin-bottom: 20px;
-            color: var(--text-main);
-            line-height: 1.2;
-        }
-
-        .hero h1 span {
-            color: var(--accent-color);
-        }
-
-        .hero p {
-            font-size: 18px;
-            color: var(--text-muted);
-            font-weight: 600;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        /* Tools Container */
-        .tools-container {
-            display: flex;
-            justify-content: center;
-            gap: 32px;
-            padding: 0 24px 80px;
-            max-width: 900px;
-            margin: 0 auto;
-            flex-wrap: wrap;
-        }
-
-        .tool-card {
-            background-color: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 40px 32px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 10px 30px rgba(74, 64, 58, 0.05);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border: 2px solid transparent;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 40px rgba(74, 64, 58, 0.1);
-            border-color: #fad1cd;
-        }
-
-        .icon-wrapper {
-            background-color: #fff0ee;
-            color: var(--accent-color);
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            transition: transform 0.3s ease;
-        }
-
-        .tool-card:hover .icon-wrapper {
-            transform: scale(1.1);
-            background-color: var(--accent-color);
-            color: #ffffff;
-        }
-
-        .tool-card h3 {
-            font-size: 22px;
-            font-weight: 800;
-            margin-bottom: 12px;
-        }
-
-        .tool-card p {
-            font-size: 15px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        /* Footer */
-        footer {
-            margin-top: auto;
-            text-align: center;
-            padding: 30px;
-            font-size: 14px;
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        footer svg {
-            vertical-align: middle;
-            margin: 0 4px;
-        }
-
-        /* Responsive */
-        @media (max-width: 600px) {
-            .navbar {
-                padding: 0 20px;
-                flex-direction: column;
-                gap: 16px;
-                height: auto;
-                padding-top: 20px;
-            }
-
-            .hero {
-                padding: 50px 16px 40px;
-            }
-
-            .hero h1 {
-                font-size: 32px;
-            }
-
-            .tools-container {
-                flex-direction: column;
-                align-items: center;
-            }
-        }
-    </style>
+  </script>
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <a href="#" class="logo">
-            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path
-                    d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
-                </path>
-            </svg>
-            MeowMD
-        </a>
-        <div class="nav-links">
-            <a href="#" class="active">Home</a>
-            <a href="mdviewer.html">MD Viewer</a>
-            <a href="mdeditor.html">MD Generator</a>
-        </div>
-    </nav>
-
-    <!-- Hero Section -->
-    <header class="hero">
-        <h1>The <span>purr-fect</span> way to handle Markdown</h1>
-        <p>Optimize your documentation workflow with intuitive, professional-grade Markdown tools.</p>
-    </header>
-
-    <!-- Tools Container -->
-    <main class="tools-container">
-
-        <!-- Markdown Viewer Card -->
-        <a href="mdviewer.html" class="tool-card">
-            <div class="icon-wrapper">
-                <!-- Browser Window / UI SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="2" y="3" width="20" height="18" rx="2" ry="2"></rect>
-                    <line x1="2" y1="8" x2="22" y2="8"></line>
-                    <circle cx="6" cy="5.5" r="1.5" fill="currentColor"></circle>
-                    <circle cx="10" cy="5.5" r="1.5" fill="currentColor"></circle>
-                </svg>
-            </div>
-            <h3>MD Viewer</h3>
-            <p>Paste or upload your Markdown to instantly render it into clean, readable HTML. Perfect for quick reading
-                and proofing.</p>
-        </a>
-
-        <!-- Markdown Generator Card -->
-        <a href="mdeditor.html" class="tool-card">
-            <div class="icon-wrapper">
-                <!-- Edit / Pen Tool SVG -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                </svg>
-            </div>
-            <h3>MD Generator</h3>
-            <p>Draft and edit your `.md` files directly in your browser. Scratch down your ideas with a live,
-                side-by-side preview.</p>
-        </a>
-
-    </main>
-
-    <footer>
-        Made with
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="var(--accent-color)"
-            stroke="var(--accent-color)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Navigation Bar -->
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
             <path
-                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+              d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
             </path>
-        </svg>
-        by MeowMD
-    </footer>
+          </svg>
+        </span>
+        MeowMD
+      </a>
 
+      <div class="nav-links">
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link active">Home</a>
+        <a href="mdviewer.html" class="nav-link">MD Viewer</a>
+        <a href="mdeditor.html" class="nav-link">MD Generator</a>
+        <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
+          <i class="fa-solid fa-moon"></i>
+        </button>
+        <a href="mdviewer.html" class="nav-cta">
+          <span>Open Workspace</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </a>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <div class="hero-badge">
+        <i class="fa-solid fa-sparkles"></i>
+        <span>Ultra-Fast & Privacy-First Markdown Toolkit</span>
+      </div>
+
+      <h1 class="hero-title">
+        The <span>Purr-fect</span> Way to View, Edit & Export Markdown
+      </h1>
+
+      <p class="hero-subtitle">
+        Elevate your technical documentation. Instantly render Markdown with live preview, Mermaid flowcharts, LaTeX math equations, 3D molecular structures, and crisp PDF export.
+      </p>
+
+      <div class="hero-actions">
+        <a href="mdviewer.html" class="btn btn-primary">
+          <i class="fa-solid fa-eye"></i> Launch MD Viewer
+        </a>
+        <a href="mdeditor.html" class="btn btn-outline">
+          <i class="fa-solid fa-pen-to-square"></i> Open Live Generator
+        </a>
+      </div>
+
+      <div class="hero-highlights">
+        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> 100% Client-Side Privacy</div>
+        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Offline PWA Ready</div>
+        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Zero Sign-Up Required</div>
+        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Multi-File & Folder Import</div>
+      </div>
+    </section>
+
+    <!-- Tools Grid Section -->
+    <section class="tools-grid-section">
+      <div class="section-header">
+        <h2>Choose Your Markdown Workflow</h2>
+        <p>Built for developers, researchers, writers, and students who demand speed and reliability.</p>
+      </div>
+
+      <div class="tools-cards">
+        <!-- MD Viewer Card -->
+        <article class="app-card">
+          <span class="badge badge-primary app-card-badge">Viewer & Workspace</span>
+          <div class="app-card-icon">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <h3>Technical MD Viewer</h3>
+          <p>
+            Paste or drag-and-drop `.md` files and whole folders to instantly render rich documentation with search, table of contents, and dark mode.
+          </p>
+          <ul class="app-card-features">
+            <li><i class="fa-solid fa-check"></i> Multi-file workspace & folder import</li>
+            <li><i class="fa-solid fa-check"></i> Mermaid.js diagrams & KaTeX equations</li>
+            <li><i class="fa-solid fa-check"></i> 3D Molecular viewer (PDB / MOL)</li>
+            <li><i class="fa-solid fa-check"></i> One-click export to clean PDF & HTML</li>
+          </ul>
+          <a href="mdviewer.html" class="btn btn-primary">Open Viewer Workspace &rarr;</a>
+        </article>
+
+        <!-- MD Editor Card -->
+        <article class="app-card">
+          <span class="badge badge-success app-card-badge">Visual WYSIWYG</span>
+          <div class="app-card-icon">
+            <i class="fa-solid fa-pen-nib"></i>
+          </div>
+          <h3>Live Markdown Generator</h3>
+          <p>
+            Write naturally with a rich-text visual editor that automatically outputs standard GitHub Flavored Markdown in real-time.
+          </p>
+          <ul class="app-card-features">
+            <li><i class="fa-solid fa-check"></i> Split-pane live dual preview</li>
+            <li><i class="fa-solid fa-check"></i> Rich-text toolbar with hotkeys</li>
+            <li><i class="fa-solid fa-check"></i> Real-time word & character counter</li>
+            <li><i class="fa-solid fa-check"></i> Instant copy and <code>.md</code> file download</li>
+          </ul>
+          <a href="mdeditor.html" class="btn btn-outline">Open Live Generator &rarr;</a>
+        </article>
+      </div>
+    </section>
+
+    <!-- Interactive Live Playground Section -->
+    <section class="playground-section">
+      <div class="section-header">
+        <h2>Interactive Live Playground</h2>
+        <p>Test MeowMD's rendering speed directly in your browser. Switch presets to explore capabilities.</p>
+      </div>
+
+      <div class="playground-box">
+        <div class="playground-bar">
+          <div class="playground-tabs">
+            <button class="tab-btn active" data-preset="general">General Markdown</button>
+            <button class="tab-btn" data-preset="mermaid">Mermaid Diagram</button>
+            <button class="tab-btn" data-preset="math">LaTeX Math</button>
+          </div>
+          <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted);">
+            <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> Live Real-Time Rendering
+          </span>
+        </div>
+
+        <div class="playground-grid">
+          <div class="playground-editor-wrap">
+            <textarea id="playgroundTextarea" class="playground-textarea" aria-label="Markdown Input" spellcheck="false"></textarea>
+          </div>
+          <div id="playgroundPreview" class="playground-preview markdown-body" aria-label="Markdown Output Preview"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Core Features Grid -->
+    <section class="features-grid-section">
+      <div class="features-container">
+        <div class="section-header">
+          <h2>Engineered for Modern Documentation</h2>
+          <p>Everything you need for clean, structured, and interactive Markdown.</p>
+        </div>
+
+        <div class="feature-columns">
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-diagram-project"></i></div>
+            <div class="feature-text">
+              <h4>Mermaid.js Flowcharts</h4>
+              <p>Turn code blocks into responsive sequence diagrams, flowcharts, Gantt charts, and architecture graphs.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-square-root-variable"></i></div>
+            <div class="feature-text">
+              <h4>KaTeX Math Rendering</h4>
+              <p>Render complex scientific and mathematical formulas with lightning-fast TeX typesetting.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-dna"></i></div>
+            <div class="feature-text">
+              <h4>3D Structural Biology</h4>
+              <p>Visualize PDB molecular structures with interactive 3D WebGL rotation and cartoon styling.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-file-pdf"></i></div>
+            <div class="feature-text">
+              <h4>Vector-Grade PDF Export</h4>
+              <p>Export your documents with preserved typography, syntax highlighting, and clean margins.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-magnifying-glass"></i></div>
+            <div class="feature-text">
+              <h4>Fuzzy Document Search</h4>
+              <p>Instantly search across multi-file repositories and headings using built-in fuzzy indexing.</p>
+            </div>
+          </div>
+
+          <div class="feature-item">
+            <div class="feature-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="feature-text">
+              <h4>Total Data Privacy</h4>
+              <p>Zero telemetry, zero server storage. All rendering and auto-save happens locally on your device.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Markdown Syntax Cheatsheet Section (SEO Query Magnet) -->
+    <section class="cheatsheet-section">
+      <div class="section-header">
+        <h2>Quick Markdown Syntax Reference</h2>
+        <p>Common formatting cheat sheet for GitHub Flavored Markdown (GFM).</p>
+      </div>
+
+      <div class="cheatsheet-grid">
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-heading" style="color: var(--primary);"></i> Headings</h4>
+          <pre class="cheat-code"># Heading 1
+## Heading 2
+### Heading 3</pre>
+        </div>
+
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-bold" style="color: var(--primary);"></i> Text Styling</h4>
+          <pre class="cheat-code">**Bold Text**
+*Italic Text*
+~~Strikethrough~~</pre>
+        </div>
+
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-list-check" style="color: var(--primary);"></i> Lists & Tasks</h4>
+          <pre class="cheat-code">- [x] Completed task
+- [ ] Pending item
+1. Numbered step</pre>
+        </div>
+
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-table" style="color: var(--primary);"></i> Tables</h4>
+          <pre class="cheat-code">| Column | Type |
+| :--- | :---: |
+| Item 1 | Text |</pre>
+        </div>
+
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-code" style="color: var(--primary);"></i> Code & Quotes</h4>
+          <pre class="cheat-code">`inline code`
+```js
+console.log("Hello");
+```
+> Blockquote text</pre>
+        </div>
+
+        <div class="cheat-card">
+          <h4><i class="fa-solid fa-square-root-variable" style="color: var(--primary);"></i> Math & Diagrams</h4>
+          <pre class="cheat-code">$E = mc^2$
+```mermaid
+graph LR; A-->B;
+```</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section -->
+    <section class="faq-section">
+      <div class="section-header">
+        <h2>Frequently Asked Questions</h2>
+        <p>Everything you need to know about MeowMD tools and privacy.</p>
+      </div>
+
+      <div class="faq-list">
+        <div class="faq-item active">
+          <button class="faq-question">
+            <span>Is MeowMD completely free?</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes, MeowMD is 100% free with no hidden paywalls, subscriptions, or account requirements. You can use all features indefinitely.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Where is my data stored?</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>All your Markdown documents, notes, and preferences remain strictly inside your browser. No files are uploaded to any server.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>Can I import full folders of Markdown notes?</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! In the MD Viewer workspace, simply click "Folder" or drag-and-drop a folder from your computer to load all contained <code>.md</code> and <code>.txt</code> files at once.</p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-question">
+            <span>How do I export Markdown to PDF?</span>
+            <i class="fa-solid fa-chevron-down"></i>
+          </button>
+          <div class="faq-answer">
+            <p>In the MD Viewer toolbar, click the "PDF" button. MeowMD formats your document with clean typography, code styling, and diagrams, and downloads a high-quality PDF.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Banner -->
+    <section class="cta-banner">
+      <div class="cta-box">
+        <h3>Ready for a Smoother Markdown Experience?</h3>
+        <p>Start viewing, editing, and rendering your Markdown files with zero setup.</p>
+        <a href="mdviewer.html" class="btn">
+          <i class="fa-solid fa-rocket"></i> Get Started Free
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <!-- Global Footer -->
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
+            <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z"></path>
+          </svg>
+          MeowMD
+        </h4>
+        <p>The privacy-first technical Markdown viewer and live documentation workstation.</p>
+      </div>
+
+      <div class="footer-col">
+        <h5>Tools</h5>
+        <ul class="footer-links">
+          <li><a href="mdviewer.html">Markdown Viewer</a></li>
+          <li><a href="mdeditor.html">Live Generator</a></li>
+          <li><a href="sitemap.xml">XML Sitemap</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Features</h5>
+        <ul class="footer-links">
+          <li><a href="mdviewer.html">Mermaid Diagrams</a></li>
+          <li><a href="mdviewer.html">LaTeX Math Rendering</a></li>
+          <li><a href="mdviewer.html">PDF Export</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="https://github.com/AtharvaTilewale/meowmd" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="robots.txt">Robots.txt</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="footer-bottom">
+      <span>&copy; 2026 MeowMD. All rights reserved. Free & Open Source.</span>
+      <span>Engineered with <i class="fa-solid fa-heart" style="color: var(--primary);"></i> for documentation lovers</span>
+    </div>
+  </footer>
+
+  <!-- Performance Optimized Deferred Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/lazy-loader.js" defer></script>
+  <script src="assets/js/landing.js" defer></script>
+  <script src="assets/js/sw-register.js" defer></script>
 </body>
 
 </html>
