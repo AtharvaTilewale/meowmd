@@ -103,10 +103,10 @@
     <aside class="sidebar" id="sidebar" aria-label="Workspace Files">
       <div class="sidebar-header">
         <div class="sidebar-branding">
-          <span><i class="fa-solid fa-folder-open text-primary" style="color: var(--primary);"></i> Workspace</span>
+          <span><i class="fa-solid fa-folder-open" style="color: var(--primary);"></i> Workspace</span>
           <div style="display: flex; gap: 0.25rem;">
-            <button class="btn-icon" id="toggleSidebarBtn" title="Collapse Sidebar" aria-label="Collapse Sidebar">
-              <i class="fa-solid fa-bars-staggered"></i>
+            <button class="btn-icon" id="toggleSidebarBtn" title="Close Sidebar" aria-label="Close Sidebar">
+              <i class="fa-solid fa-xmark"></i>
             </button>
           </div>
         </div>
@@ -142,11 +142,6 @@
       <ul class="file-list" id="fileList"></ul>
     </aside>
 
-    <!-- Floating Toggle Button for collapsed sidebar -->
-    <button class="floating-toggle" id="floatingToggleBtn" title="Open Sidebar" aria-label="Open Sidebar">
-      <i class="fa-solid fa-bars"></i>
-    </button>
-
     <!-- Main Content Area -->
     <main class="main-content" id="mainContent">
 
@@ -161,6 +156,9 @@
       <!-- Viewer Top Bar -->
       <div class="viewer-topbar" id="topBar">
         <div class="doc-info">
+          <button class="btn-icon" id="sidebarToggleTopbarBtn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
           <div class="doc-title" id="docTitle">Loading Document...</div>
           <div class="doc-meta" id="docMeta"></div>
         </div>

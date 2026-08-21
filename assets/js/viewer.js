@@ -51,14 +51,14 @@ class MeowViewer {
     this.clearAllBtn = document.getElementById('clearAllBtn');
     this.storageToggle = document.getElementById('storageToggle');
     this.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
-    this.floatingToggleBtn = document.getElementById('floatingToggleBtn');
+    this.sidebarToggleTopbarBtn = document.getElementById('sidebarToggleTopbarBtn');
 
     // Sidebar Toggles
     if (this.toggleSidebarBtn) {
       this.toggleSidebarBtn.onclick = () => this.toggleSidebar();
     }
-    if (this.floatingToggleBtn) {
-      this.floatingToggleBtn.onclick = () => this.toggleSidebar();
+    if (this.sidebarToggleTopbarBtn) {
+      this.sidebarToggleTopbarBtn.onclick = () => this.toggleSidebar();
     }
 
     // Storage Toggle
@@ -144,7 +144,9 @@ class MeowViewer {
   }
 
   toggleSidebar() {
-    this.sidebar.classList.toggle('collapsed');
+    if (this.sidebar) {
+      this.sidebar.classList.toggle('collapsed');
+    }
   }
 
   async handleFiles(fileList) {
@@ -323,6 +325,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
     const file = this.getActiveFile();
     if (!file) {
       this.docTitleEl.innerText = 'No Document Selected';
+      this.docTitleEl.removeAttribute('title');
       this.docMetaEl.innerHTML = '';
       this.contentEl.innerHTML = `
         <div class="empty-state">
@@ -336,6 +339,7 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
     }
 
     this.docTitleEl.innerText = file.name;
+    this.docTitleEl.title = file.name;
     const words = file.content.trim().split(/\s+/).filter(Boolean).length;
     const readTime = Math.ceil(words / 200);
     this.docMetaEl.innerHTML = `
