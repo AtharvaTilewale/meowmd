@@ -34,11 +34,11 @@
 
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#fe6b5e">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
 
   <!-- Resource Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,11 +46,8 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
   <!-- Google Fonts & Icons -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
 
   <!-- App Stylesheets -->
   <link rel="stylesheet" href="assets/css/core.css">
@@ -77,20 +74,15 @@
     <nav class="navbar" aria-label="Main Navigation">
       <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
         <span class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
-            </path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         MeowMD
       </a>
 
       <div class="nav-links">
-        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link">Home</a>
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home">Home</a>
         <a href="mdviewer.html" class="nav-link active">MD Viewer</a>
-        <a href="mdeditor.html" class="nav-link">MD Generator</a>
+        <a href="mdeditor.html" class="nav-link">MD Editor</a>
         <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
           <i class="fa-solid fa-moon"></i>
         </button>
@@ -105,26 +97,20 @@
     <aside class="sidebar" id="sidebar" aria-label="Workspace Files">
       <div class="sidebar-header">
         <div class="sidebar-branding">
-          <span><i class="fa-solid fa-folder-open" style="color: var(--primary);"></i> Workspace</span>
-          <div style="display: flex; gap: 0.25rem;">
-            <button class="btn-icon" id="toggleSidebarBtn" title="Close Sidebar" aria-label="Close Sidebar">
-              <i class="fa-solid fa-xmark"></i>
-            </button>
-          </div>
+          <span>Workspace</span>
+          <button class="btn-icon" id="toggleSidebarBtn" title="Close Sidebar" aria-label="Close Sidebar">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
 
         <div class="search-box">
           <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="searchInput" placeholder="Search documents..." aria-label="Search documents" />
+          <input type="text" id="searchInput" placeholder="Search documents" aria-label="Search documents" />
         </div>
 
         <div class="sidebar-actions">
-          <label for="fileInput" class="btn btn-primary" title="Import Markdown Files">
-            <i class="fa-solid fa-file-import"></i> Files
-          </label>
-          <label for="folderInput" class="btn btn-outline" title="Import Whole Folder">
-            <i class="fa-solid fa-folder-tree"></i> Folder
-          </label>
+          <label for="fileInput" class="btn btn-primary" title="Import Markdown Files">Files</label>
+          <label for="folderInput" class="btn btn-outline" title="Import Whole Folder">Folder</label>
           <button class="btn btn-danger" id="clearAllBtn" title="Clear Workspace" aria-label="Clear Workspace">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -133,7 +119,7 @@
         </div>
 
         <div class="storage-toggle-bar">
-          <span><i class="fa-solid fa-hard-drive"></i> Local Auto-Save</span>
+          <span>Auto-save locally</span>
           <label class="switch" title="Toggle Local Auto-Save">
             <input type="checkbox" id="storageToggle" aria-label="Toggle Auto-Save">
             <span class="slider"></span>
@@ -150,8 +136,8 @@
       <!-- Drag and Drop Overlay -->
       <div class="drag-overlay" id="dragOverlay">
         <div class="drag-overlay-content">
-          <h2><i class="fa-solid fa-cloud-arrow-up"></i> Drop to Import</h2>
-          <p>Release your Markdown files or folder to instantly add to workspace</p>
+          <h2>Drop to import</h2>
+          <p>Release to add these files to your workspace</p>
         </div>
       </div>
 
@@ -161,19 +147,19 @@
           <button class="btn-icon" id="sidebarToggleTopbarBtn" title="Toggle Sidebar" aria-label="Toggle Sidebar">
             <i class="fa-solid fa-bars-staggered"></i>
           </button>
-          <div class="doc-title" id="docTitle">Loading Document...</div>
+          <div class="doc-title" id="docTitle">Loading</div>
           <div class="doc-meta" id="docMeta"></div>
         </div>
 
         <div class="viewer-actions">
           <button class="btn btn-outline" id="copyRawMdBtn" title="Copy Raw Markdown">
-            <i class="fa-regular fa-copy"></i> Raw MD
+            <i class="fa-regular fa-copy"></i> <span>Copy MD</span>
           </button>
           <button class="btn btn-outline" id="copyHtmlBtn" title="Copy Rendered HTML">
-            <i class="fa-solid fa-code"></i> HTML
+            <i class="fa-solid fa-code"></i> <span>Copy HTML</span>
           </button>
-          <button class="btn btn-primary" id="exportPdfBtn" title="Export as Clean PDF">
-            <i class="fa-solid fa-file-pdf"></i> PDF
+          <button class="btn btn-primary" id="exportPdfBtn" title="Export as PDF">
+            <i class="fa-solid fa-arrow-down"></i> <span>Export PDF</span>
           </button>
           <button class="btn-icon" id="printDocBtn" title="Print Document" aria-label="Print Document">
             <i class="fa-solid fa-print"></i>

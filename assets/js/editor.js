@@ -1,4 +1,4 @@
-﻿/**
+/**
  * MeowMD Markdown Generator & WYSIWYG Editor (editor.js)
  * Standard GFM compliant engine ensuring high fidelity across GitHub,
  * VS Code, Obsidian, Notion, GitLab, and all Markdown renderers.
@@ -13,6 +13,7 @@ class MeowEditor {
     this.mdParser = null;
     this.isSyncing = false;
     this.activeView = 'split';
+    this.savedRange = null;
 
     this.initParsers();
     this.initEditorContent();
@@ -29,13 +30,10 @@ class MeowEditor {
       if (window.markdownit) {
         this.mdParser = window.markdownit({
           html: true,
-          linkify: true,
-          typographer: true,
-          breaks: true
+          linkify: false,
+          typographer: false,
+          breaks: false
         });
-        if (window.markdownitFootnote) {
-          this.mdParser.use(window.markdownitFootnote);
-        }
       }
     } catch (e) {
       console.warn('Markdown-it init error:', e);
@@ -54,6 +52,26 @@ class MeowEditor {
         });
 
         var self = this;
+
+        // 0. List items: single space after the marker, nested lists indented to the marker width
+        this.turndown.addRule('tightListItem', {
+          filter: 'li',
+          replacement: function (content, node, options) {
+            content = content
+              .replace(/^\n+/, '')
+              .replace(/\n+$/, '\n');
+            var prefix = options.bulletListMarker + ' ';
+            var parent = node.parentNode;
+            if (parent && parent.nodeName === 'OL') {
+              var start = parent.getAttribute('start');
+              var index = Array.prototype.indexOf.call(parent.children, node);
+              prefix = (start ? Number(start) + index : index + 1) + '. ';
+            }
+            var indent = new Array(prefix.length + 1).join(' ');
+            content = content.replace(/\n/gm, '\n' + indent);
+            return prefix + content + (node.nextSibling && !/\n$/.test(content) ? '\n' : '');
+          }
+        });
 
         // 1. Strikethrough: ~~text~~ (GFM standard)
         this.turndown.addRule('strikethrough', {
@@ -138,9 +156,10 @@ class MeowEditor {
         this.turndown.addRule('codeBlocks', {
           filter: ['pre'],
           replacement: function (content, node) {
-            var codeEl = node.querySelector('code');
-            var code = codeEl ? codeEl.textContent : node.textContent;
-            code = (code || '').replace(/\r\n/g, '\n').trimEnd();
+            var codeEl = node.querySelector('code') || node;
+            var clone = codeEl.cloneNode(true);
+            clone.querySelectorAll('br').forEach(function (br) { br.replaceWith('\n'); });
+            var code = (clone.textContent || '').replace(/\r\n/g, '\n').replace(/\u00a0/g, ' ').trimEnd();
             var lang = '';
             if (codeEl && codeEl.className) {
               var match = codeEl.className.match(/language-(\w+)/);
@@ -255,26 +274,44 @@ class MeowEditor {
           }
         });
 
-        // 14. Text Alignment (<div align="center">...</div>)
-        this.turndown.addRule('alignmentDivs', {
+        // 14. Text Alignment on paragraphs, headings and divs -> <div align="center">
+        var ALIGN_BLOCKS = ['P', 'DIV', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6'];
+        function blockAlign(node) {
+          var a = (node.getAttribute('align') || (node.style && node.style.textAlign) || '').toLowerCase();
+          return (a === 'center' || a === 'right' || a === 'justify') ? a : '';
+        }
+        this.turndown.addRule('alignedBlocks', {
           filter: function (node) {
-            return (
-              node.nodeName === 'DIV' &&
-              (node.getAttribute('align') || (node.style && node.style.textAlign)) &&
-              !node.classList.contains('markdown-alert')
-            );
+            return ALIGN_BLOCKS.indexOf(node.nodeName) !== -1 &&
+              !node.classList.contains('markdown-alert') &&
+              !node.classList.contains('markdown-alert-content') &&
+              Boolean(blockAlign(node));
           },
           replacement: function (content, node) {
-            var align = node.getAttribute('align') || (node.style ? node.style.textAlign : 'left');
-            if (align && align !== 'left') {
-              return '\n\n<div align="' + align + '">\n\n' + content.trim() + '\n\n</div>\n\n';
-            }
-            return content;
+            var inner = content.trim();
+            var hm = node.nodeName.match(/^H([1-6])$/);
+            if (hm) inner = new Array(Number(hm[1]) + 1).join('#') + ' ' + inner;
+            if (!inner) return '';
+            return '\n\n<div align="' + blockAlign(node) + '">\n\n' + inner + '\n\n</div>\n\n';
           }
         });
 
-        // Keep standard HTML tags widely accepted across GFM renderers
-        this.turndown.keep(['kbd', 'mark', 'sub', 'sup', 'u', 'center', 'div', 'br']);
+        // 15. Plain divs (Chrome creates these when typing at the root) behave like paragraphs
+        this.turndown.addRule('plainDiv', {
+          filter: function (node) {
+            return node.nodeName === 'DIV' &&
+              !blockAlign(node) &&
+              !node.classList.contains('markdown-alert') &&
+              !node.classList.contains('markdown-alert-content');
+          },
+          replacement: function (content) {
+            var inner = content.trim();
+            return inner ? '\n\n' + inner + '\n\n' : '';
+          }
+        });
+
+        // Keep inline HTML tags that GFM renders as-is
+        this.turndown.keep(['kbd', 'mark', 'sub', 'sup', 'u']);
       }
     } catch (e) {
       console.warn('Turndown init error:', e);
@@ -358,7 +395,7 @@ function formatMarkdown(doc) {
       'btnMark': function () { self.insertMark(); },
       'btnHr': function () { self.insertHorizontalRule(); },
       'btnFootnote': function () { self.insertFootnote(); },
-      'btnClearFormat': function () { self.execCmd('removeFormat'); },
+      'btnClearFormat': function () { self.clearFormatting(); },
       'btnUndo': function () { self.execCmd('undo'); },
       'btnRedo': function () { self.execCmd('redo'); },
       'btnAlignLeft': function () { self.execCmd('justifyLeft'); },
@@ -413,8 +450,17 @@ function formatMarkdown(doc) {
     if (this.visualEditor) {
       this.visualEditor.addEventListener('input', function () {
         if (self.isSyncing) return;
+        self.normalizeEditorDom();
         self.syncVisualToMarkdown();
         self.updateStats();
+      });
+
+      this.visualEditor.addEventListener('keydown', function (e) {
+        self.handleEditorKeydown(e);
+      });
+
+      this.visualEditor.addEventListener('paste', function (e) {
+        self.handlePaste(e);
       });
 
       this.visualEditor.addEventListener('keyup', function () {
@@ -427,6 +473,8 @@ function formatMarkdown(doc) {
 
       this.visualEditor.addEventListener('change', function (e) {
         if (e.target && e.target.type === 'checkbox') {
+          // innerHTML serialises the attribute, not the live property
+          e.target.toggleAttribute('checked', e.target.checked);
           self.syncVisualToMarkdown();
           self.updateStats();
         }
@@ -489,8 +537,151 @@ function formatMarkdown(doc) {
     if (mdBtn) mdBtn.onclick = function () { self.setViewMode('markdown'); };
 
     document.addEventListener('selectionchange', function () {
+      if (self.selectionInEditor()) {
+        var sel = window.getSelection();
+        if (sel && sel.rangeCount) self.savedRange = sel.getRangeAt(0).cloneRange();
+      }
       self.updateToolbarState();
     });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(function (m) {
+          m.classList.remove('active');
+        });
+      }
+    });
+  }
+
+  handleEditorKeydown(e) {
+    // Enter on an empty task item leaves the list, like a normal list item would
+    if (e.key === 'Enter' && !e.shiftKey) {
+      var taskLi = this.closestInEditor('li.task-list-item');
+      if (taskLi && !taskLi.textContent.replace(/\u00a0/g, '').trim() && !taskLi.querySelector('img, pre, table')) {
+        e.preventDefault();
+        taskLi.classList.remove('task-list-item');
+        taskLi.innerHTML = '<br>';
+        var list = taskLi.parentNode;
+        if (list && !list.querySelector('li.task-list-item')) list.classList.remove('task-list');
+        var selEmpty = window.getSelection();
+        var rEmpty = document.createRange();
+        rEmpty.setStart(taskLi, 0);
+        rEmpty.collapse(true);
+        selEmpty.removeAllRanges();
+        selEmpty.addRange(rEmpty);
+        document.execCommand('insertParagraph');
+        this.normalizeEditorDom();
+        this.syncVisualToMarkdown();
+        this.updateStats();
+        return;
+      }
+    }
+
+    // Enter inside a code block inserts a newline; a blank line at the end leaves the block
+    if (e.key === 'Enter' && !e.shiftKey) {
+      var pre = this.closestInEditor('pre');
+      if (pre) {
+        e.preventDefault();
+        var code = pre.querySelector('code') || pre;
+        var sel = window.getSelection();
+        var range = sel.getRangeAt(0);
+        var tail = range.cloneRange();
+        tail.selectNodeContents(code);
+        tail.setStart(range.endContainer, range.endOffset);
+        var atEnd = tail.toString().length === 0;
+        // Chrome stores newlines inside <pre> as <br>; read them as text to detect a blank last line
+        var probe = code.cloneNode(true);
+        probe.querySelectorAll('br').forEach(function (br) { br.replaceWith('\n'); });
+        var codeText = probe.textContent;
+        var lastNode = code.lastChild;
+        var blankLastLine = /\n\n$/.test(codeText) ||
+          (lastNode && lastNode.nodeType === 3 && /\n$/.test(lastNode.data));
+        if (atEnd && blankLastLine) {
+          // Drop the trailing blank line(s) and continue in a paragraph after the block
+          while (code.lastChild && (code.lastChild.nodeName === 'BR' ||
+                 (code.lastChild.nodeType === 3 && !code.lastChild.data.replace(/\n+$/, '')))) {
+            code.removeChild(code.lastChild);
+          }
+          if (code.lastChild && code.lastChild.nodeType === 3) {
+            code.lastChild.data = code.lastChild.data.replace(/\n+$/, '');
+          }
+          var p = document.createElement('p');
+          p.innerHTML = '<br>';
+          pre.parentNode.insertBefore(p, pre.nextSibling);
+          var r2 = document.createRange();
+          r2.setStart(p, 0);
+          r2.collapse(true);
+          sel.removeAllRanges();
+          sel.addRange(r2);
+        } else {
+          document.execCommand('insertText', false, '\n');
+        }
+        this.syncVisualToMarkdown();
+        this.updateStats();
+        return;
+      }
+    }
+
+    if (e.key === 'Tab') {
+      var cell = this.closestInEditor('td, th');
+      if (cell) {
+        e.preventDefault();
+        var cells = Array.prototype.slice.call(cell.closest('table').querySelectorAll('th, td'));
+        var idx = cells.indexOf(cell);
+        var next = cells[e.shiftKey ? idx - 1 : idx + 1];
+        if (next) {
+          var r3 = document.createRange();
+          r3.selectNodeContents(next);
+          var s3 = window.getSelection();
+          s3.removeAllRanges();
+          s3.addRange(r3);
+        }
+        return;
+      }
+      if (this.closestInEditor('li')) {
+        e.preventDefault();
+        document.execCommand(e.shiftKey ? 'outdent' : 'indent');
+        this.normalizeEditorDom();
+        this.syncVisualToMarkdown();
+        this.updateStats();
+        return;
+      }
+      if (this.closestInEditor('pre')) {
+        e.preventDefault();
+        document.execCommand('insertText', false, '  ');
+        return;
+      }
+    }
+  }
+
+  /* Paste: normalise rich HTML through the Markdown pipeline so only supported structures land. */
+  handlePaste(e) {
+    if (!e.clipboardData) return;
+    var html = e.clipboardData.getData('text/html');
+    var text = e.clipboardData.getData('text/plain');
+    e.preventDefault();
+
+    if (this.closestInEditor('pre')) {
+      document.execCommand('insertText', false, text);
+      return;
+    }
+
+    if (html && this.turndown && this.mdParser) {
+      try {
+        var md = this.cleanMarkdown(this.turndown.turndown(html));
+        var clean = this.upgradeRenderedHtml(this.mdParser.render(md));
+        if (clean.trim()) {
+          document.execCommand('insertHTML', false, clean);
+          this.normalizeEditorDom();
+          this.syncVisualToMarkdown();
+          this.updateStats();
+          return;
+        }
+      } catch (err) {
+        console.warn('Rich paste failed, falling back to plain text', err);
+      }
+    }
+    document.execCommand('insertText', false, text);
   }
 
   setViewMode(mode) {
@@ -538,6 +729,25 @@ function formatMarkdown(doc) {
     checkState('superscript', 'btnSuperscript');
     checkState('insertUnorderedList', 'btnUl');
     checkState('insertOrderedList', 'btnOl');
+    checkState('justifyCenter', 'btnAlignCenter');
+    checkState('justifyRight', 'btnAlignRight');
+
+    var setActive = function (btnId, on) {
+      var btn = document.getElementById(btnId);
+      if (btn) btn.classList.toggle('active', Boolean(on));
+    };
+    var inEditor = this.selectionInEditor();
+    setActive('btnQuote', inEditor && this.closestInEditor('blockquote'));
+    setActive('btnChecklist', inEditor && this.closestInEditor('li.task-list-item'));
+    setActive('btnInlineCode', inEditor && this.closestInEditor('code') && !this.closestInEditor('pre'));
+    setActive('btnCodeBlock', inEditor && this.closestInEditor('pre'));
+
+    var headingSelect = document.getElementById('headingSelect');
+    if (headingSelect && inEditor) {
+      var h = this.closestInEditor('h1, h2, h3, h4');
+      var val = h ? h.nodeName.toLowerCase() : 'p';
+      if (headingSelect.value !== val) headingSelect.value = val;
+    }
   }
 
   syncVisualToMarkdown() {
@@ -548,9 +758,7 @@ function formatMarkdown(doc) {
       var md = '';
 
       if (this.turndown) {
-        md = this.turndown.turndown(html);
-        // Clean excessive blank lines while preserving standard markdown paragraphs
-        md = md.replace(/\n{3,}/g, '\n\n').trim();
+        md = this.cleanMarkdown(this.turndown.turndown(html));
       } else {
         var tmp = document.createElement('div');
         tmp.innerHTML = html;
@@ -565,6 +773,64 @@ function formatMarkdown(doc) {
     }
   }
 
+  /* Undo escaping Turndown applies to syntax we deliberately keep (footnotes, task boxes). */
+  cleanMarkdown(md) {
+    return (md || '')
+      .replace(/\\\[\^([^\]\\]+)\\\]/g, '[^$1]')
+      .replace(/^(\s*(?:[-*+]|\d+\.)\s+)\\\[( |x|X)\\\]/gm, '$1[$2]')
+      .replace(/^[ \t\u00a0]+$/gm, '')
+      .replace(/[ \t]+$/gm, function (m) { return m.length >= 2 ? '  ' : ''; })
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+  }
+
+  /* Rebuild editor-only structures (task boxes, callouts) from rendered Markdown HTML. */
+  upgradeRenderedHtml(html) {
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+
+    tmp.querySelectorAll('li').forEach(function (li) {
+      var first = li.firstChild;
+      while (first && first.nodeType === 1 && first.nodeName === 'P' && first.firstChild) first = first.firstChild;
+      if (!first || first.nodeType !== 3) return;
+      var m = first.textContent.match(/^\s*\[( |x|X)\]\s?/);
+      if (!m) return;
+      first.textContent = first.textContent.slice(m[0].length);
+      var cb = document.createElement('input');
+      cb.type = 'checkbox';
+      if (m[1].toLowerCase() === 'x') cb.setAttribute('checked', '');
+      var holder = first.parentNode;
+      holder.insertBefore(document.createTextNode(' '), first);
+      holder.insertBefore(cb, holder.firstChild);
+      li.classList.add('task-list-item');
+      if (li.parentNode) li.parentNode.classList.add('task-list');
+    });
+
+    var ICONS = { NOTE: 'fa-circle-info', TIP: 'fa-lightbulb', IMPORTANT: 'fa-circle-exclamation', WARNING: 'fa-triangle-exclamation', CAUTION: 'fa-fire' };
+    tmp.querySelectorAll('blockquote').forEach(function (bq) {
+      var p = bq.firstElementChild;
+      if (!p || p.nodeName !== 'P' || !p.firstChild || p.firstChild.nodeType !== 3) return;
+      var m = p.firstChild.textContent.match(/^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n?/i);
+      if (!m) return;
+      var type = m[1].toUpperCase();
+      p.firstChild.textContent = p.firstChild.textContent.slice(m[0].length);
+      var alert = document.createElement('div');
+      alert.className = 'markdown-alert markdown-alert-' + type.toLowerCase();
+      var title = document.createElement('p');
+      title.className = 'markdown-alert-title';
+      title.innerHTML = '<i class="fa-solid ' + ICONS[type] + '"></i> ' + type;
+      var body = document.createElement('div');
+      body.className = 'markdown-alert-content';
+      while (bq.firstChild) body.appendChild(bq.firstChild);
+      if (!body.textContent.trim()) body.textContent = 'Enter your ' + type.toLowerCase() + ' message here';
+      alert.appendChild(title);
+      alert.appendChild(body);
+      bq.replaceWith(alert);
+    });
+
+    return tmp.innerHTML;
+  }
+
   syncMarkdownToVisual() {
     if (!this.markdownOutput || !this.visualEditor) return;
     var mdText = this.markdownOutput.value;
@@ -573,8 +839,9 @@ function formatMarkdown(doc) {
     if (this.mdParser) {
       this.isSyncing = true;
       try {
-        var html = this.mdParser.render(mdText);
-        this.visualEditor.innerHTML = html;
+        var safeMd = mdText.replace(/^(\s*)\[\^([^\]]+)\]:/gm, '$1\\[^$2]:');
+        var html = this.upgradeRenderedHtml(this.mdParser.render(safeMd));
+        this.visualEditor.innerHTML = html || '<p><br></p>';
         this.updateStats();
         showToast('Visual Editor updated from Markdown', 'success');
       } catch (err) {
@@ -640,11 +907,28 @@ function formatMarkdown(doc) {
      Custom Formatting Helpers
      ========================================================================== */
 
-  insertHtmlAtCursor(html) {
+  insertHtmlAtCursor(html, forceManual) {
     if (!this.visualEditor) return;
-    this.visualEditor.focus();
+    this.restoreSelection();
+
+    // Preferred path: insertHTML is undoable and lets the browser split blocks correctly
+    var inserted = false;
+    if (!forceManual) {
+      try {
+        inserted = document.execCommand('insertHTML', false, html);
+      } catch (e) {
+        inserted = false;
+      }
+    }
+    if (inserted) {
+      this.normalizeEditorDom();
+      this.syncVisualToMarkdown();
+      this.updateStats();
+      return;
+    }
+
     var sel = window.getSelection();
-    if (sel && sel.getRangeAt && sel.rangeCount) {
+    if (sel && sel.getRangeAt && sel.rangeCount && this.selectionInEditor()) {
       var range = sel.getRangeAt(0);
       range.deleteContents();
 
@@ -664,10 +948,84 @@ function formatMarkdown(doc) {
         sel.addRange(range);
       }
     } else {
-      this.visualEditor.innerHTML += html;
+      this.visualEditor.insertAdjacentHTML('beforeend', html);
     }
+    this.normalizeEditorDom();
     this.syncVisualToMarkdown();
     this.updateStats();
+  }
+
+  /* Inserts block HTML after the block that holds the caret, replacing it if it is empty.
+     Used for <pre> and <details>, which Chrome's insertHTML flattens or strips. */
+  insertBlockHtml(html) {
+    if (!this.visualEditor) return;
+    this.restoreSelection();
+    var ed = this.visualEditor;
+    var block = this.closestInEditor('p, h1, h2, h3, h4, h5, h6, div, pre, blockquote, li, table, details');
+    while (block && block.parentNode !== ed) block = block.parentNode;
+
+    var tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    var nodes = Array.prototype.slice.call(tmp.childNodes);
+    var caretTarget = tmp.querySelector('p:last-child');
+
+    if (block) {
+      var isEmpty = !block.textContent.trim() && !block.querySelector('img, table, pre, input');
+      var ref = block.nextSibling;
+      nodes.forEach(function (n) { ed.insertBefore(n, ref); });
+      if (isEmpty) block.remove();
+    } else {
+      nodes.forEach(function (n) { ed.appendChild(n); });
+    }
+
+    if (caretTarget) {
+      var sel = window.getSelection();
+      var r = document.createRange();
+      r.setStart(caretTarget, 0);
+      r.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(r);
+    }
+    this.normalizeEditorDom();
+    this.syncVisualToMarkdown();
+    this.updateStats();
+  }
+
+  /* Repairs structures the browser produces while editing:
+     task items without a checkbox, nested lists placed beside their parent item. */
+  normalizeEditorDom() {
+    if (!this.visualEditor) return;
+    var ed = this.visualEditor;
+
+    ed.querySelectorAll('li.task-list-item').forEach(function (li) {
+      if (!li.querySelector('input[type="checkbox"]')) {
+        var cb = document.createElement('input');
+        cb.type = 'checkbox';
+        var space = document.createTextNode('\u00a0');
+        li.insertBefore(cb, li.firstChild);
+        li.insertBefore(space, cb.nextSibling);
+        // Keep the caret after the new box so typing continues on the right side of it
+        var sel = window.getSelection();
+        if (sel && sel.rangeCount && li.contains(sel.anchorNode)) {
+          var after = document.createRange();
+          after.setStart(space, space.length);
+          after.collapse(true);
+          if (sel.getRangeAt(0).compareBoundaryPoints(Range.START_TO_START, after) < 0) {
+            sel.removeAllRanges();
+            sel.addRange(after);
+          }
+        }
+      }
+      var ul = li.parentNode;
+      if (ul && (ul.nodeName === 'UL' || ul.nodeName === 'OL')) ul.classList.add('task-list');
+    });
+
+    ed.querySelectorAll('ul > ul, ul > ol, ol > ul, ol > ol').forEach(function (list) {
+      var prev = list.previousElementSibling;
+      if (prev && prev.nodeName === 'LI') {
+        prev.appendChild(list);
+      }
+    });
   }
 
   formatInlineCode() {
@@ -676,33 +1034,91 @@ function formatMarkdown(doc) {
       var text = sel.toString();
       this.insertHtmlAtCursor('<code>' + this.escapeHtml(text) + '</code>');
     } else {
-      this.insertHtmlAtCursor('<code>code_snippet</code>');
+      this.insertHtmlAtCursor('<code>code</code>&nbsp;');
     }
   }
 
   formatBlockquote() {
-    this.execCmd('formatBlock', '<blockquote>');
+    var bq = this.closestInEditor('blockquote');
+    if (bq) {
+      this.execCmd('outdent');
+    } else {
+      this.execCmd('formatBlock', '<blockquote>');
+    }
+  }
+
+  closestInEditor(selector) {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !this.visualEditor) return null;
+    var node = sel.getRangeAt(0).startContainer;
+    if (node.nodeType === 3) node = node.parentNode;
+    if (!node || !this.visualEditor.contains(node)) return null;
+    var el = node.closest(selector);
+    return (el && this.visualEditor.contains(el) && el !== this.visualEditor) ? el : null;
+  }
+
+  selectionInEditor() {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !this.visualEditor) return false;
+    var node = sel.getRangeAt(0).commonAncestorContainer;
+    return this.visualEditor.contains(node);
+  }
+
+  restoreSelection() {
+    if (!this.visualEditor) return;
+    var ed = this.visualEditor;
+    ed.focus();
+    var saved = this.savedRange;
+    if (!saved || !ed.contains(saved.startContainer) || !ed.contains(saved.endContainer)) return;
+
+    // Focusing a contenteditable after a modal input resets the caret to the start; put it back
+    var sel = window.getSelection();
+    var cur = sel && sel.rangeCount ? sel.getRangeAt(0) : null;
+    var atStart = false;
+    if (cur && cur.collapsed) {
+      var head = document.createRange();
+      head.selectNodeContents(ed);
+      head.setEnd(cur.startContainer, cur.startOffset);
+      atStart = head.toString() === '';
+    }
+    if (!this.selectionInEditor() || atStart) {
+      try {
+        sel.removeAllRanges();
+        sel.addRange(saved);
+      } catch (e) {}
+    }
   }
 
   insertChecklist() {
+    var li = this.closestInEditor('li');
+    if (li) {
+      if (li.classList.contains('task-list-item')) {
+        // Toggle back to a plain list item
+        li.classList.remove('task-list-item');
+        var cb = li.querySelector('input[type="checkbox"]');
+        if (cb) {
+          if (cb.nextSibling && cb.nextSibling.nodeType === 3) {
+            cb.nextSibling.textContent = cb.nextSibling.textContent.replace(/^\s+/, '');
+          }
+          cb.remove();
+        }
+        var list = li.parentNode;
+        if (list && !list.querySelector('li.task-list-item')) list.classList.remove('task-list');
+      } else {
+        li.classList.add('task-list-item');
+      }
+      this.normalizeEditorDom();
+      this.syncVisualToMarkdown();
+      this.updateStats();
+      return;
+    }
     var sel = window.getSelection();
     var text = (sel && !sel.isCollapsed) ? sel.toString() : 'Task item';
-    this.insertHtmlAtCursor(`
-      <ul class="task-list">
-        <li class="task-list-item"><input type="checkbox"> ${this.escapeHtml(text)}</li>
-      </ul>
-      <p><br></p>
-    `);
+    this.insertHtmlAtCursor('<ul class="task-list"><li class="task-list-item"><input type="checkbox"> ' + this.escapeHtml(text) + '</li></ul><p><br></p>');
   }
 
   insertDetails() {
-    this.insertHtmlAtCursor(`
-      <details>
-        <summary>Click to expand section</summary>
-        <p>Put your detailed markdown content here.</p>
-      </details>
-      <p><br></p>
-    `);
+    this.insertBlockHtml('<details><summary>Click to expand</summary><p>Put the collapsible content here.</p></details><p><br></p>');
     showToast('Inserted collapsible section', 'success');
   }
 
@@ -723,11 +1139,35 @@ function formatMarkdown(doc) {
   }
 
   insertFootnote() {
-    this.insertHtmlAtCursor('<sup>[^1]</sup>');
-    this.visualEditor.innerHTML += '<p><br></p><p>[^1]: Footnote description here.</p>';
+    var text = (this.visualEditor && this.visualEditor.textContent) || '';
+    var n = 1;
+    var m;
+    var re = /\[\^(\d+)\]/g;
+    while ((m = re.exec(text))) {
+      n = Math.max(n, parseInt(m[1], 10) + 1);
+    }
+    this.insertHtmlAtCursor('[^' + n + ']');
+    var def = document.createElement('p');
+    def.textContent = '[^' + n + ']: Footnote text';
+    this.visualEditor.appendChild(def);
     this.syncVisualToMarkdown();
     this.updateStats();
-    showToast('Inserted footnote', 'info');
+    showToast('Inserted footnote ' + n + '. Edit its text at the end of the document.', 'info');
+  }
+
+  clearFormatting() {
+    this.execCmd('removeFormat');
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount || !this.visualEditor) return;
+    var range = sel.getRangeAt(0);
+    this.visualEditor.querySelectorAll('code, mark, kbd, u, s, strike, del, sub, sup').forEach(function (el) {
+      if (el.closest('pre')) return;
+      if (range.intersectsNode(el)) {
+        var parent = el.parentNode;
+        while (el.firstChild) parent.insertBefore(el.firstChild, el);
+        parent.removeChild(el);
+      }
+    });
   }
 
   /* ==========================================================================
@@ -763,9 +1203,12 @@ function formatMarkdown(doc) {
     if (linkForm) {
       linkForm.onsubmit = function (e) {
         e.preventDefault();
-        var text = document.getElementById('linkTextInput').value || 'Link';
-        var url = document.getElementById('linkUrlInput').value || 'https://';
-        self.insertHtmlAtCursor('<a href="' + encodeURI(url) + '" target="_blank">' + self.escapeHtml(text) + '</a>');
+        var url = (document.getElementById('linkUrlInput').value || '').trim();
+        var text = document.getElementById('linkTextInput').value || url;
+        if (url) {
+          self.insertHtmlAtCursor('<a href="' + self.escapeHtml(encodeURI(url)) + '">' + self.escapeHtml(text) + '</a>');
+        }
+        linkForm.reset();
         self.closeModal('linkModal');
       };
     }
@@ -778,8 +1221,9 @@ function formatMarkdown(doc) {
         var alt = document.getElementById('imageAltInput').value || 'Image description';
         var url = document.getElementById('imageUrlInput').value || '';
         if (url) {
-          self.insertHtmlAtCursor('<img src="' + encodeURI(url) + '" alt="' + self.escapeHtml(alt) + '" />');
+          self.insertHtmlAtCursor('<img src="' + self.escapeHtml(encodeURI(url)) + '" alt="' + self.escapeHtml(alt) + '">');
         }
+        imageForm.reset();
         self.closeModal('imageModal');
       };
     }
@@ -789,9 +1233,11 @@ function formatMarkdown(doc) {
     if (codeBlockForm) {
       codeBlockForm.onsubmit = function (e) {
         e.preventDefault();
-        var lang = document.getElementById('codeLangInput').value || 'text';
-        var code = document.getElementById('codeSnippetInput').value || '// Code goes here';
-        self.insertHtmlAtCursor('<pre><code class="language-' + self.escapeHtml(lang) + '">' + self.escapeHtml(code) + '</code></pre><p><br></p>');
+        var lang = (document.getElementById('codeLangInput').value || '').trim().toLowerCase();
+        var code = document.getElementById('codeSnippetInput').value || '';
+        var cls = lang ? ' class="language-' + self.escapeHtml(lang) + '"' : '';
+        self.insertBlockHtml('<pre><code' + cls + '>' + self.escapeHtml(code) + '</code></pre><p><br></p>');
+        codeBlockForm.reset();
         self.closeModal('codeBlockModal');
       };
     }
@@ -883,7 +1329,7 @@ function formatMarkdown(doc) {
     var alertHtml = `
       <div class="markdown-alert markdown-alert-${typeLower}">
         <p class="markdown-alert-title"><i class="fa-solid ${icon}"></i> ${type}</p>
-        <div class="markdown-alert-content">Enter your ${typeLower} message here...</div>
+        <div class="markdown-alert-content">Enter your ${typeLower} message here</div>
       </div>
       <p><br></p>
     `;

@@ -35,11 +35,11 @@
 
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#fe6b5e">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
 
   <!-- Resource Hints for High Performance -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,7 +48,7 @@
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
 
   <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Core & Page Stylesheets -->
@@ -142,25 +142,20 @@
     <nav class="navbar" aria-label="Main Navigation">
       <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
         <span class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
-            </path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         MeowMD
       </a>
 
       <div class="nav-links">
-        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link active">Home</a>
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home active">Home</a>
         <a href="mdviewer.html" class="nav-link">MD Viewer</a>
-        <a href="mdeditor.html" class="nav-link">MD Generator</a>
+        <a href="mdeditor.html" class="nav-link">MD Editor</a>
         <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
           <i class="fa-solid fa-moon"></i>
         </button>
         <a href="mdviewer.html" class="nav-cta">
-          <span>Open Workspace</span>
+          <span>Open viewer</span>
           <i class="fa-solid fa-arrow-right"></i>
         </a>
       </div>
@@ -171,79 +166,74 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="hero-badge">
-        <i class="fa-solid fa-sparkles"></i>
-        <span>Ultra-Fast & Privacy-First Markdown Toolkit</span>
+        <span>Free, open source, and fully offline</span>
       </div>
 
       <h1 class="hero-title">
-        The <span>Purr-fect</span> Way to View, Edit & Export Markdown
+        Markdown, rendered properly. <span>View, edit, and export without leaving your browser.</span>
       </h1>
 
       <p class="hero-subtitle">
-        Elevate your technical documentation. Instantly render Markdown with live preview, Mermaid flowcharts, LaTeX math equations, 3D molecular structures, and crisp PDF export.
+        A fast, private Markdown workspace with live preview, Mermaid diagrams, LaTeX math, 3D molecules, and clean PDF export. Nothing you write ever leaves your device.
       </p>
 
       <div class="hero-actions">
-        <a href="mdviewer.html" class="btn btn-primary">
-          <i class="fa-solid fa-eye"></i> Launch MD Viewer
-        </a>
-        <a href="mdeditor.html" class="btn btn-outline">
-          <i class="fa-solid fa-pen-to-square"></i> Open Live Generator
-        </a>
+        <a href="mdviewer.html" class="btn btn-primary">Open the viewer</a>
+        <a href="mdeditor.html" class="btn btn-outline">Open the editor</a>
       </div>
 
       <div class="hero-highlights">
-        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> 100% Client-Side Privacy</div>
-        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Offline PWA Ready</div>
-        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Zero Sign-Up Required</div>
-        <div class="highlight-item"><i class="fa-solid fa-circle-check"></i> Multi-File & Folder Import</div>
+        <div class="highlight-item"><i class="fa-solid fa-check"></i> 100% client-side</div>
+        <div class="highlight-item"><i class="fa-solid fa-check"></i> Works offline</div>
+        <div class="highlight-item"><i class="fa-solid fa-check"></i> No sign-up</div>
+        <div class="highlight-item"><i class="fa-solid fa-check"></i> Folder import</div>
       </div>
     </section>
 
     <!-- Tools Grid Section -->
     <section class="tools-grid-section">
       <div class="section-header">
-        <h2>Choose Your Markdown Workflow</h2>
-        <p>Built for developers, researchers, writers, and students who demand speed and reliability.</p>
+        <h2>Two tools, one workspace</h2>
+        <p>Read and present existing documents in the viewer, or write new ones in the editor and get clean Markdown out.</p>
       </div>
 
       <div class="tools-cards">
         <!-- MD Viewer Card -->
         <article class="app-card">
-          <span class="badge badge-primary app-card-badge">Viewer & Workspace</span>
+          <span class="badge badge-primary app-card-badge">Viewer</span>
           <div class="app-card-icon">
             <i class="fa-solid fa-book-open"></i>
           </div>
-          <h3>Technical MD Viewer</h3>
+          <h3>Markdown Viewer</h3>
           <p>
-            Paste or drag-and-drop `.md` files and whole folders to instantly render rich documentation with search, table of contents, and dark mode.
+            Drop <code>.md</code> files or whole folders and read them rendered, with search across documents, diagrams, math, and one-click export.
           </p>
           <ul class="app-card-features">
-            <li><i class="fa-solid fa-check"></i> Multi-file workspace & folder import</li>
-            <li><i class="fa-solid fa-check"></i> Mermaid.js diagrams & KaTeX equations</li>
-            <li><i class="fa-solid fa-check"></i> 3D Molecular viewer (PDB / MOL)</li>
-            <li><i class="fa-solid fa-check"></i> One-click export to clean PDF & HTML</li>
+            <li><i class="fa-solid fa-check"></i> Multi-file workspace with folder import</li>
+            <li><i class="fa-solid fa-check"></i> Mermaid diagrams and KaTeX equations</li>
+            <li><i class="fa-solid fa-check"></i> 3D molecular viewer for PDB and MOL</li>
+            <li><i class="fa-solid fa-check"></i> Export to PDF or copy as HTML</li>
           </ul>
-          <a href="mdviewer.html" class="btn btn-primary">Open Viewer Workspace &rarr;</a>
+          <a href="mdviewer.html" class="btn btn-primary">Open viewer</a>
         </article>
 
         <!-- MD Editor Card -->
         <article class="app-card">
-          <span class="badge badge-success app-card-badge">Visual WYSIWYG</span>
+          <span class="badge badge-success app-card-badge">Editor</span>
           <div class="app-card-icon">
             <i class="fa-solid fa-pen-nib"></i>
           </div>
-          <h3>Live Markdown Generator</h3>
+          <h3>Markdown Editor</h3>
           <p>
-            Write naturally with a rich-text visual editor that automatically outputs standard GitHub Flavored Markdown in real-time.
+            Write in a visual editor and watch standard GitHub Flavored Markdown appear beside it, ready to copy or download.
           </p>
           <ul class="app-card-features">
-            <li><i class="fa-solid fa-check"></i> Split-pane live dual preview</li>
-            <li><i class="fa-solid fa-check"></i> Rich-text toolbar with hotkeys</li>
-            <li><i class="fa-solid fa-check"></i> Real-time word & character counter</li>
-            <li><i class="fa-solid fa-check"></i> Instant copy and <code>.md</code> file download</li>
+            <li><i class="fa-solid fa-check"></i> Split view with live Markdown output</li>
+            <li><i class="fa-solid fa-check"></i> Formatting toolbar and keyboard shortcuts</li>
+            <li><i class="fa-solid fa-check"></i> Tables, callouts, task lists, footnotes</li>
+            <li><i class="fa-solid fa-check"></i> Copy or download as <code>.md</code></li>
           </ul>
-          <a href="mdeditor.html" class="btn btn-outline">Open Live Generator &rarr;</a>
+          <a href="mdeditor.html" class="btn btn-outline">Open editor</a>
         </article>
       </div>
     </section>
@@ -251,20 +241,18 @@
     <!-- Interactive Live Playground Section -->
     <section class="playground-section">
       <div class="section-header">
-        <h2>Interactive Live Playground</h2>
-        <p>Test MeowMD's rendering speed directly in your browser. Switch presets to explore capabilities.</p>
+        <h2>Try it here</h2>
+        <p>Edit the Markdown on the left and watch it render on the right. Switch presets to see diagrams and math.</p>
       </div>
 
       <div class="playground-box">
         <div class="playground-bar">
           <div class="playground-tabs">
-            <button class="tab-btn active" data-preset="general">General Markdown</button>
-            <button class="tab-btn" data-preset="mermaid">Mermaid Diagram</button>
-            <button class="tab-btn" data-preset="math">LaTeX Math</button>
+            <button class="tab-btn active" data-preset="general">Markdown</button>
+            <button class="tab-btn" data-preset="mermaid">Mermaid</button>
+            <button class="tab-btn" data-preset="math">Math</button>
           </div>
-          <span style="font-size: 0.82rem; font-weight: 700; color: var(--text-muted);">
-            <i class="fa-solid fa-bolt" style="color: var(--primary);"></i> Live Real-Time Rendering
-          </span>
+          <span class="playground-status">Live</span>
         </div>
 
         <div class="playground-grid">
@@ -280,56 +268,56 @@
     <section class="features-grid-section">
       <div class="features-container">
         <div class="section-header">
-          <h2>Engineered for Modern Documentation</h2>
-          <p>Everything you need for clean, structured, and interactive Markdown.</p>
+          <h2>Built for technical writing</h2>
+          <p>Everything a documentation workflow needs, with nothing in the way.</p>
         </div>
 
         <div class="feature-columns">
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-diagram-project"></i></div>
             <div class="feature-text">
-              <h4>Mermaid.js Flowcharts</h4>
-              <p>Turn code blocks into responsive sequence diagrams, flowcharts, Gantt charts, and architecture graphs.</p>
+              <h4>Mermaid diagrams</h4>
+              <p>Fenced code blocks become flowcharts, sequence diagrams, Gantt charts, and architecture graphs.</p>
             </div>
           </div>
 
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-square-root-variable"></i></div>
             <div class="feature-text">
-              <h4>KaTeX Math Rendering</h4>
-              <p>Render complex scientific and mathematical formulas with lightning-fast TeX typesetting.</p>
+              <h4>LaTeX math</h4>
+              <p>Inline and display equations typeset with KaTeX, fast enough to render as you type.</p>
             </div>
           </div>
 
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-dna"></i></div>
             <div class="feature-text">
-              <h4>3D Structural Biology</h4>
-              <p>Visualize PDB molecular structures with interactive 3D WebGL rotation and cartoon styling.</p>
+              <h4>3D molecules</h4>
+              <p>PDB and MOL blocks render as interactive WebGL structures you can rotate and zoom.</p>
             </div>
           </div>
 
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-file-pdf"></i></div>
             <div class="feature-text">
-              <h4>Vector-Grade PDF Export</h4>
-              <p>Export your documents with preserved typography, syntax highlighting, and clean margins.</p>
+              <h4>PDF export</h4>
+              <p>Export any document with its typography, syntax highlighting, and diagrams intact.</p>
             </div>
           </div>
 
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-magnifying-glass"></i></div>
             <div class="feature-text">
-              <h4>Fuzzy Document Search</h4>
-              <p>Instantly search across multi-file repositories and headings using built-in fuzzy indexing.</p>
+              <h4>Workspace search</h4>
+              <p>Fuzzy search across every file in your workspace, by name or by content.</p>
             </div>
           </div>
 
           <div class="feature-item">
             <div class="feature-icon-box"><i class="fa-solid fa-shield-halved"></i></div>
             <div class="feature-text">
-              <h4>Total Data Privacy</h4>
-              <p>Zero telemetry, zero server storage. All rendering and auto-save happens locally on your device.</p>
+              <h4>Private by design</h4>
+              <p>No telemetry and no server. Rendering and auto-save happen entirely on your device.</p>
             </div>
           </div>
         </div>
@@ -339,8 +327,8 @@
     <!-- Markdown Syntax Cheatsheet Section (SEO Query Magnet) -->
     <section class="cheatsheet-section">
       <div class="section-header">
-        <h2>Quick Markdown Syntax Reference</h2>
-        <p>Common formatting cheat sheet for GitHub Flavored Markdown (GFM).</p>
+        <h2>Syntax reference</h2>
+        <p>The GitHub Flavored Markdown you will use most often.</p>
       </div>
 
       <div class="cheatsheet-grid">
@@ -394,8 +382,8 @@ graph LR; A-->B;
     <!-- FAQ Accordion Section -->
     <section class="faq-section">
       <div class="section-header">
-        <h2>Frequently Asked Questions</h2>
-        <p>Everything you need to know about MeowMD tools and privacy.</p>
+        <h2>Questions</h2>
+        <p>Short answers about pricing, privacy, and export.</p>
       </div>
 
       <div class="faq-list">
@@ -444,11 +432,9 @@ graph LR; A-->B;
     <!-- CTA Banner -->
     <section class="cta-banner">
       <div class="cta-box">
-        <h3>Ready for a Smoother Markdown Experience?</h3>
-        <p>Start viewing, editing, and rendering your Markdown files with zero setup.</p>
-        <a href="mdviewer.html" class="btn">
-          <i class="fa-solid fa-rocket"></i> Get Started Free
-        </a>
+        <h3>Start with a file</h3>
+        <p>Open the viewer and drop any Markdown file onto it. No account, no setup.</p>
+        <a href="mdviewer.html" class="btn">Open the viewer</a>
       </div>
     </section>
   </main>
@@ -458,20 +444,17 @@ graph LR; A-->B;
     <div class="footer-inner">
       <div class="footer-brand">
         <h4>
-          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--primary);">
-            <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z"></path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
           MeowMD
         </h4>
-        <p>The privacy-first technical Markdown viewer and live documentation workstation.</p>
+        <p>A private, offline Markdown viewer and editor for technical writing.</p>
       </div>
 
       <div class="footer-col">
         <h5>Tools</h5>
         <ul class="footer-links">
           <li><a href="mdviewer.html">Markdown Viewer</a></li>
-          <li><a href="mdeditor.html">Live Generator</a></li>
+          <li><a href="mdeditor.html">Markdown Editor</a></li>
           <li><a href="sitemap.xml">XML Sitemap</a></li>
         </ul>
       </div>
@@ -495,8 +478,8 @@ graph LR; A-->B;
     </div>
 
     <div class="footer-bottom">
-      <span>&copy; 2026 MeowMD. All rights reserved. Free & Open Source.</span>
-      <span>Engineered with <i class="fa-solid fa-heart" style="color: var(--primary);"></i> for documentation lovers</span>
+      <span>&copy; 2026 MeowMD. Free and open source.</span>
+      <span>Made for people who write documentation</span>
     </div>
   </footer>
 

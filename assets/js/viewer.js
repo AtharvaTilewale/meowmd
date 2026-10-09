@@ -28,7 +28,8 @@ class MeowViewer {
               return `<pre><button class="code-copy-btn" onclick="copyCodeFromPre(this)">Copy</button><code class="hljs language-${lang}">${window.hljs.highlight(str, { language: lang, ignoreIllegals: true }).value}</code></pre>`;
             } catch (__) {}
           }
-          return `<pre><button class="code-copy-btn" onclick="copyCodeFromPre(this)">Copy</button><code>${this.escapeHTML(str)}</code></pre>`;
+          const cls = lang ? ` class="language-${this.escapeHTML(lang)}"` : '';
+          return `<pre><button class="code-copy-btn" onclick="copyCodeFromPre(this)">Copy</button><code${cls}>${this.escapeHTML(str)}</code></pre>`;
         }
       });
 
@@ -52,6 +53,12 @@ class MeowViewer {
     this.storageToggle = document.getElementById('storageToggle');
     this.toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
     this.sidebarToggleTopbarBtn = document.getElementById('sidebarToggleTopbarBtn');
+
+    // Start collapsed on narrow screens so the document is visible first
+    this.isNarrow = () => window.matchMedia('(max-width: 768px)').matches;
+    if (this.sidebar && this.isNarrow()) {
+      this.sidebar.classList.add('collapsed');
+    }
 
     // Sidebar Toggles
     if (this.toggleSidebarBtn) {
@@ -219,46 +226,53 @@ class MeowViewer {
       id: 'demo_welcome',
       name: 'Welcome_to_MeowMD.md',
       path: 'Welcome_to_MeowMD.md',
-      content: `# Welcome to MeowMD Workspace
+      content: `# Welcome to MeowMD
 
-MeowMD is an offline-capable technical Markdown documentation viewer and workstation.
+MeowMD is a private, offline Markdown viewer. Drop any \`.md\` file or folder onto this window to start reading.
 
----
+## Diagrams
 
-### Features and Capabilities
+Fenced \`mermaid\` blocks render as diagrams.
 
-1. **Diagrams and Flowcharts** (Powered by Mermaid):
 \`\`\`mermaid
 graph LR
-    A[Raw Markdown] --> B(Parser Engine)
-    B --> C{Smart Loader}
+    A[Markdown] --> B(Parser)
+    B --> C{Extensions}
     C -->|Math| D[KaTeX]
-    C -->|Flowcharts| E[Mermaid]
-    C -->|Structures| F[3Dmol.js]
-    D --> G[Instant Clean Preview]
+    C -->|Diagrams| E[Mermaid]
+    C -->|Molecules| F[3Dmol]
+    D --> G[Rendered page]
     E --> G
     F --> G
 \`\`\`
 
-2. **LaTeX Math Support**:
-Inline equation: $f(x) = \\frac{1}{\\sigma \\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$
+## Math
 
-Display equation:
+Inline math like $f(x) = \\frac{1}{\\sigma \\sqrt{2\\pi}} e^{-\\frac{1}{2}\\left(\\frac{x-\\mu}{\\sigma}\\right)^2}$ and display equations:
+
 $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\\partial \\mathbf{E}}{\\partial t}$$
 
-3. **Tables and Checklists**:
+## Tables and tasks
+
 | Feature | Details | Status |
 | :--- | :--- | :---: |
-| Offline Ready | Full PWA Service Worker | Yes |
-| Speed | On-demand Lazy Loading | Yes |
-| Privacy | 100% Client-Side | Yes |
+| Offline | Service worker caches the app | Yes |
+| Speed | Heavy libraries load on demand | Yes |
+| Privacy | Everything stays in your browser | Yes |
 
-- [x] High-performance rendering
-- [x] Vector-grade PDF export
-- [x] Multi-file workspace search
+- [x] Render Markdown with diagrams and math
+- [x] Export to PDF
+- [ ] Import your own files
 
----
-*Tip: Drag and drop any Markdown files or folders anywhere onto this screen to start reading.*
+## Code
+
+\`\`\`js
+function render(markdown) {
+  return md.render(markdown); // fast, local, private
+}
+\`\`\`
+
+> Tip: turn on auto-save in the sidebar to keep your workspace between visits.
 `,
       size: 1024,
       lastModified: Date.now()
@@ -291,11 +305,14 @@ $$\\nabla \\times \\mathbf{B} = \\mu_0 \\mathbf{J} + \\mu_0 \\epsilon_0 \\frac{\
         this.activeFileId = file.id;
         this.renderFileList();
         this.renderActiveFile();
+        if (this.isNarrow && this.isNarrow() && this.sidebar) {
+          this.sidebar.classList.add('collapsed');
+        }
       };
 
       li.innerHTML = `
         <div class="file-item-name" title="${file.path}">
-          <i class="fa-regular fa-file-lines" style="color: var(--primary);"></i>
+          <i class="fa-regular fa-file-lines"></i>
           <span>${file.name}</span>
         </div>
         <button class="file-item-delete" title="Delete file" onclick="event.stopPropagation(); window.viewerApp.deleteFile('${file.id}')">

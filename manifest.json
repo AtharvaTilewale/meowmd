@@ -1,16 +1,16 @@
 {
-  "name": "MeowMD - Ultimate Markdown Workspace",
+  "name": "MeowMD - Markdown Viewer and Editor",
   "short_name": "MeowMD",
   "description": "Fast, privacy-first technical Markdown viewer, live editor, and documentation workstation with Mermaid diagrams, LaTeX math, and 3D molecule support.",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#fff9f5",
-  "theme_color": "#fe6b5e",
+  "background_color": "#fafafa",
+  "theme_color": "#fafafa",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>",
-      "sizes": "512x512",
+      "src": "assets/img/icon.svg",
+      "sizes": "any",
       "type": "image/svg+xml"
     }
   ]

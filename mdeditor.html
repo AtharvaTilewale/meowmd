@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -34,11 +34,11 @@
 
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#fe6b5e">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23fe6b5e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z'></path></svg>">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
 
   <!-- Resource Hints -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -46,7 +46,7 @@
   <link rel="preconnect" href="https://cdnjs.cloudflare.com">
 
   <!-- Google Fonts & Icons -->
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- App Stylesheets -->
@@ -74,20 +74,15 @@
     <nav class="navbar" aria-label="Main Navigation">
       <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
         <span class="logo-icon">
-          <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <path
-              d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7 .57 1.07.97 2.3.97 3.65 0 5.64-4.04 10.35-9 10.35S3 19.29 3 13.65c0-1.35.4-2.58.97-3.65 0 0-1.82-6.42-.42-7 1.39-.58 4.64.26 6.42 2.26.65-.17 1.33-.26 2-.26z">
-            </path>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
         </span>
         MeowMD
       </a>
 
       <div class="nav-links">
-        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link">Home</a>
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home">Home</a>
         <a href="mdviewer.html" class="nav-link">MD Viewer</a>
-        <a href="mdeditor.html" class="nav-link active">MD Generator</a>
+        <a href="mdeditor.html" class="nav-link active">MD Editor</a>
         <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme">
           <i class="fa-solid fa-moon"></i>
         </button>
@@ -102,7 +97,7 @@
     <div class="editor-header">
       <div class="editor-title">
         <i class="fa-solid fa-pen-nib" style="color: var(--primary); font-size: 1.25rem;"></i>
-        <h2>Markdown Generator</h2>
+        <h2>Markdown Editor</h2>
       </div>
 
       <!-- View Switcher Controls -->
@@ -120,18 +115,18 @@
 
       <div class="editor-actions">
         <label for="editorFileInput" class="btn btn-outline" title="Import Markdown or Text File">
-          <i class="fa-solid fa-file-import"></i> Import .md
+          <i class="fa-solid fa-arrow-up"></i> <span>Import</span>
         </label>
         <input type="file" id="editorFileInput" accept=".md,.markdown,.txt" />
 
         <button class="btn btn-outline" id="clearEditorBtn" title="Clear Content">
-          <i class="fa-solid fa-trash-can"></i> Clear
+          <i class="fa-regular fa-trash-can"></i> <span>Clear</span>
         </button>
         <button class="btn btn-outline" id="copyMdBtn" title="Copy Markdown to Clipboard">
-          <i class="fa-regular fa-copy"></i> Copy Markdown
+          <i class="fa-regular fa-copy"></i> <span>Copy</span>
         </button>
         <button class="btn btn-primary" id="downloadMdBtn" title="Download .md File">
-          <i class="fa-solid fa-download"></i> Download .md
+          <i class="fa-solid fa-arrow-down"></i> <span>Download .md</span>
         </button>
       </div>
     </div>
@@ -225,15 +220,15 @@
       <!-- Markdown Code Output Pane -->
       <section class="pane" id="mdPane" aria-label="Generated Markdown Output">
         <div class="pane-header">
-          <span><i class="fa-brands fa-markdown"></i> Markdown Output (GFM)</span>
+          <span>Markdown output</span>
           <div class="pane-header-actions">
-            <button class="btn-subtle" id="syncToVisualBtn" title="Parse Markdown back into Visual Editor">
-              <i class="fa-solid fa-rotate"></i> Sync to Visual
+            <button class="btn-subtle" id="syncToVisualBtn" title="Parse Markdown back into the visual editor">
+              <i class="fa-solid fa-rotate"></i> Sync to visual
             </button>
           </div>
         </div>
         <div class="pane-body">
-          <textarea id="markdownOutput" class="markdown-output-area" spellcheck="false" aria-label="Generated Markdown" placeholder="Generated GitHub Flavored Markdown appears here in real time..."></textarea>
+          <textarea id="markdownOutput" class="markdown-output-area" spellcheck="false" aria-label="Generated Markdown" placeholder="Markdown appears here as you write"></textarea>
         </div>
       </section>
 
@@ -247,7 +242,7 @@
         <span id="statLines">0 Lines</span>
       </div>
       <div class="status-indicator">
-        <span><i class="fa-solid fa-bolt" style="color: var(--success);"></i> Live GFM Syncing</span>
+        <span>Syncing</span>
       </div>
     </div>
   </main>
@@ -256,26 +251,26 @@
   <div class="modal-overlay" id="tableModal" role="dialog" aria-modal="true" aria-labelledby="tableModalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="tableModalTitle"><i class="fa-solid fa-table-cells" style="color: var(--primary);"></i> Insert GFM Table</h3>
+        <h3 id="tableModalTitle">Insert table</h3>
         <button class="modal-close-btn" aria-label="Close Table Modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="tableModalForm">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
-              <label for="tableRowsInput">Number of Rows</label>
+              <label for="tableRowsInput">Rows</label>
               <input type="number" id="tableRowsInput" min="1" max="50" value="3" required />
             </div>
             <div class="form-group">
-              <label for="tableColsInput">Number of Columns</label>
+              <label for="tableColsInput">Columns</label>
               <input type="number" id="tableColsInput" min="1" max="20" value="3" required />
             </div>
           </div>
-          <p class="form-hint">Generates standard GitHub Flavored Markdown table syntax.</p>
+          <p class="form-hint">Inserts a GitHub Flavored Markdown table.</p>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Insert Table</button>
+          <button type="submit" class="btn btn-primary">Insert table</button>
         </div>
       </form>
     </div>
@@ -285,7 +280,7 @@
   <div class="modal-overlay" id="alertModal" role="dialog" aria-modal="true" aria-labelledby="alertModalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="alertModalTitle"><i class="fa-solid fa-bell" style="color: var(--primary);"></i> Insert GitHub Callout Alert</h3>
+        <h3 id="alertModalTitle">Insert callout</h3>
         <button class="modal-close-btn" aria-label="Close Alert Modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
@@ -334,23 +329,23 @@
   <div class="modal-overlay" id="linkModal" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="linkModalTitle"><i class="fa-solid fa-link" style="color: var(--primary);"></i> Insert Link</h3>
+        <h3 id="linkModalTitle">Insert link</h3>
         <button class="modal-close-btn" aria-label="Close Link Modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="linkModalForm">
         <div class="modal-body">
           <div class="form-group">
-            <label for="linkTextInput">Display Text</label>
+            <label for="linkTextInput">Text</label>
             <input type="text" id="linkTextInput" placeholder="Link text" required />
           </div>
-          <div class="form-group" style="margin-top: 1rem;">
-            <label for="linkUrlInput">Target URL</label>
+          <div class="form-group">
+            <label for="linkUrlInput">URL</label>
             <input type="url" id="linkUrlInput" placeholder="https://example.com" required />
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Link</button>
+          <button type="submit" class="btn btn-primary">Insert link</button>
         </div>
       </form>
     </div>
@@ -360,23 +355,23 @@
   <div class="modal-overlay" id="imageModal" role="dialog" aria-modal="true" aria-labelledby="imageModalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="imageModalTitle"><i class="fa-solid fa-image" style="color: var(--primary);"></i> Insert Image</h3>
+        <h3 id="imageModalTitle">Insert image</h3>
         <button class="modal-close-btn" aria-label="Close Image Modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="imageModalForm">
         <div class="modal-body">
           <div class="form-group">
-            <label for="imageAltInput">Alt Text / Description</label>
+            <label for="imageAltInput">Alt text</label>
             <input type="text" id="imageAltInput" placeholder="Image description" />
           </div>
-          <div class="form-group" style="margin-top: 1rem;">
+          <div class="form-group">
             <label for="imageUrlInput">Image URL</label>
             <input type="url" id="imageUrlInput" placeholder="https://example.com/image.png" required />
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Image</button>
+          <button type="submit" class="btn btn-primary">Insert image</button>
         </div>
       </form>
     </div>
@@ -386,23 +381,23 @@
   <div class="modal-overlay" id="codeBlockModal" role="dialog" aria-modal="true" aria-labelledby="codeBlockModalTitle">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="codeBlockModalTitle"><i class="fa-solid fa-file-code" style="color: var(--primary);"></i> Insert Code Block</h3>
+        <h3 id="codeBlockModalTitle">Insert code block</h3>
         <button class="modal-close-btn" aria-label="Close Code Block Modal"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <form id="codeBlockModalForm">
         <div class="modal-body">
           <div class="form-group">
-            <label for="codeLangInput">Language (e.g. js, python, html, bash)</label>
+            <label for="codeLangInput">Language</label>
             <input type="text" id="codeLangInput" placeholder="javascript" />
           </div>
-          <div class="form-group" style="margin-top: 1rem;">
-            <label for="codeSnippetInput">Code Snippet</label>
-            <textarea id="codeSnippetInput" rows="5" style="width: 100%; padding: 0.75rem; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); font-family: var(--font-mono); font-size: 0.9rem; background-color: var(--bg-surface); color: var(--text-main);" placeholder="// Paste or type code here..."></textarea>
+          <div class="form-group">
+            <label for="codeSnippetInput">Code</label>
+            <textarea id="codeSnippetInput" rows="5" placeholder="Paste or type code here"></textarea>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
-          <button type="submit" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Insert Code</button>
+          <button type="submit" class="btn btn-primary">Insert code</button>
         </div>
       </form>
     </div>
@@ -411,7 +406,6 @@
   <!-- Performance Optimized Scripts -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it-footnote/3.0.3/markdown-it-footnote.min.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/editor.js"></script>
   <script src="assets/js/sw-register.js"></script>
