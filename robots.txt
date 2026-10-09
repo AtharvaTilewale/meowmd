@@ -1,5 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /sw.js
 
-# Sitemap Location
 Sitemap: https://atharvatilewale.github.io/meowmd/sitemap.xml

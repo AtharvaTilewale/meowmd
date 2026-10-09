@@ -5,32 +5,43 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Primary SEO Meta Tags -->
-  <title>MeowMD Viewer — Offline Technical Markdown Documentation Workspace</title>
-  <meta name="title" content="MeowMD Viewer — Offline Technical Markdown Documentation Workspace">
-  <meta name="description"
-    content="Upload or paste Markdown files and folders to view beautifully rendered HTML with Mermaid charts, LaTeX math, 3D molecules, and PDF export. 100% offline & private.">
-  <meta name="keywords"
-    content="markdown viewer, offline markdown reader, technical documentation viewer, render markdown online, markdown mermaid, markdown latex math, markdown 3dmol">
-  <meta name="author" content="MeowMD">
-  <meta name="robots" content="index, follow">
+  <!-- Primary SEO -->
+  <title>Online Markdown Viewer: Open .md Files, Export to PDF | MeowMD</title>
+  <meta name="title" content="Online Markdown Viewer: Open .md Files, Export to PDF | MeowMD">
+  <meta name="description" content="Open .md files or folders and read them rendered: GitHub Markdown, Mermaid diagrams, LaTeX math, search and one-click PDF export. No upload, works offline.">
+  <meta name="keywords" content="markdown viewer, md file viewer, open md file, view markdown online, markdown reader, markdown to pdf converter, readme viewer, markdown folder viewer, obsidian vault viewer, mermaid markdown viewer, latex markdown viewer, offline markdown viewer, markdown to html">
+  <meta name="author" content="Atharva Tilewale">
+  <meta name="application-name" content="MeowMD">
+  <meta name="apple-mobile-web-app-title" content="MeowMD">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <meta name="format-detection" content="telephone=no">
   <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/mdviewer.html">
+  <link rel="alternate" hreflang="en" href="https://atharvatilewale.github.io/meowmd/mdviewer.html">
+  <link rel="alternate" hreflang="x-default" href="https://atharvatilewale.github.io/meowmd/mdviewer.html">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
 
-  <!-- Open Graph / Facebook -->
+  <!-- Open Graph -->
   <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MeowMD">
+  <meta property="og:locale" content="en_US">
   <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/mdviewer.html">
-  <meta property="og:title" content="MeowMD Viewer — Technical Markdown Workspace">
-  <meta property="og:description"
-    content="Render and explore Markdown documentation with diagrams, math, 3D molecule support, and multi-file search.">
+  <meta property="og:title" content="MeowMD Viewer: Open and Read Markdown Files Online">
+  <meta property="og:description" content="Drop .md files or folders and read them rendered with diagrams, math and code. Export to PDF. Private and offline.">
   <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:image:secure_url" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="MeowMD: Markdown, rendered properly. Free private Markdown viewer and editor.">
 
-  <!-- Twitter / X Card -->
+  <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:url" content="https://atharvatilewale.github.io/meowmd/mdviewer.html">
-  <meta name="twitter:title" content="MeowMD Viewer — Technical Markdown Workspace">
-  <meta name="twitter:description"
-    content="Render and explore Markdown documentation with diagrams, math, and multi-file search.">
+  <meta name="twitter:title" content="MeowMD Viewer: Open and Read Markdown Files Online">
+  <meta name="twitter:description" content="Drop .md files or folders and read them rendered with diagrams, math and code. Export to PDF. Private and offline.">
   <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta name="twitter:image:alt" content="MeowMD: Markdown, rendered properly.">
 
   <!-- PWA Manifest & Theme -->
   <link rel="manifest" href="manifest.json">
@@ -53,17 +64,133 @@
   <link rel="stylesheet" href="assets/css/core.css">
   <link rel="stylesheet" href="assets/css/viewer.css">
 
-  <!-- JSON-LD Structured Data -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "MeowMD Viewer",
-    "url": "https://atharvatilewale.github.io/meowmd/mdviewer.html",
-    "applicationCategory": "DeveloperApplication",
-    "operatingSystem": "All",
-    "description": "A local, offline-capable technical markdown viewer with structural biology, charts, math, and diagram plotting support."
-  }
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://atharvatilewale.github.io/meowmd/#website",
+      "url": "https://atharvatilewale.github.io/meowmd/",
+      "name": "MeowMD",
+      "description": "Free, private, offline Markdown viewer and editor with live preview, Mermaid diagrams, LaTeX math and PDF export.",
+      "inLanguage": "en",
+      "publisher": {
+        "@type": "Person",
+        "name": "Atharva Tilewale"
+      }
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "MeowMD Markdown Viewer",
+      "alternateName": [
+        "MeowMD Markdown Viewer",
+        "MeowMD Markdown Editor",
+        "Meow MD"
+      ],
+      "applicationCategory": [
+        "DeveloperApplication",
+        "UtilitiesApplication",
+        "Productivity"
+      ],
+      "applicationSubCategory": "Markdown editor and viewer",
+      "operatingSystem": "Any (web browser: Chrome, Edge, Firefox, Safari, Android, iOS)",
+      "browserRequirements": "Requires JavaScript. Works offline after first load.",
+      "isAccessibleForFree": true,
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "availability": "https://schema.org/InStock"
+      },
+      "license": "https://github.com/AtharvaTilewale/meowmd/blob/main/LICENSE",
+      "author": {
+        "@type": "Person",
+        "name": "Atharva Tilewale",
+        "url": "https://github.com/AtharvaTilewale"
+      },
+      "publisher": {
+        "@type": "Person",
+        "name": "Atharva Tilewale",
+        "url": "https://github.com/AtharvaTilewale"
+      },
+      "sameAs": [
+        "https://github.com/AtharvaTilewale/meowmd"
+      ],
+      "codeRepository": "https://github.com/AtharvaTilewale/meowmd",
+      "image": "https://atharvatilewale.github.io/meowmd/og-image.png",
+      "screenshot": "https://atharvatilewale.github.io/meowmd/og-image.png",
+      "inLanguage": "en",
+      "audience": [
+        {
+          "@type": "Audience",
+          "audienceType": "Software developers"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Students"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Researchers and academics"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Technical writers"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Note-takers and Obsidian users"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Open source maintainers writing READMEs"
+        },
+        {
+          "@type": "Audience",
+          "audienceType": "Bloggers and content creators"
+        }
+      ],
+      "datePublished": "2026-08-21",
+      "dateModified": "2026-10-09",
+      "@id": "https://atharvatilewale.github.io/meowmd/mdviewer.html#app",
+      "url": "https://atharvatilewale.github.io/meowmd/mdviewer.html",
+      "featureList": [
+        "Live Markdown preview with GitHub Flavored Markdown (GFM)",
+        "Visual WYSIWYG editor that outputs clean Markdown",
+        "Mermaid flowcharts, sequence diagrams and Gantt charts",
+        "LaTeX and KaTeX math equations",
+        "GitHub tables, task lists, callouts, footnotes and collapsible sections",
+        "Syntax highlighted code blocks",
+        "3D molecular structure viewer for PDB and MOL files",
+        "Export Markdown to PDF and HTML",
+        "Open .md files and whole folders, with fuzzy search across documents",
+        "Works offline as a Progressive Web App",
+        "100% client-side: no upload, no account, no tracking",
+        "Dark mode"
+      ],
+      "description": "A private, offline Markdown viewer. Open .md files and folders, read them rendered with Mermaid diagrams, LaTeX math, tables and code, search across documents, and export to PDF."
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "Home",
+          "item": "https://atharvatilewale.github.io/meowmd/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "Markdown Viewer",
+          "item": "https://atharvatilewale.github.io/meowmd/mdviewer.html"
+        }
+      ]
+    }
+  ]
+}
   </script>
 </head>
 
