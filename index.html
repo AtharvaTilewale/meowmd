@@ -171,6 +171,15 @@
       "Two-way live sync between the visual editor and Markdown source",
       "Open and save Markdown files on disk, with drafts auto-saved locally",
       "Copy as rich text for Google Docs, Gmail, Notion and Word",
+      "Paste any Markdown or AI chat transcript to open it instantly",
+      "Self-contained share links that carry the whole note",
+      "Open whole GitHub repositories and documentation folders",
+      "Present any document as slides",
+      "Render Jupyter notebooks, CSV files and JSON chart blocks",
+      "Export to Word (.docx), PDF and HTML",
+      "Compare two documents side by side",
+      "Templates for READMEs, changelogs, ADRs, pull requests, lab reports, meeting notes and resumes",
+      "Slash commands and table of contents insertion in the editor",
         "Works offline as a Progressive Web App",
         "100% client-side: no upload, no account, no tracking",
         "Dark mode"
@@ -308,6 +317,7 @@
       <div class="hero-actions">
         <a href="mdviewer.html" class="btn btn-primary">Open the viewer</a>
         <a href="mdeditor.html" class="btn btn-outline">Open the editor</a>
+        <a href="mdeditor.html?template=readme" class="btn btn-outline">Start from a template</a>
       </div>
 
       <div class="hero-highlights">
@@ -337,10 +347,10 @@
             Drop <code>.md</code> files, whole folders, or paste a GitHub link and read it rendered, with an outline, search, diagrams, math, and one-click export.
           </p>
           <ul class="app-card-features">
-            <li><i class="fa-solid fa-check"></i> Open files, folders, or any GitHub URL</li>
-            <li><i class="fa-solid fa-check"></i> Document outline and search across files</li>
-            <li><i class="fa-solid fa-check"></i> Mermaid diagrams, KaTeX math, 3D molecules</li>
-            <li><i class="fa-solid fa-check"></i> Export to PDF or HTML, copy as rich text</li>
+            <li><i class="fa-solid fa-check"></i> Open files, folders, GitHub repos, notebooks, CSV</li>
+            <li><i class="fa-solid fa-check"></i> Outline, search, side-by-side compare, slides mode</li>
+            <li><i class="fa-solid fa-check"></i> Mermaid diagrams, KaTeX math, charts, 3D molecules</li>
+            <li><i class="fa-solid fa-check"></i> Export to PDF, Word or HTML, copy as rich text</li>
           </ul>
           <a href="mdviewer.html" class="btn btn-primary">Open viewer</a>
         </article>
@@ -359,7 +369,7 @@
             <li><i class="fa-solid fa-check"></i> Two-way live sync between visual and Markdown</li>
             <li><i class="fa-solid fa-check"></i> Open and save <code>.md</code> files on your disk</li>
             <li><i class="fa-solid fa-check"></i> Drafts auto-saved, restored when you return</li>
-            <li><i class="fa-solid fa-check"></i> Tables, callouts, task lists, footnotes</li>
+            <li><i class="fa-solid fa-check"></i> Templates, slash commands, table of contents</li>
           </ul>
           <a href="mdeditor.html" class="btn btn-outline">Open editor</a>
         </article>
@@ -429,7 +439,7 @@
             <div class="feature-icon-box"><i class="fa-solid fa-file-pdf"></i></div>
             <div class="feature-text">
               <h4>PDF export</h4>
-              <p>Export to PDF or a standalone HTML file, or copy as rich text straight into Docs, Gmail, or Word.</p>
+              <p>Export to PDF, Word or a standalone HTML file, or copy as rich text straight into Docs and Gmail.</p>
             </div>
           </div>
 
@@ -437,7 +447,7 @@
             <div class="feature-icon-box"><i class="fa-solid fa-magnifying-glass"></i></div>
             <div class="feature-text">
               <h4>Outline and search</h4>
-              <p>A live heading outline for every document, plus fuzzy search across all files in your workspace.</p>
+              <p>A live heading outline, fuzzy search across every file, and a side-by-side diff of any two documents.</p>
             </div>
           </div>
 
@@ -456,7 +466,7 @@
     <section class="cheatsheet-section">
       <div class="section-header">
         <h2>Syntax reference</h2>
-        <p>The GitHub Flavored Markdown you will use most often.</p>
+        <p>The GitHub Flavored Markdown you will use most often. <a href="markdown-cheat-sheet.html">See the full cheat sheet.</a></p>
       </div>
 
       <div class="cheatsheet-grid">
@@ -612,20 +622,21 @@ graph LR; A-->B;
       </div>
 
       <div class="footer-col">
-        <h5>Tools</h5>
+        <h5>Apps</h5>
         <ul class="footer-links">
           <li><a href="mdviewer.html">Markdown Viewer</a></li>
           <li><a href="mdeditor.html">Markdown Editor</a></li>
-          <li><a href="sitemap.xml">XML Sitemap</a></li>
+          <li><a href="mdeditor.html?template=readme">README Template</a></li>
         </ul>
       </div>
 
       <div class="footer-col">
-        <h5>Features</h5>
+        <h5>Tools</h5>
         <ul class="footer-links">
-          <li><a href="mdviewer.html">Mermaid Diagrams</a></li>
-          <li><a href="mdviewer.html">LaTeX Math Rendering</a></li>
-          <li><a href="mdviewer.html">PDF Export</a></li>
+          <li><a href="markdown-table-generator.html">Table Generator</a></li>
+          <li><a href="html-to-markdown.html">HTML to Markdown</a></li>
+          <li><a href="markdown-cheat-sheet.html">Cheat Sheet</a></li>
+          <li><a href="open-in-meowmd.html">Bookmarklet &amp; Extension</a></li>
         </ul>
       </div>
 
@@ -633,7 +644,7 @@ graph LR; A-->B;
         <h5>Resources</h5>
         <ul class="footer-links">
           <li><a href="https://github.com/AtharvaTilewale/meowmd" target="_blank" rel="noopener">GitHub Repository</a></li>
-          <li><a href="robots.txt">Robots.txt</a></li>
+          <li><a href="sitemap.xml">Sitemap</a></li>
         </ul>
       </div>
     </div>

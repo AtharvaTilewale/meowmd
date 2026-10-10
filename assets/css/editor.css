@@ -549,6 +549,79 @@
 .modal-footer .btn { padding: 0.5rem 0.9rem; font-size: 0.85rem; }
 .modal-footer .btn-primary i { display: none; }
 
+/* Templates */
+.modal-card.modal-wide { max-width: 760px; }
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 0.6rem;
+}
+
+.template-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  padding: 0.9rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--bg-surface);
+  text-align: left;
+  transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.template-card:hover { border-color: var(--border-strong); background-color: var(--bg-hover); }
+.template-card i { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 0.2rem; }
+.template-card strong { font-size: 0.88rem; font-weight: 600; color: var(--text-main); }
+.template-card span { font-size: 0.76rem; color: var(--text-muted); line-height: 1.45; }
+
+/* Slash command menu */
+.slash-menu {
+  position: fixed;
+  z-index: 1200;
+  width: 300px;
+  max-height: 340px;
+  overflow-y: auto;
+  background-color: var(--bg-surface-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 0.3rem;
+}
+
+.slash-menu[hidden] { display: none; }
+
+.slash-item {
+  display: grid;
+  grid-template-columns: 22px 1fr;
+  grid-template-rows: auto auto;
+  column-gap: 0.6rem;
+  align-items: center;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  text-align: left;
+  color: var(--text-main);
+}
+
+.slash-item i { grid-row: 1 / span 2; color: var(--text-muted); font-size: 0.85rem; text-align: center; }
+.slash-item span { font-size: 0.85rem; font-weight: 500; }
+.slash-item small { font-size: 0.72rem; color: var(--text-muted); }
+.slash-item:hover, .slash-item.active { background-color: var(--bg-hover); }
+
+/* Table of contents block */
+.visual-editor .toc-block {
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  background-color: var(--bg-surface-subtle);
+}
+
+.visual-editor .toc-block p { margin-bottom: 0.35rem; }
+.visual-editor .toc-block ul { margin-bottom: 0; }
+
 /* Alert picker */
 .alert-grid { display: flex; flex-direction: column; gap: 0.4rem; }
 

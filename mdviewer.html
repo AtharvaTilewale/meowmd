@@ -170,6 +170,15 @@
       "Two-way live sync between the visual editor and Markdown source",
       "Open and save Markdown files on disk, with drafts auto-saved locally",
       "Copy as rich text for Google Docs, Gmail, Notion and Word",
+      "Paste any Markdown or AI chat transcript to open it instantly",
+      "Self-contained share links that carry the whole note",
+      "Open whole GitHub repositories and documentation folders",
+      "Present any document as slides",
+      "Render Jupyter notebooks, CSV files and JSON chart blocks",
+      "Export to Word (.docx), PDF and HTML",
+      "Compare two documents side by side",
+      "Templates for READMEs, changelogs, ADRs, pull requests, lab reports, meeting notes and resumes",
+      "Slash commands and table of contents insertion in the editor",
         "Works offline as a Progressive Web App",
         "100% client-side: no upload, no account, no tracking",
         "Dark mode"
@@ -248,7 +257,7 @@
           <button class="btn btn-danger" id="clearAllBtn" title="Clear Workspace" aria-label="Clear Workspace">
             <i class="fa-solid fa-trash-can"></i>
           </button>
-          <input type="file" id="fileInput" accept=".md,.markdown,.txt" multiple />
+          <input type="file" id="fileInput" accept=".md,.markdown,.txt,.ipynb,.csv,.tsv" multiple />
           <input type="file" id="folderInput" webkitdirectory directory multiple />
         </div>
 
@@ -302,8 +311,11 @@
               </button>
               <button class="menu-item" id="copyRawMdBtn" role="menuitem"><span>Markdown source</span></button>
               <button class="menu-item" id="copyHtmlBtn" role="menuitem"><span>HTML</span></button>
+              <button class="menu-item" id="copyHashLinkBtn" role="menuitem">
+                <span>Self-contained link</span><small>The whole note travels in the link, nothing hosted</small>
+              </button>
               <button class="menu-item" id="copyLinkBtn" role="menuitem" hidden>
-                <span>Share link</span><small>Opens this document in MeowMD</small>
+                <span>Source link</span><small>Opens the original URL in MeowMD</small>
               </button>
             </div>
           </div>
@@ -313,10 +325,17 @@
             </button>
             <div class="menu-list" role="menu">
               <button class="menu-item" id="exportPdfBtn" role="menuitem"><span>PDF</span></button>
+              <button class="menu-item" id="exportDocxBtn" role="menuitem"><span>Word (.docx)</span><small>Headings, lists, tables, code, images</small></button>
               <button class="menu-item" id="exportHtmlBtn" role="menuitem"><span>HTML file</span><small>Standalone page with styles</small></button>
               <button class="menu-item" id="printDocBtn" role="menuitem"><span>Print</span></button>
             </div>
           </div>
+          <button class="btn-icon" id="presentBtn" title="Present as slides (split on --- or headings)" aria-label="Present as slides">
+            <i class="fa-solid fa-play"></i>
+          </button>
+          <button class="btn-icon" id="diffBtn" title="Compare two documents" aria-label="Compare two documents">
+            <i class="fa-solid fa-code-compare"></i>
+          </button>
           <button class="btn-icon" id="fullScreenBtn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
             <i class="fa-solid fa-expand"></i>
           </button>
@@ -334,12 +353,30 @@
   <div class="modal-overlay" id="urlModal" role="dialog" aria-modal="true" aria-labelledby="urlModalTitle">
     <div class="modal-content modal-left">
       <h3 id="urlModalTitle">Open from URL</h3>
-      <p>Paste a link to a public Markdown file. GitHub file pages and Gists are converted to their raw form automatically.</p>
+      <p>Paste a link to a public Markdown file, a Jupyter notebook, a Gist, or a whole GitHub repository or folder. Every Markdown file in a repository is loaded into the workspace.</p>
       <form id="urlModalForm">
-        <input type="url" id="urlInput" class="url-input" placeholder="https://github.com/user/repo/blob/main/README.md" required autocomplete="off" spellcheck="false">
+        <input type="url" id="urlInput" class="url-input" placeholder="https://github.com/user/repo" required autocomplete="off" spellcheck="false">
         <div class="modal-actions">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
           <button type="submit" class="btn btn-primary">Open</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Compare documents -->
+  <div class="modal-overlay" id="diffModal" role="dialog" aria-modal="true" aria-labelledby="diffModalTitle">
+    <div class="modal-content modal-left">
+      <h3 id="diffModalTitle">Compare two documents</h3>
+      <p>Lines are matched side by side. Removed lines show on the left, added lines on the right.</p>
+      <form id="diffModalForm">
+        <label class="diff-label" for="diffA">Original</label>
+        <select id="diffA" class="url-input"></select>
+        <label class="diff-label" for="diffB">Changed</label>
+        <select id="diffB" class="url-input"></select>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Compare</button>
         </div>
       </form>
     </div>
@@ -354,6 +391,7 @@
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/lazy-loader.js" defer></script>
   <script src="assets/js/viewer.js" defer></script>
+  <script src="assets/js/viewer-extras.js" defer></script>
   <script src="assets/js/sw-register.js" defer></script>
 </body>
 

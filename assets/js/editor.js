@@ -31,6 +31,7 @@ class MeowEditor {
     this.updateStats();
     this.setupScrollSync();
     this.updateSaveState();
+    if (this.initExtras) this.initExtras();
   }
 
   initParsers() {
@@ -470,6 +471,7 @@ function formatMarkdown(doc) {
     if (this.visualEditor) {
       this.visualEditor.addEventListener('input', function () {
         if (self.isSyncing) return;
+        if (self.updateSlashMenu) self.updateSlashMenu();
         self.normalizeEditorDom();
         self.syncVisualToMarkdown();
         self.updateStats();
@@ -576,6 +578,8 @@ function formatMarkdown(doc) {
   }
 
   handleEditorKeydown(e) {
+    if (this.handleSlashKeydown && this.handleSlashKeydown(e)) return;
+
     // Enter on an empty task item leaves the list, like a normal list item would
     if (e.key === 'Enter' && !e.shiftKey) {
       var taskLi = this.closestInEditor('li.task-list-item');

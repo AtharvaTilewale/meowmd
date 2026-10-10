@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Open in MeowMD",
+  "version": "1.0.0",
+  "description": "Open Markdown files, GitHub READMEs, Gists and whole repositories in the MeowMD viewer with one click.",
+  "homepage_url": "https://atharvatilewale.github.io/meowmd/open-in-meowmd.html",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
+  "permissions": [
+    "contextMenus",
+    "activeTab"
+  ],
+  "action": {
+    "default_title": "Open this page in MeowMD",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  }
+}

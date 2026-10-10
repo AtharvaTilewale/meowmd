@@ -13,5 +13,41 @@
       "sizes": "any",
       "type": "image/svg+xml"
     }
+  ],
+  "file_handlers": [
+    {
+      "action": "./mdviewer.html",
+      "accept": {
+        "text/markdown": [
+          ".md",
+          ".markdown"
+        ],
+        "text/plain": [
+          ".txt"
+        ],
+        "application/x-ipynb+json": [
+          ".ipynb"
+        ],
+        "text/csv": [
+          ".csv",
+          ".tsv"
+        ]
+      }
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "shortcuts": [
+    {
+      "name": "Markdown Viewer",
+      "url": "./mdviewer.html",
+      "description": "Open and read Markdown files"
+    },
+    {
+      "name": "Markdown Editor",
+      "url": "./mdeditor.html",
+      "description": "Write Markdown visually"
+    }
   ]
 }

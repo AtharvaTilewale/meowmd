@@ -11,12 +11,14 @@ class MeowViewer {
     this.fuse = null;
     // Read the share-link parameter before any render can rewrite the address bar
     try { this.pendingUrl = new URLSearchParams(window.location.search).get('url') || ''; } catch (e) { this.pendingUrl = ''; }
+    this.pendingHash = window.location.hash || '';
 
     this.initMarkdownParser();
     this.bindDOM();
     this.loadPersistedFiles();
     this.setupDragAndDrop();
     this.handleUrlParam();
+    if (this.initExtras) this.initExtras();
   }
 
   initMarkdownParser() {
@@ -305,15 +307,26 @@ class MeowViewer {
   }
 
   async openFromUrl(raw) {
+    const repo = this.parseRepoUrl ? this.parseRepoUrl(raw) : null;
+    if (repo) {
+      try { await this.openRepo(repo); } catch (err) { console.error(err); showToast(err.message || 'Could not open that repository', 'danger', 5000); }
+      return;
+    }
     const url = this.normalizeSourceUrl(raw);
     if (!url) return;
     showToast('Fetching document', 'info', 1500);
     try {
       const res = await fetch(url, { mode: 'cors' });
       if (!res.ok) throw new Error('HTTP ' + res.status);
-      const text = await res.text();
+      let text = await res.text();
       let name = decodeURIComponent((url.split('#')[0].split('?')[0].split('/').pop() || '').trim()) || 'document.md';
-      if (!/\.(md|markdown|txt)$/i.test(name)) name += '.md';
+      let kind;
+      if (/\.ipynb$/i.test(name) && this.notebookToMarkdown) {
+        text = this.notebookToMarkdown(JSON.parse(text));
+        kind = 'notebook';
+      } else if (!/\.(md|markdown|txt)$/i.test(name)) {
+        name += '.md';
+      }
 
       const existing = this.files.find((f) => f.sourceUrl === url);
       if (existing) {
@@ -323,7 +336,7 @@ class MeowViewer {
       } else {
         const file = {
           id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
-          name, path: url, sourceUrl: url, content: text, size: text.length, lastModified: Date.now()
+          name, path: url, sourceUrl: url, content: text, kind, size: text.length, lastModified: Date.now()
         };
         this.files = [file, ...this.files];
         this.activeFileId = file.id;
@@ -424,14 +437,24 @@ class MeowViewer {
     const newFiles = [];
     for (let i = 0; i < fileList.length; i++) {
       const file = fileList[i];
-      if (file.name.endsWith('.md') || file.name.endsWith('.markdown') || file.name.endsWith('.txt')) {
+      const lower = file.name.toLowerCase();
+      if (/\.(md|markdown|txt|ipynb|csv|tsv)$/.test(lower)) {
         try {
-          const content = await file.text();
+          let content = await file.text();
+          let kind;
+          if (lower.endsWith('.ipynb') && this.notebookToMarkdown) {
+            content = this.notebookToMarkdown(JSON.parse(content));
+            kind = 'notebook';
+          } else if (/\.(csv|tsv)$/.test(lower) && this.csvToMarkdownTable) {
+            content = '# ' + file.name + '\n\n' + this.csvToMarkdownTable(content);
+            kind = 'csv';
+          }
           newFiles.push({
             id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
             name: file.name,
             path: file.webkitRelativePath || file.name,
             content: content,
+            kind: kind,
             size: file.size,
             lastModified: file.lastModified || Date.now()
           });
@@ -575,7 +598,7 @@ function render(markdown) {
 
       li.innerHTML = `
         <div class="file-item-name" title="${file.path}">
-          <i class="${file.sourceUrl ? 'fa-solid fa-link' : 'fa-regular fa-file-lines'}"></i>
+          <i class="${file.kind === 'notebook' ? 'fa-solid fa-book' : file.kind === 'chat' ? 'fa-regular fa-comments' : file.kind === 'csv' ? 'fa-solid fa-table' : file.sourceUrl ? 'fa-solid fa-link' : 'fa-regular fa-file-lines'}"></i>
           <span>${file.name}</span>
         </div>
         <button class="file-item-delete" title="Delete file" onclick="event.stopPropagation(); window.viewerApp.deleteFile('${file.id}')">
@@ -616,7 +639,7 @@ function render(markdown) {
         <div class="empty-state">
           <div class="empty-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
           <h3>No Document Selected</h3>
-          <p>Import a Markdown file or folder from the sidebar, or drop a file anywhere on screen.</p>
+          <p>Import a file or folder from the sidebar, drop files anywhere, paste Markdown with Ctrl+V, or open a GitHub URL.</p>
           <label for="fileInput" class="btn btn-primary"><i class="fa-solid fa-file-import"></i> Import Document</label>
         </div>
       `;
@@ -634,11 +657,12 @@ function render(markdown) {
     `;
 
     // Render Markdown
+    const source = this.sourceForRender ? this.sourceForRender(file) : file.content;
     let html = '';
     if (this.md) {
-      html = this.md.render(file.content);
+      html = this.md.render(source);
     } else {
-      html = `<pre>${this.escapeHTML(file.content)}</pre>`;
+      html = `<pre>${this.escapeHTML(source)}</pre>`;
     }
 
     // Sanitize with DOMPurify if present
@@ -660,25 +684,31 @@ function render(markdown) {
     this.syncAddressBar(file);
 
     // Process Smart Extensions On-Demand (Lazy Loading)
-    await this.processSmartExtensions(file.content);
+    await this.processSmartExtensions(source);
     this.updateActiveHeading();
   }
 
-  async processSmartExtensions(raw) {
-    if (!window.LazyEngines) return;
+  async processSmartExtensions(raw, root) {
+    root = root || this.contentEl;
+    if (!window.LazyEngines || !root) return;
+
+    // 0. Tables from CSV fences, charts from chart fences
+    if (this.renderDataBlocks && (raw.includes('```csv') || raw.includes('```tsv') || raw.includes('```chart'))) {
+      try { await this.renderDataBlocks(root); } catch (err) { console.error('Data block render error:', err); }
+    }
 
     // 1. Check for Mermaid Diagrams
     if (raw.includes('```mermaid')) {
       try {
         const mermaid = await window.LazyEngines.ensureMermaid();
-        const codeNodes = this.contentEl.querySelectorAll('pre code.language-mermaid');
+        const codeNodes = root.querySelectorAll('pre code.language-mermaid');
         codeNodes.forEach(node => {
           const wrapper = document.createElement('div');
           wrapper.className = 'mermaid-wrapper';
           wrapper.innerHTML = `<div class="mermaid">${node.textContent}</div>`;
           node.closest('pre').replaceWith(wrapper);
         });
-        mermaid.run({ querySelector: '.mermaid' });
+        mermaid.run({ nodes: root.querySelectorAll('.mermaid') });
       } catch (err) {
         console.error('Mermaid render error:', err);
       }
@@ -689,7 +719,7 @@ function render(markdown) {
       try {
         await window.LazyEngines.ensureKaTeX();
         if (window.renderMathInElement) {
-          window.renderMathInElement(this.contentEl, {
+          window.renderMathInElement(root, {
             delimiters: [
               { left: '$$', right: '$$', display: true },
               { left: '$', right: '$', display: false }
@@ -706,7 +736,7 @@ function render(markdown) {
     if (raw.includes('```pdb') || raw.includes('```mol')) {
       try {
         const $3Dmol = await window.LazyEngines.ensure3Dmol();
-        const pdbNodes = this.contentEl.querySelectorAll('pre code.language-pdb, pre code.language-mol');
+        const pdbNodes = root.querySelectorAll('pre code.language-pdb, pre code.language-mol');
         pdbNodes.forEach((node, idx) => {
           const container = document.createElement('div');
           container.id = 'viewer_mol_' + idx;

@@ -170,6 +170,15 @@
       "Two-way live sync between the visual editor and Markdown source",
       "Open and save Markdown files on disk, with drafts auto-saved locally",
       "Copy as rich text for Google Docs, Gmail, Notion and Word",
+      "Paste any Markdown or AI chat transcript to open it instantly",
+      "Self-contained share links that carry the whole note",
+      "Open whole GitHub repositories and documentation folders",
+      "Present any document as slides",
+      "Render Jupyter notebooks, CSV files and JSON chart blocks",
+      "Export to Word (.docx), PDF and HTML",
+      "Compare two documents side by side",
+      "Templates for READMEs, changelogs, ADRs, pull requests, lab reports, meeting notes and resumes",
+      "Slash commands and table of contents insertion in the editor",
         "Works offline as a Progressive Web App",
         "100% client-side: no upload, no account, no tracking",
         "Dark mode"
@@ -245,6 +254,9 @@
       </div>
 
       <div class="editor-actions">
+        <button class="btn btn-outline" id="templatesBtn" title="Start from a template">
+          <i class="fa-regular fa-clone"></i> <span>Templates</span>
+        </button>
         <button class="btn btn-outline" id="clearEditorBtn" title="New document">
           <i class="fa-regular fa-file"></i> <span>New</span>
         </button>
@@ -374,6 +386,20 @@
       </div>
     </div>
   </main>
+
+  <!-- Modal: Templates -->
+  <div class="modal-overlay" id="templatesModal" role="dialog" aria-modal="true" aria-labelledby="templatesModalTitle">
+    <div class="modal-card modal-wide">
+      <div class="modal-header">
+        <h3 id="templatesModalTitle">Start from a template</h3>
+        <button class="modal-close-btn" aria-label="Close Templates"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p class="form-hint" style="margin: 0 0 1rem;">Pick a starting point. Type <code>/</code> in the editor at any time for quick inserts.</p>
+        <div class="template-grid" id="templateGrid"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- Modal: Insert Table -->
   <div class="modal-overlay" id="tableModal" role="dialog" aria-modal="true" aria-labelledby="tableModalTitle">
@@ -536,6 +562,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
   <script src="assets/js/common.js"></script>
   <script src="assets/js/editor.js"></script>
+  <script src="assets/js/templates.js"></script>
+  <script src="assets/js/editor-extras.js"></script>
   <script src="assets/js/sw-register.js"></script>
 </body>
 

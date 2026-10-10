@@ -3,12 +3,16 @@
  * High-performance offline caching and instant page loads.
  */
 
-const CACHE_NAME = 'meowmd-v8';
+const CACHE_NAME = 'meowmd-v11';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
   './mdviewer.html',
   './mdeditor.html',
+  './markdown-table-generator.html',
+  './html-to-markdown.html',
+  './markdown-cheat-sheet.html',
+  './open-in-meowmd.html',
   './manifest.json',
   './assets/img/logo.svg',
   './assets/img/icon.svg',
@@ -16,11 +20,15 @@ const PRECACHE_ASSETS = [
   './assets/css/landing.css',
   './assets/css/viewer.css',
   './assets/css/editor.css',
+  './assets/css/tools.css',
   './assets/js/common.js',
   './assets/js/lazy-loader.js',
   './assets/js/landing.js',
   './assets/js/viewer.js',
+  './assets/js/viewer-extras.js',
   './assets/js/editor.js',
+  './assets/js/templates.js',
+  './assets/js/editor-extras.js',
   './assets/js/sw-register.js'
 ];
 

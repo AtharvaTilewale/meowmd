@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Markdown Table Generator: Build GitHub Tables Visually | MeowMD</title>
+  <meta name="title" content="Markdown Table Generator: Build GitHub Tables Visually | MeowMD">
+  <meta name="description" content="Create Markdown tables without counting pipes. Type into a grid, set column alignment, paste CSV, and copy clean GitHub Flavored Markdown. Free, runs in your browser.">
+  <meta name="keywords" content="markdown table generator, markdown table maker, csv to markdown table, github markdown table, markdown table alignment, create markdown table online, table to markdown">
+  <meta name="author" content="Atharva Tilewale">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/markdown-table-generator.html">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MeowMD">
+  <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/markdown-table-generator.html">
+  <meta property="og:title" content="Markdown Table Generator | MeowMD">
+  <meta property="og:description" content="Type into a grid, set alignment, paste CSV, copy clean Markdown. Free and private.">
+  <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Markdown Table Generator | MeowMD">
+  <meta name="twitter:description" content="Type into a grid, set alignment, paste CSV, copy clean Markdown. Free and private.">
+  <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/tools.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "Markdown Table Generator",
+        "url": "https://atharvatilewale.github.io/meowmd/markdown-table-generator.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any (web browser)",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Build GitHub Flavored Markdown tables visually: edit cells in a grid, choose column alignment, import CSV, and copy the Markdown.",
+        "publisher": { "@type": "Person", "name": "Atharva Tilewale" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://atharvatilewale.github.io/meowmd/" },
+          { "@type": "ListItem", "position": 2, "name": "Markdown Table Generator", "item": "https://atharvatilewale.github.io/meowmd/markdown-table-generator.html" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "How do I align columns in a Markdown table?", "acceptedAnswer": { "@type": "Answer", "text": "Use colons in the separator row: :--- for left, :---: for center and ---: for right. The generator sets these for you when you pick an alignment for a column." } },
+          { "@type": "Question", "name": "How do I put a pipe character inside a table cell?", "acceptedAnswer": { "@type": "Answer", "text": "Escape it as \\|. The generator escapes pipes automatically when it builds the Markdown." } },
+          { "@type": "Question", "name": "Can I convert CSV to a Markdown table?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. Open Import CSV, paste comma, tab or semicolon separated data, and the grid fills in. The first row becomes the header." } }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        MeowMD
+      </a>
+      <div class="nav-links">
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home">Home</a>
+        <a href="mdviewer.html" class="nav-link">MD Viewer</a>
+        <a href="mdeditor.html" class="nav-link">MD Editor</a>
+        <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-hero">
+      <h1>Markdown table generator</h1>
+      <p>Type into the grid, pick an alignment per column, or paste CSV. The Markdown on the right updates as you go and pastes cleanly into GitHub, GitLab, Obsidian, Notion and READMEs.</p>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-bar">
+        <label class="tool-label">Rows <input type="number" id="tgRows" class="tool-input" min="1" max="200" value="3"></label>
+        <label class="tool-label">Columns <input type="number" id="tgCols" class="tool-input" min="1" max="30" value="3"></label>
+        <button class="btn btn-outline" id="tgAddRow"><i class="fa-solid fa-plus"></i> Row</button>
+        <button class="btn btn-outline" id="tgAddCol"><i class="fa-solid fa-plus"></i> Column</button>
+        <button class="btn btn-outline" id="tgImportToggle"><i class="fa-solid fa-file-csv"></i> Import CSV</button>
+        <span class="spacer"></span>
+        <label class="tool-check"><input type="checkbox" id="tgPad" checked> Align pipes</label>
+        <button class="btn btn-outline" id="tgClear"><i class="fa-regular fa-trash-can"></i> Clear</button>
+      </div>
+
+      <div class="tg-import" id="tgImport" hidden>
+        <textarea id="tgCsv" placeholder="name,role,team&#10;Ada,Engineer,Core&#10;Grace,Architect,Platform"></textarea>
+        <div class="row">
+          <button class="btn btn-primary" id="tgImportBtn">Fill grid from CSV</button>
+          <span class="tool-label">Comma, tab or semicolon separated. First row is the header.</span>
+        </div>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-pane">
+          <div class="tool-pane-head"><span>Grid</span><span>Tab moves between cells</span></div>
+          <div class="tg-wrap"><table class="tg-grid" id="tgGrid" aria-label="Table editor"></table></div>
+        </div>
+        <div class="tool-pane">
+          <div class="tool-pane-head">
+            <span>Markdown</span>
+            <span style="display:flex;gap:.35rem">
+              <button class="btn btn-outline" id="tgCopy"><i class="fa-regular fa-copy"></i> Copy</button>
+              <button class="btn btn-outline" id="tgOpenEditor" title="Continue in the MeowMD editor"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open in editor</button>
+            </span>
+          </div>
+          <textarea id="tgOutput" class="tool-textarea" spellcheck="false" aria-label="Generated Markdown"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <section class="tool-section">
+      <h2>How Markdown tables work</h2>
+      <p>A GitHub Flavored Markdown table is a header row, a separator row, and any number of body rows. Cells are separated with pipes. The separator row decides alignment: <code>:---</code> left, <code>:---:</code> center, <code>---:</code> right.</p>
+      <pre><code>| Name  | Role      | Score |
+| :---- | :-------: | ----: |
+| Ada   | Engineer  |    98 |
+| Grace | Architect |    95 |</code></pre>
+      <h3>Tips</h3>
+      <ul>
+        <li>Pipes inside a cell must be escaped as <code>\|</code>. The generator does this for you.</li>
+        <li>Line breaks inside cells are not supported in GFM. Use <code>&lt;br&gt;</code> if you must.</li>
+        <li>Padding the pipes is optional. Renderers ignore the extra spaces, but aligned source is easier to review in pull requests.</li>
+        <li>Need more than a table? Open the result in the <a href="mdeditor.html">MeowMD editor</a>, or read any <code>.md</code> file in the <a href="mdviewer.html">viewer</a>.</li>
+      </ul>
+      <div class="tool-links">
+        <a class="btn btn-outline" href="html-to-markdown.html">HTML to Markdown converter</a>
+        <a class="btn btn-outline" href="markdown-cheat-sheet.html">Markdown cheat sheet</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>MeowMD</h4>
+        <p>A private, offline Markdown viewer and editor for technical writing.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Apps</h5>
+        <ul class="footer-links">
+          <li><a href="mdviewer.html">Markdown Viewer</a></li>
+          <li><a href="mdeditor.html">Markdown Editor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Tools</h5>
+        <ul class="footer-links">
+          <li><a href="markdown-table-generator.html">Table Generator</a></li>
+          <li><a href="html-to-markdown.html">HTML to Markdown</a></li>
+          <li><a href="markdown-cheat-sheet.html">Cheat Sheet</a></li>
+          <li><a href="open-in-meowmd.html">Bookmarklet &amp; Extension</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="https://github.com/AtharvaTilewale/meowmd" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="sitemap.xml">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 MeowMD. Free and open source.</span>
+      <span>Made for people who write documentation</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/common.js"></script>
+  <script>
+  (function () {
+    const gridEl = document.getElementById('tgGrid');
+    const out = document.getElementById('tgOutput');
+    const rowsIn = document.getElementById('tgRows');
+    const colsIn = document.getElementById('tgCols');
+    const padIn = document.getElementById('tgPad');
+    let data = [['Name', 'Role', 'Score'], ['Ada', 'Engineer', '98'], ['Grace', 'Architect', '95']];
+    let aligns = ['left', 'center', 'right'];
+
+    function resize(r, c) {
+      r = Math.max(1, Math.min(200, r | 0)); c = Math.max(1, Math.min(30, c | 0));
+      while (data.length < r) data.push(Array(data[0] ? data[0].length : c).fill(''));
+      data.length = r;
+      data.forEach((row) => { while (row.length < c) row.push(''); row.length = c; });
+      while (aligns.length < c) aligns.push('left');
+      aligns.length = c;
+      rowsIn.value = r; colsIn.value = c;
+      render();
+    }
+
+    function render() {
+      const cols = data[0].length;
+      let html = '<thead><tr><th class="tg-rowhandle"></th>' + data[0].map((v, c) =>
+        '<th><div class="tg-cell" contenteditable="true" data-r="0" data-c="' + c + '">' + esc(v) + '</div>' +
+        '<div class="tg-align">' + ['left', 'center', 'right'].map((a) => '<button type="button" data-c="' + c + '" data-a="' + a + '" class="' + (aligns[c] === a ? 'active' : '') + '" title="Align ' + a + '"><i class="fa-solid fa-align-' + a + '"></i></button>').join('') + '</div></th>'
+      ).join('') + '</tr></thead><tbody>';
+      for (let r = 1; r < data.length; r++) {
+        html += '<tr><td class="tg-rowhandle"><button type="button" data-del="' + r + '" title="Delete row"><i class="fa-solid fa-xmark"></i></button></td>' +
+          data[r].map((v, c) => '<td><div class="tg-cell" contenteditable="true" data-r="' + r + '" data-c="' + c + '">' + esc(v) + '</div></td>').join('') + '</tr>';
+      }
+      html += '</tbody>';
+      gridEl.innerHTML = html;
+      update();
+    }
+
+    function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
+    function cell(s) { return String(s || '').replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').trim(); }
+
+    function update() {
+      const cols = data[0].length;
+      const rows = data.map((row) => row.map(cell));
+      const pad = padIn.checked;
+      const widths = Array.from({ length: cols }, (_, c) => Math.max(3, ...rows.map((r) => (r[c] || '').length)));
+      const fmt = (v, c) => {
+        if (!pad) return v;
+        const w = widths[c];
+        if (aligns[c] === 'right') return v.padStart(w);
+        if (aligns[c] === 'center') { const total = w - v.length; const l = Math.floor(total / 2); return ' '.repeat(l) + v + ' '.repeat(total - l); }
+        return v.padEnd(w);
+      };
+      const line = (r) => '| ' + r.map((v, c) => fmt(v, c)).join(' | ') + ' |';
+      const sep = '| ' + aligns.map((a, c) => {
+        const w = pad ? widths[c] : 3;
+        if (a === 'center') return ':' + '-'.repeat(Math.max(1, w - 2)) + ':';
+        if (a === 'right') return '-'.repeat(Math.max(1, w - 1)) + ':';
+        return ':' + '-'.repeat(Math.max(1, w - 1));
+      }).join(' | ') + ' |';
+      out.value = [line(rows[0]), sep].concat(rows.slice(1).map(line)).join('\n');
+    }
+
+    gridEl.addEventListener('input', (e) => {
+      const el = e.target.closest('.tg-cell');
+      if (!el) return;
+      data[+el.dataset.r][+el.dataset.c] = el.innerText;
+      update();
+    });
+    gridEl.addEventListener('click', (e) => {
+      const ab = e.target.closest('.tg-align button');
+      if (ab) { aligns[+ab.dataset.c] = ab.dataset.a; render(); return; }
+      const del = e.target.closest('[data-del]');
+      if (del && data.length > 2) { data.splice(+del.dataset.del, 1); resize(data.length, data[0].length); }
+    });
+    gridEl.addEventListener('keydown', (e) => {
+      const el = e.target.closest('.tg-cell');
+      if (!el) return;
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const cells = Array.from(gridEl.querySelectorAll('.tg-cell'));
+        let i = cells.indexOf(el) + (e.shiftKey ? -1 : 1);
+        if (i >= cells.length) { data.push(Array(data[0].length).fill('')); resize(data.length, data[0].length); i = cells.length; }
+        const next = gridEl.querySelectorAll('.tg-cell')[Math.max(0, i)];
+        if (next) { next.focus(); const r = document.createRange(); r.selectNodeContents(next); r.collapse(false); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+      } else if (e.key === 'Enter') {
+        e.preventDefault();
+        const r = +el.dataset.r + 1;
+        if (r >= data.length) { data.push(Array(data[0].length).fill('')); resize(data.length, data[0].length); }
+        const next = gridEl.querySelector('.tg-cell[data-r="' + r + '"][data-c="' + el.dataset.c + '"]');
+        if (next) next.focus();
+      }
+    });
+    gridEl.addEventListener('paste', (e) => {
+      const el = e.target.closest('.tg-cell');
+      if (!el) return;
+      const text = e.clipboardData.getData('text/plain');
+      if (!/[\t\n]/.test(text)) return;
+      e.preventDefault();
+      const rows = text.replace(/\r/g, '').split('\n').filter((l) => l.length).map((l) => l.split('\t'));
+      const r0 = +el.dataset.r, c0 = +el.dataset.c;
+      const needR = r0 + rows.length, needC = c0 + Math.max(...rows.map((r) => r.length));
+      resize(Math.max(data.length, needR), Math.max(data[0].length, needC));
+      rows.forEach((row, i) => row.forEach((v, j) => { data[r0 + i][c0 + j] = v; }));
+      render();
+    });
+
+    rowsIn.onchange = () => resize(+rowsIn.value, data[0].length);
+    colsIn.onchange = () => resize(data.length, +colsIn.value);
+    document.getElementById('tgAddRow').onclick = () => resize(data.length + 1, data[0].length);
+    document.getElementById('tgAddCol').onclick = () => resize(data.length, data[0].length + 1);
+    document.getElementById('tgClear').onclick = () => { data = data.map((row) => row.map(() => '')); render(); };
+    padIn.onchange = update;
+    document.getElementById('tgImportToggle').onclick = () => { const box = document.getElementById('tgImport'); box.hidden = !box.hidden; if (!box.hidden) document.getElementById('tgCsv').focus(); };
+    document.getElementById('tgImportBtn').onclick = () => {
+      const text = document.getElementById('tgCsv').value.replace(/^﻿/, '');
+      if (!text.trim()) return;
+      const first = text.split('\n', 1)[0];
+      const delim = [',', '\t', ';'].sort((a, b) => first.split(b).length - first.split(a).length)[0];
+      const rows = [];
+      let row = [], cur = '', q = false;
+      for (let i = 0; i < text.length; i++) {
+        const ch = text[i];
+        if (q) { if (ch === '"') { if (text[i + 1] === '"') { cur += '"'; i++; } else q = false; } else cur += ch; }
+        else if (ch === '"') q = true;
+        else if (ch === delim) { row.push(cur); cur = ''; }
+        else if (ch === '\n' || ch === '\r') { if (ch === '\r' && text[i + 1] === '\n') i++; row.push(cur); cur = ''; if (row.some((v) => v !== '')) rows.push(row); row = []; }
+        else cur += ch;
+      }
+      row.push(cur); if (row.some((v) => v !== '')) rows.push(row);
+      if (!rows.length) return;
+      const cols = Math.max(...rows.map((r) => r.length));
+      data = rows.map((r) => { const copy = r.slice(0, cols); while (copy.length < cols) copy.push(''); return copy; });
+      if (data.length < 2) data.push(Array(cols).fill(''));
+      aligns = Array(cols).fill('left');
+      resize(data.length, cols);
+      document.getElementById('tgImport').hidden = true;
+      showToast('Imported ' + (rows.length - 1) + ' rows', 'success');
+    };
+    document.getElementById('tgCopy').onclick = () => copyToClipboard(out.value, 'Markdown table copied');
+    document.getElementById('tgOpenEditor').onclick = () => {
+      try { localStorage.setItem('meowmd_editor_draft', JSON.stringify({ md: out.value + '\n', html: '', fileName: '', lastSavedContent: null, savedAt: Date.now() })); } catch (e) {}
+      window.location.href = 'mdeditor.html';
+    };
+
+    render();
+  })();
+  </script>
+  <script src="assets/js/sw-register.js"></script>
+</body>
+
+</html>

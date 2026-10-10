@@ -83,8 +83,15 @@ const LazyEngines = {
   // Charts
   async ensureChartJS() {
     if (window.Chart) return window.Chart;
-    await loadScript('https://cdn.jsdelivr.net/npm/chart.js');
+    await loadScript('https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.js');
     return window.Chart;
+  },
+
+  // Word documents (docx.js)
+  async ensureDocx() {
+    if (window.docx) return window.docx;
+    await loadScript('https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js');
+    return window.docx;
   },
 
   // Search Engine (Fuse.js)

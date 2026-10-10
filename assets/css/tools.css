@@ -1,0 +1,185 @@
+/* ==========================================================================
+   MeowMD standalone tool pages (tools.css)
+   ========================================================================== */
+
+.tool-page { max-width: var(--container); margin: 0 auto; padding: 3rem 1.5rem 5rem; width: 100%; }
+
+.tool-hero { max-width: 720px; margin-bottom: 2rem; }
+.tool-hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.6rem);
+  font-weight: 600;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+  color: var(--text-main);
+  margin-bottom: 0.75rem;
+}
+.tool-hero p { color: var(--text-muted); font-size: 1.05rem; line-height: 1.55; }
+
+.tool-card {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.tool-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+.tool-bar .spacer { flex: 1; }
+.tool-bar .btn { padding: 0.4rem 0.7rem; font-size: 0.8rem; }
+
+.tool-grid { display: grid; grid-template-columns: 1fr 1fr; min-height: 420px; }
+.tool-pane { display: flex; flex-direction: column; min-width: 0; }
+.tool-pane + .tool-pane { border-left: 1px solid var(--border-light); }
+
+.tool-pane-head {
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0 0.9rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-light);
+}
+.tool-pane-head .btn { padding: 0.25rem 0.55rem; font-size: 0.72rem; }
+
+.tool-tabs { display: flex; gap: 0.15rem; }
+.tool-tab {
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.tool-tab.active { background-color: var(--bg-surface-subtle); color: var(--text-main); }
+
+.tool-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 380px;
+  border: none;
+  resize: vertical;
+  padding: 1rem 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.84rem;
+  line-height: 1.65;
+  background-color: var(--bg-code);
+  color: var(--text-main);
+  tab-size: 2;
+}
+.tool-textarea::placeholder { color: var(--text-light); }
+
+.tool-editable {
+  flex: 1;
+  min-height: 380px;
+  padding: 1rem 1.1rem;
+  overflow: auto;
+  outline: none;
+  color: var(--text-body);
+}
+.tool-editable:empty::before { content: attr(data-placeholder); color: var(--text-light); }
+.tool-editable[hidden] { display: none; }
+
+.tool-input, .tool-select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  font-size: 0.85rem;
+}
+.tool-input[type="number"] { width: 72px; }
+.tool-label { font-size: 0.8rem; color: var(--text-muted); display: inline-flex; align-items: center; gap: 0.4rem; }
+.tool-check { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.8rem; color: var(--text-muted); }
+.tool-check input { accent-color: var(--ink); }
+
+.tool-section { max-width: 760px; margin: 3.5rem 0 0; }
+.tool-section h2 { font-size: 1.35rem; font-weight: 600; letter-spacing: -0.02em; margin-bottom: 0.75rem; color: var(--text-main); }
+.tool-section h3 { font-size: 1rem; font-weight: 600; margin: 1.5rem 0 0.4rem; color: var(--text-main); }
+.tool-section p, .tool-section li { color: var(--text-body); font-size: 0.95rem; line-height: 1.65; }
+.tool-section p { margin-bottom: 0.75rem; }
+.tool-section ul, .tool-section ol { padding-left: 1.4rem; margin: 0.5rem 0 0.75rem; }
+.tool-section code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background-color: var(--bg-surface-subtle);
+  border: 1px solid var(--border-light);
+  padding: 0.1em 0.35em;
+  border-radius: 4px;
+}
+.tool-section pre {
+  background-color: var(--bg-code);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  overflow: auto;
+  font-size: 0.84rem;
+  line-height: 1.6;
+  margin: 0.75rem 0 1rem;
+}
+.tool-section pre code { background: none; border: none; padding: 0; font-size: 1em; }
+.tool-section a { color: var(--text-main); text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
+.tool-links { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem; }
+
+/* Table generator grid */
+.tg-wrap { padding: 1rem; overflow: auto; flex: 1; }
+.tg-grid { border-collapse: collapse; width: 100%; font-size: 0.875rem; }
+.tg-grid th, .tg-grid td { border: 1px solid var(--border-color); padding: 0; min-width: 110px; vertical-align: top; }
+.tg-grid th { background-color: var(--bg-surface-subtle); font-weight: 500; }
+.tg-cell { display: block; min-height: 2.2rem; padding: 0.45rem 0.6rem; outline: none; white-space: pre-wrap; }
+.tg-cell:focus { background-color: var(--bg-hover); }
+.tg-align { display: flex; gap: 2px; padding: 0.2rem; border-top: 1px dashed var(--border-light); }
+.tg-align button { flex: 1; padding: 0.15rem; font-size: 0.68rem; border-radius: 3px; color: var(--text-light); }
+.tg-align button.active { background-color: var(--bg-surface); color: var(--text-main); box-shadow: inset 0 0 0 1px var(--border-color); }
+.tg-rowhandle { width: 28px; min-width: 28px !important; text-align: center; color: var(--text-light); font-size: 0.7rem; background-color: var(--bg-surface-subtle); }
+.tg-rowhandle button { color: var(--text-light); padding: 0.4rem 0.2rem; font-size: 0.7rem; }
+.tg-rowhandle button:hover { color: var(--danger); }
+.tg-import { padding: 0.75rem; border-bottom: 1px solid var(--border-light); background-color: var(--bg-surface-subtle); }
+.tg-import textarea { width: 100%; min-height: 90px; font-family: var(--font-mono); font-size: 0.8rem; padding: 0.6rem; border: 1px solid var(--border-color); border-radius: var(--radius-sm); background-color: var(--bg-surface); color: var(--text-main); resize: vertical; }
+.tg-import .row { display: flex; gap: 0.5rem; margin-top: 0.5rem; align-items: center; }
+
+/* Cheat sheet */
+.cheat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1rem; }
+.cheat-block { border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-surface); }
+.cheat-block h3 { margin: 0; padding: 0.6rem 0.9rem; font-size: 0.85rem; font-weight: 600; border-bottom: 1px solid var(--border-light); color: var(--text-main); }
+.cheat-block pre { margin: 0; border: none; border-radius: 0; background-color: var(--bg-code); padding: 0.9rem; font-size: 0.8rem; white-space: pre-wrap; line-height: 1.6; }
+.cheat-block .preview { padding: 0.9rem; border-top: 1px solid var(--border-light); font-size: 0.9rem; }
+.cheat-block .preview > :last-child { margin-bottom: 0; }
+.cheat-block .preview table { font-size: 0.85rem; }
+.cheat-toc { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.5rem; }
+.cheat-toc a { font-size: 0.78rem; padding: 0.25rem 0.6rem; border: 1px solid var(--border-color); border-radius: var(--radius-full); color: var(--text-muted); }
+.cheat-toc a:hover { color: var(--text-main); border-color: var(--border-strong); }
+
+/* Bookmarklet */
+.bookmarklet {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  color: var(--text-main);
+  background-color: var(--bg-surface);
+  cursor: grab;
+  text-decoration: none !important;
+}
+.steps { counter-reset: step; list-style: none; padding-left: 0; }
+.steps li { position: relative; padding-left: 2.2rem; margin-bottom: 0.6rem; }
+.steps li::before { counter-increment: step; content: counter(step); position: absolute; left: 0; top: 0.1rem; width: 1.5rem; height: 1.5rem; border-radius: 50%; background-color: var(--ink); color: var(--on-ink); font-size: 0.75rem; font-weight: 600; display: flex; align-items: center; justify-content: center; }
+
+@media (max-width: 768px) {
+  .tool-page { padding: 2rem 1rem 4rem; }
+  .tool-grid { grid-template-columns: 1fr; }
+  .tool-pane + .tool-pane { border-left: none; border-top: 1px solid var(--border-light); }
+  .tool-textarea, .tool-editable { min-height: 240px; }
+}

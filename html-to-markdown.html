@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>HTML to Markdown Converter: Paste Rich Text or HTML, Get Markdown | MeowMD</title>
+  <meta name="title" content="HTML to Markdown Converter: Paste Rich Text or HTML, Get Markdown | MeowMD">
+  <meta name="description" content="Convert HTML or copied rich text from Google Docs, Word, Notion and web pages into clean GitHub Flavored Markdown with tables, lists, code and links. Free, private, in your browser.">
+  <meta name="keywords" content="html to markdown, html to markdown converter, convert html to markdown online, rich text to markdown, google docs to markdown, word to markdown, notion to markdown, webpage to markdown">
+  <meta name="author" content="Atharva Tilewale">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/html-to-markdown.html">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MeowMD">
+  <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/html-to-markdown.html">
+  <meta property="og:title" content="HTML to Markdown Converter | MeowMD">
+  <meta property="og:description" content="Paste HTML or rich text from Docs, Word, Notion or any page and get clean Markdown. Free and private.">
+  <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="HTML to Markdown Converter | MeowMD">
+  <meta name="twitter:description" content="Paste HTML or rich text from Docs, Word, Notion or any page and get clean Markdown. Free and private.">
+  <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/tools.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "name": "HTML to Markdown Converter",
+        "url": "https://atharvatilewale.github.io/meowmd/html-to-markdown.html",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "Any (web browser)",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "Convert HTML source or pasted rich text into GitHub Flavored Markdown, including tables, task lists, strikethrough, code blocks and links. Runs entirely in the browser.",
+        "publisher": { "@type": "Person", "name": "Atharva Tilewale" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://atharvatilewale.github.io/meowmd/" },
+          { "@type": "ListItem", "position": 2, "name": "HTML to Markdown", "item": "https://atharvatilewale.github.io/meowmd/html-to-markdown.html" }
+        ]
+      },
+      {
+        "@type": "FAQPage",
+        "mainEntity": [
+          { "@type": "Question", "name": "How do I convert a Google Doc or Word document to Markdown?", "acceptedAnswer": { "@type": "Answer", "text": "Select the content in Docs or Word, copy it, switch to the Paste rich text tab and paste. Headings, bold, italics, lists, links and tables are converted to Markdown immediately." } },
+          { "@type": "Question", "name": "Is my content uploaded anywhere?", "acceptedAnswer": { "@type": "Answer", "text": "No. The conversion runs in your browser with the open source Turndown library. Nothing is sent to a server." } },
+          { "@type": "Question", "name": "Are tables converted?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. HTML tables become GitHub Flavored Markdown tables, along with strikethrough and task lists." } }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        MeowMD
+      </a>
+      <div class="nav-links">
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home">Home</a>
+        <a href="mdviewer.html" class="nav-link">MD Viewer</a>
+        <a href="mdeditor.html" class="nav-link">MD Editor</a>
+        <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-hero">
+      <h1>HTML to Markdown converter</h1>
+      <p>Paste HTML source, or paste formatted text straight from Google Docs, Word, Notion, Confluence or a web page. You get clean GitHub Flavored Markdown with headings, lists, links, code and tables.</p>
+    </div>
+
+    <div class="tool-card">
+      <div class="tool-bar">
+        <div class="tool-tabs" role="tablist">
+          <button class="tool-tab active" data-mode="rich" role="tab">Paste rich text</button>
+          <button class="tool-tab" data-mode="html" role="tab">HTML source</button>
+        </div>
+        <span class="spacer"></span>
+        <label class="tool-label">Bullets
+          <select id="h2mBullet" class="tool-select"><option value="-">-</option><option value="*">*</option><option value="+">+</option></select>
+        </label>
+        <label class="tool-label">Emphasis
+          <select id="h2mEm" class="tool-select"><option value="*">*italic*</option><option value="_">_italic_</option></select>
+        </label>
+        <button class="btn btn-outline" id="h2mClear"><i class="fa-regular fa-trash-can"></i> Clear</button>
+      </div>
+
+      <div class="tool-grid">
+        <div class="tool-pane">
+          <div class="tool-pane-head"><span id="h2mInLabel">Rich text (paste here)</span><button class="btn btn-outline" id="h2mSample">Load sample</button></div>
+          <div id="h2mRich" class="tool-editable" contenteditable="true" data-placeholder="Copy from Docs, Word, Notion or a web page and paste here"></div>
+          <textarea id="h2mHtml" class="tool-textarea" spellcheck="false" placeholder="<h1>Title</h1>&#10;<p>Paste <strong>HTML</strong> here</p>" hidden></textarea>
+        </div>
+        <div class="tool-pane">
+          <div class="tool-pane-head">
+            <span>Markdown</span>
+            <span style="display:flex;gap:.35rem">
+              <button class="btn btn-outline" id="h2mCopy"><i class="fa-regular fa-copy"></i> Copy</button>
+              <button class="btn btn-outline" id="h2mDownload"><i class="fa-solid fa-arrow-down"></i> .md</button>
+              <button class="btn btn-outline" id="h2mOpenEditor"><i class="fa-solid fa-arrow-up-right-from-square"></i> Open in editor</button>
+            </span>
+          </div>
+          <textarea id="h2mOut" class="tool-textarea" spellcheck="false" aria-label="Markdown output" placeholder="Markdown appears here"></textarea>
+        </div>
+      </div>
+    </div>
+
+    <section class="tool-section">
+      <h2>What gets converted</h2>
+      <ul>
+        <li>Headings, paragraphs, bold, italic, strikethrough, inline code and links</li>
+        <li>Bulleted, numbered and task lists, including nesting</li>
+        <li>Tables as GitHub Flavored Markdown tables</li>
+        <li>Code blocks with the language when the source marks it</li>
+        <li>Images as <code>![alt](src)</code> and blockquotes as <code>&gt;</code></li>
+      </ul>
+      <p>Layout markup such as wrappers, inline styles, fonts and colours is dropped, which is usually what you want when moving content into a README, a wiki or a static site.</p>
+      <h3>Common workflows</h3>
+      <ul>
+        <li><strong>Google Docs to Markdown:</strong> select all, copy, paste into the rich text tab.</li>
+        <li><strong>Web page to Markdown:</strong> select the article text in the browser and paste, or view source and paste the HTML.</li>
+        <li><strong>Notion or Confluence export:</strong> paste the HTML export file contents into the HTML source tab.</li>
+      </ul>
+      <p>Need to go the other way? Write in the <a href="mdeditor.html">MeowMD editor</a> and use Copy HTML, or read a Markdown file in the <a href="mdviewer.html">viewer</a> and copy it as rich text.</p>
+      <div class="tool-links">
+        <a class="btn btn-outline" href="markdown-table-generator.html">Markdown table generator</a>
+        <a class="btn btn-outline" href="markdown-cheat-sheet.html">Markdown cheat sheet</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>MeowMD</h4>
+        <p>A private, offline Markdown viewer and editor for technical writing.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Apps</h5>
+        <ul class="footer-links">
+          <li><a href="mdviewer.html">Markdown Viewer</a></li>
+          <li><a href="mdeditor.html">Markdown Editor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Tools</h5>
+        <ul class="footer-links">
+          <li><a href="markdown-table-generator.html">Table Generator</a></li>
+          <li><a href="html-to-markdown.html">HTML to Markdown</a></li>
+          <li><a href="markdown-cheat-sheet.html">Cheat Sheet</a></li>
+          <li><a href="open-in-meowmd.html">Bookmarklet &amp; Extension</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="https://github.com/AtharvaTilewale/meowmd" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="sitemap.xml">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 MeowMD. Free and open source.</span>
+      <span>Made for people who write documentation</span>
+    </div>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/turndown/7.1.2/turndown.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/turndown-plugin-gfm@1.0.2/dist/turndown-plugin-gfm.js"></script>
+  <script src="assets/js/common.js"></script>
+  <script>
+  (function () {
+    const rich = document.getElementById('h2mRich');
+    const htmlIn = document.getElementById('h2mHtml');
+    const out = document.getElementById('h2mOut');
+    const bulletSel = document.getElementById('h2mBullet');
+    const emSel = document.getElementById('h2mEm');
+    let mode = 'rich';
+
+    function makeService() {
+      const td = new TurndownService({ headingStyle: 'atx', codeBlockStyle: 'fenced', hr: '---', bulletListMarker: bulletSel.value, emDelimiter: emSel.value, strongDelimiter: '**' });
+      if (window.turndownPluginGfm) td.use(window.turndownPluginGfm.gfm);
+      td.addRule('strike', { filter: ['del', 's', 'strike'], replacement: (c) => c.trim() ? '~~' + c.trim() + '~~' : '' });
+      td.addRule('underline', { filter: ['u', 'ins'], replacement: (c) => c.trim() ? '<u>' + c.trim() + '</u>' : '' });
+      td.addRule('kbdmarksubsup', { filter: ['kbd', 'mark', 'sub', 'sup'], replacement: (c, n) => c.trim() ? '<' + n.nodeName.toLowerCase() + '>' + c.trim() + '</' + n.nodeName.toLowerCase() + '>' : '' });
+      td.addRule('fencedWithLang', {
+        filter: (n) => n.nodeName === 'PRE',
+        replacement: (c, n) => {
+          const code = n.querySelector('code') || n;
+          const m = (code.className || '').match(/language-(\w+)/);
+          return '\n\n```' + (m ? m[1] : '') + '\n' + code.textContent.replace(/\n$/, '') + '\n```\n\n';
+        }
+      });
+      td.remove(['style', 'script', 'noscript', 'meta', 'link', 'title']);
+      return td;
+    }
+
+    function clean(md) {
+      return md
+        .replace(/ /g, ' ')
+        .replace(/^[ \t]+$/gm, '')
+        .replace(/\\\[( |x|X)\\\]/g, '[$1]')
+        .replace(/\n{3,}/g, '\n\n')
+        .trim() + '\n';
+    }
+
+    function convert() {
+      try {
+        const html = mode === 'rich' ? rich.innerHTML : htmlIn.value;
+        if (!html.trim()) { out.value = ''; return; }
+        out.value = clean(makeService().turndown(html));
+      } catch (e) {
+        out.value = 'Conversion error: ' + e.message;
+      }
+    }
+
+    rich.addEventListener('input', convert);
+    rich.addEventListener('paste', () => setTimeout(convert, 0));
+    htmlIn.addEventListener('input', convert);
+    bulletSel.onchange = convert;
+    emSel.onchange = convert;
+
+    document.querySelectorAll('.tool-tab').forEach((tab) => {
+      tab.onclick = () => {
+        mode = tab.dataset.mode;
+        document.querySelectorAll('.tool-tab').forEach((t) => t.classList.toggle('active', t === tab));
+        rich.hidden = mode !== 'rich';
+        htmlIn.hidden = mode !== 'html';
+        document.getElementById('h2mInLabel').textContent = mode === 'rich' ? 'Rich text (paste here)' : 'HTML source';
+        convert();
+        (mode === 'rich' ? rich : htmlIn).focus();
+      };
+    });
+
+    document.getElementById('h2mClear').onclick = () => { rich.innerHTML = ''; htmlIn.value = ''; out.value = ''; };
+    document.getElementById('h2mSample').onclick = () => {
+      const sample = '<h1>Quarterly update</h1><p>Revenue grew <strong>12%</strong> and churn fell to <em>2.1%</em>. See the <a href="https://example.com/report">full report</a>.</p><h2>Highlights</h2><ul><li>Launched the new onboarding flow</li><li>Hired <del>three</del> four engineers</li></ul><table><thead><tr><th>Region</th><th>Revenue</th></tr></thead><tbody><tr><td>EMEA</td><td>$1.2M</td></tr><tr><td>APAC</td><td>$0.9M</td></tr></tbody></table><pre><code class="language-js">const total = regions.reduce((s, r) => s + r.revenue, 0);</code></pre><blockquote>Momentum is good. Keep shipping.</blockquote>';
+      if (mode === 'rich') rich.innerHTML = sample; else htmlIn.value = sample.replace(/></g, '>\n<');
+      convert();
+    };
+    document.getElementById('h2mCopy').onclick = () => copyToClipboard(out.value, 'Markdown copied');
+    document.getElementById('h2mDownload').onclick = () => {
+      if (!out.value.trim()) return;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob([out.value], { type: 'text/markdown;charset=utf-8' }));
+      a.download = 'converted.md';
+      document.body.appendChild(a); a.click(); a.remove();
+    };
+    document.getElementById('h2mOpenEditor').onclick = () => {
+      if (!out.value.trim()) return;
+      try { localStorage.setItem('meowmd_editor_draft', JSON.stringify({ md: out.value, html: '', fileName: '', lastSavedContent: null, savedAt: Date.now() })); } catch (e) {}
+      window.location.href = 'mdeditor.html';
+    };
+  })();
+  </script>
+  <script src="assets/js/sw-register.js"></script>
+</body>
+
+</html>

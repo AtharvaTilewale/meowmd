@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Open in MeowMD: Bookmarklet and Browser Extension for Markdown Files | MeowMD</title>
+  <meta name="title" content="Open in MeowMD: Bookmarklet and Browser Extension for Markdown Files | MeowMD">
+  <meta name="description" content="Open any GitHub README, raw .md file, Gist or whole repository in the MeowMD viewer with one click. A drag-to-bookmarks bookmarklet and a Chrome extension with a right-click menu.">
+  <meta name="keywords" content="open markdown file in browser, github readme viewer extension, markdown bookmarklet, view raw markdown rendered, markdown viewer chrome extension">
+  <meta name="author" content="Atharva Tilewale">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large">
+  <link rel="canonical" href="https://atharvatilewale.github.io/meowmd/open-in-meowmd.html">
+  <link rel="sitemap" type="application/xml" title="Sitemap" href="sitemap.xml">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="MeowMD">
+  <meta property="og:url" content="https://atharvatilewale.github.io/meowmd/open-in-meowmd.html">
+  <meta property="og:title" content="Open in MeowMD: Bookmarklet and Extension">
+  <meta property="og:description" content="One click from any GitHub README, raw Markdown file, Gist or repository to a rendered, searchable view.">
+  <meta property="og:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Open in MeowMD: Bookmarklet and Extension">
+  <meta name="twitter:description" content="One click from any GitHub README, raw Markdown file, Gist or repository to a rendered, searchable view.">
+  <meta name="twitter:image" content="https://atharvatilewale.github.io/meowmd/og-image.png">
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#fafafa">
+  <link rel="icon" type="image/svg+xml" href="assets/img/logo.svg">
+  <link rel="apple-touch-icon" href="assets/img/icon.svg">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="assets/css/core.css">
+  <link rel="stylesheet" href="assets/css/tools.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Open in MeowMD",
+        "url": "https://atharvatilewale.github.io/meowmd/open-in-meowmd.html",
+        "applicationCategory": "BrowserApplication",
+        "operatingSystem": "Chrome, Edge, Brave, Firefox",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "description": "A bookmarklet and a browser extension that open GitHub READMEs, raw Markdown files, Gists and repositories in the MeowMD viewer.",
+        "downloadUrl": "https://github.com/AtharvaTilewale/meowmd/tree/main/extension",
+        "publisher": { "@type": "Person", "name": "Atharva Tilewale" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://atharvatilewale.github.io/meowmd/" },
+          { "@type": "ListItem", "position": 2, "name": "Open in MeowMD", "item": "https://atharvatilewale.github.io/meowmd/open-in-meowmd.html" }
+        ]
+      }
+    ]
+  }
+  </script>
+</head>
+
+<body>
+  <header>
+    <nav class="navbar" aria-label="Main Navigation">
+      <a href="https://atharvatilewale.github.io/meowmd/" class="logo" aria-label="MeowMD Home">
+        <span class="logo-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 32 32" aria-hidden="true"><rect class="brand-tile" width="32" height="32" rx="9"/><path class="brand-mark" d="M8 23.5V10.5l8 7.2 8-7.2v8.3c0 3.4-2.1 5.2-4.6 5.2-1.6 0-2.8-.8-3.4-2.1" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
+        MeowMD
+      </a>
+      <div class="nav-links">
+        <a href="https://atharvatilewale.github.io/meowmd/" class="nav-link nav-link-home">Home</a>
+        <a href="mdviewer.html" class="nav-link">MD Viewer</a>
+        <a href="mdeditor.html" class="nav-link">MD Editor</a>
+        <button class="btn-icon theme-toggle-btn" title="Toggle Theme" aria-label="Toggle Theme"><i class="fa-solid fa-moon"></i></button>
+      </div>
+    </nav>
+  </header>
+
+  <main class="tool-page">
+    <div class="tool-hero">
+      <h1>Open any Markdown in MeowMD with one click</h1>
+      <p>Reading a README on GitHub, a raw <code>.md</code> file, a Gist or a whole repository? Send it to the MeowMD viewer for a clean rendered page with an outline, search, diagrams, math and export. Two ways to install, both free.</p>
+    </div>
+
+    <section class="tool-section" style="margin-top:0">
+      <h2>1. Bookmarklet (works in every browser)</h2>
+      <p>Drag this button to your bookmarks bar. Click it on any page to open that page's URL in MeowMD. GitHub file pages, Gists and repository pages are handled automatically.</p>
+      <p>
+        <a class="bookmarklet" id="bookmarklet" href="javascript:(function(){location.href='https://atharvatilewale.github.io/meowmd/mdviewer.html?url='+encodeURIComponent(location.href);})();" onclick="return false;" title="Drag me to your bookmarks bar"><i class="fa-solid fa-bookmark"></i> Open in MeowMD</a>
+      </p>
+      <p>On mobile, or if you prefer to make the bookmark by hand, create a bookmark with this as the address:</p>
+      <pre><code id="bmCode">javascript:(function(){location.href='https://atharvatilewale.github.io/meowmd/mdviewer.html?url='+encodeURIComponent(location.href);})();</code></pre>
+      <p><button class="btn btn-outline" id="bmCopy"><i class="fa-regular fa-copy"></i> Copy bookmarklet code</button></p>
+
+      <h2 style="margin-top:3rem">2. Browser extension (Chrome, Edge, Brave)</h2>
+      <p>The extension adds a toolbar button and two right-click items: <strong>Open link in MeowMD</strong> on any link, and <strong>Open this page in MeowMD</strong>. It asks for no permissions beyond the context menu and the current tab.</p>
+      <ol class="steps">
+        <li>Download the <a href="https://github.com/AtharvaTilewale/meowmd/tree/main/extension" target="_blank" rel="noopener">extension folder</a> from the repository, or clone the repo.</li>
+        <li>Open <code>chrome://extensions</code> and turn on <strong>Developer mode</strong> in the top right.</li>
+        <li>Click <strong>Load unpacked</strong> and choose the <code>extension</code> folder.</li>
+        <li>Pin "Open in MeowMD" to the toolbar. Right-click any Markdown link to use it.</li>
+      </ol>
+      <p>The extension is open source and lives next to the app, so you can read every line before installing it.</p>
+
+      <h2 style="margin-top:3rem">3. Share links and the URL parameter</h2>
+      <p>Any URL can be opened directly with the <code>url</code> parameter, which makes MeowMD easy to link from a README or an issue:</p>
+      <pre><code>https://atharvatilewale.github.io/meowmd/mdviewer.html?url=https://github.com/user/repo/blob/main/README.md</code></pre>
+      <p>Point it at a repository instead of a file and every Markdown document in it loads into the sidebar. For notes that live nowhere, use <strong>Copy → Self-contained link</strong> inside the viewer: the whole document is compressed into the link itself.</p>
+      <div class="tool-links">
+        <a class="btn btn-primary" href="mdviewer.html?url=https%3A%2F%2Fgithub.com%2FAtharvaTilewale%2Fmeowmd">Try it on the MeowMD repository</a>
+        <a class="btn btn-outline" href="markdown-cheat-sheet.html">Markdown cheat sheet</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <h4>MeowMD</h4>
+        <p>A private, offline Markdown viewer and editor for technical writing.</p>
+      </div>
+      <div class="footer-col">
+        <h5>Apps</h5>
+        <ul class="footer-links">
+          <li><a href="mdviewer.html">Markdown Viewer</a></li>
+          <li><a href="mdeditor.html">Markdown Editor</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Tools</h5>
+        <ul class="footer-links">
+          <li><a href="markdown-table-generator.html">Table Generator</a></li>
+          <li><a href="html-to-markdown.html">HTML to Markdown</a></li>
+          <li><a href="markdown-cheat-sheet.html">Cheat Sheet</a></li>
+          <li><a href="open-in-meowmd.html">Bookmarklet &amp; Extension</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h5>Resources</h5>
+        <ul class="footer-links">
+          <li><a href="https://github.com/AtharvaTilewale/meowmd" target="_blank" rel="noopener">GitHub Repository</a></li>
+          <li><a href="sitemap.xml">Sitemap</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 MeowMD. Free and open source.</span>
+      <span>Made for people who write documentation</span>
+    </div>
+  </footer>
+
+  <script src="assets/js/common.js"></script>
+  <script>
+    document.getElementById('bmCopy').onclick = function () {
+      copyToClipboard(document.getElementById('bmCode').textContent, 'Bookmarklet code copied');
+    };
+  </script>
+  <script src="assets/js/sw-register.js"></script>
+</body>
+
+</html>
