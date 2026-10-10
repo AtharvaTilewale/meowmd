@@ -80,6 +80,7 @@
     this.bindPaste();
     this.bindLaunchQueue();
     this.bindExtraButtons();
+    this.bindGistModal();
     this.handleHashLink();
   };
 
@@ -275,6 +276,110 @@
     if (!loaded.length) throw new Error('Could not download any files from that repository.');
     this.addDocuments(loaded, { silent: true });
     showToast('Opened ' + loaded.length + ' files from ' + info.owner + '/' + info.repo + (truncated ? ' (first ' + LIMIT + ')' : ''), 'success', 4000);
+  };
+
+  /* ------------------------------------------------- GitHub Gist short links */
+
+  P.gistToken = function () {
+    try { return localStorage.getItem('meowmd_github_token') || sessionStorage.getItem('meowmd_github_token') || ''; } catch (e) { return ''; }
+  };
+
+  P.openGistById = async function (id) {
+    showToast('Fetching Gist', 'info', 1500);
+    try {
+      const r = await fetch('https://api.github.com/gists/' + id, { headers: { Accept: 'application/vnd.github+json' } });
+      if (!r.ok) throw new Error(r.status === 404 ? 'That Gist was not found. It may have been deleted or made private.' : 'GitHub returned ' + r.status);
+      const g = await r.json();
+      const files = Object.values(g.files || {});
+      const pick = files.find((f) => /\.(md|markdown)$/i.test(f.filename)) || files.find((f) => /\.(ipynb|csv|txt)$/i.test(f.filename)) || files[0];
+      if (!pick) throw new Error('That Gist has no files.');
+      let content = pick.truncated || !pick.content ? await (await fetch(pick.raw_url)).text() : pick.content;
+      let kind;
+      if (/\.ipynb$/i.test(pick.filename)) { content = this.notebookToMarkdown(JSON.parse(content)); kind = 'notebook'; }
+      else if (/\.(csv|tsv)$/i.test(pick.filename)) { content = '# ' + pick.filename + '\n\n' + this.csvToMarkdownTable(content); kind = 'csv'; }
+      const existing = this.files.find((f) => f.gistId === g.id);
+      if (existing) { existing.content = content; existing.lastModified = Date.now(); this.activeFileId = existing.id; if (this.autoSave) this.persistFiles(); this.renderFileList(); this.renderActiveFile(); }
+      else this.addDocument({ name: pick.filename, path: 'gist/' + g.id + '/' + pick.filename, sourceUrl: pick.raw_url, gistId: g.id, gistFile: pick.filename, content, kind }, { silent: true });
+      showToast('Opened ' + pick.filename + ' from Gist', 'success');
+    } catch (err) {
+      console.error('Gist open failed:', err);
+      const msg = /Failed to fetch|NetworkError/i.test(err.message || '') ? 'Could not reach GitHub for that Gist. Check your connection, or the Gist may be too large for the API.' : (err.message || 'Could not open that Gist');
+      showToast(msg, 'danger', 5000);
+    }
+  };
+
+  /* Publishes (or updates) the active document as a secret Gist and copies the short link. */
+  P.publishGist = async function () {
+    const file = this.getActiveFile();
+    if (!file) return;
+    const token = this.gistToken();
+    if (!token) { this.openGistModal(); return; }
+    showToast(file.gistId ? 'Updating Gist' : 'Publishing to a secret Gist', 'info', 2000);
+    const name = /\.(md|markdown|txt|ipynb|csv)$/i.test(file.name) ? file.name : file.name + '.md';
+    const payload = { description: 'Shared from MeowMD', public: false, files: {} };
+    payload.files[file.gistFile || name] = { content: file.content || ' ' };
+    try {
+      const url = 'https://api.github.com/gists' + (file.gistId ? '/' + file.gistId : '');
+      const r = await fetch(url, {
+        method: file.gistId ? 'PATCH' : 'POST',
+        headers: { Accept: 'application/vnd.github+json', Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+      if (r.status === 401) {
+        try { localStorage.removeItem('meowmd_github_token'); sessionStorage.removeItem('meowmd_github_token'); } catch (e) {}
+        showToast('GitHub rejected the token. Paste a new one.', 'danger', 4000);
+        this.openGistModal();
+        return;
+      }
+      if (r.status === 404 && file.gistId) { file.gistId = null; file.gistFile = null; return this.publishGist(); }
+      if (!r.ok) throw new Error('GitHub returned ' + r.status + (r.status === 403 ? ' (rate limit or missing gist scope)' : ''));
+      const g = await r.json();
+      file.gistId = g.id;
+      file.gistFile = file.gistFile || name;
+      const f = g.files && g.files[file.gistFile];
+      if (f && f.raw_url) file.sourceUrl = f.raw_url;
+      if (this.autoSave) this.persistFiles();
+      this.renderFileList();
+      const linkBtn = document.getElementById('copyLinkBtn');
+      if (linkBtn) linkBtn.hidden = false;
+      const gistBtn = document.getElementById('publishGistBtn');
+      if (gistBtn) gistBtn.querySelector('span').textContent = 'Update Gist link';
+      this.syncAddressBar(file);
+      await copyToClipboard(this.shareLinkFor(file), 'Short link copied. The note lives in a secret Gist on your GitHub.');
+    } catch (err) {
+      console.error('Gist publish failed:', err);
+      const msg = /Failed to fetch|NetworkError/i.test(err.message || '') ? 'Could not reach GitHub. Check your connection and try again.' : (err.message || 'Could not publish to GitHub');
+      showToast(msg, 'danger', 5000);
+    }
+  };
+
+  P.openGistModal = function () {
+    const input = document.getElementById('gistTokenInput');
+    if (input) input.value = '';
+    this.openModal('gistModal');
+    setTimeout(() => input && input.focus(), 50);
+  };
+
+  P.bindGistModal = function () {
+    const form = document.getElementById('gistModalForm');
+    if (!form) return;
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const token = (document.getElementById('gistTokenInput').value || '').trim();
+      if (!token) return;
+      const remember = document.getElementById('gistRemember').checked;
+      try {
+        if (remember) localStorage.setItem('meowmd_github_token', token); else sessionStorage.setItem('meowmd_github_token', token);
+      } catch (err) {}
+      this.closeModal('gistModal');
+      this.publishGist();
+    };
+    const forget = document.getElementById('gistForgetBtn');
+    if (forget) forget.onclick = () => {
+      try { localStorage.removeItem('meowmd_github_token'); sessionStorage.removeItem('meowmd_github_token'); } catch (e) {}
+      showToast('GitHub token removed from this device', 'info');
+      this.closeModal('gistModal');
+    };
   };
 
   /* ------------------------------------------------------ Jupyter & CSV */

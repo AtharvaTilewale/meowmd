@@ -3,7 +3,7 @@
  * High-performance offline caching and instant page loads.
  */
 
-const CACHE_NAME = 'meowmd-v11';
+const CACHE_NAME = 'meowmd-v12';
 const PRECACHE_ASSETS = [
   './',
   './index.html',

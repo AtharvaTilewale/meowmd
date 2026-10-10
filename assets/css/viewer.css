@@ -561,6 +561,11 @@ input:checked + .slider:before { transform: translateX(12px); }
 .dc.ins { background-color: color-mix(in srgb, var(--success) 12%, transparent); }
 .dc.pad { background-color: var(--bg-surface-subtle); }
 .diff-label { display: block; font-size: 0.78rem; color: var(--text-muted); margin: 0.75rem 0 0.3rem; }
+.gist-help { font-size: 0.8rem; color: var(--text-muted); margin: 0.6rem 0 0.75rem; }
+.gist-help a { color: var(--text-main); text-decoration: underline; text-underline-offset: 3px; }
+.gist-remember { display: inline-flex; align-items: center; gap: 0.4rem; font-size: 0.82rem; color: var(--text-body); }
+.gist-remember input { accent-color: var(--ink); }
+.modal-content p code { font-family: var(--font-mono); font-size: 0.85em; background-color: var(--bg-surface-subtle); border: 1px solid var(--border-light); border-radius: 4px; padding: 0.1em 0.3em; }
 select.url-input { font-family: var(--font-sans); appearance: auto; }
 
 /* Empty state */

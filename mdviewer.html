@@ -311,11 +311,14 @@
               </button>
               <button class="menu-item" id="copyRawMdBtn" role="menuitem"><span>Markdown source</span></button>
               <button class="menu-item" id="copyHtmlBtn" role="menuitem"><span>HTML</span></button>
-              <button class="menu-item" id="copyHashLinkBtn" role="menuitem">
-                <span>Self-contained link</span><small>The whole note travels in the link, nothing hosted</small>
-              </button>
               <button class="menu-item" id="copyLinkBtn" role="menuitem" hidden>
-                <span>Source link</span><small>Opens the original URL in MeowMD</small>
+                <span>Short link</span><small>Opens this document from its source</small>
+              </button>
+              <button class="menu-item" id="publishGistBtn" role="menuitem">
+                <span>Short link via Gist</span><small>Secret Gist on your GitHub, about 80 characters</small>
+              </button>
+              <button class="menu-item" id="copyHashLinkBtn" role="menuitem">
+                <span>Self-contained link</span><small>Long: the whole note travels inside the link</small>
               </button>
             </div>
           </div>
@@ -359,6 +362,25 @@
         <div class="modal-actions">
           <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
           <button type="submit" class="btn btn-primary">Open</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: GitHub token for Gist links -->
+  <div class="modal-overlay" id="gistModal" role="dialog" aria-modal="true" aria-labelledby="gistModalTitle">
+    <div class="modal-content modal-left">
+      <h3 id="gistModalTitle">Short links via your GitHub Gists</h3>
+      <p>MeowMD saves the note as a <strong>secret Gist</strong> in your own GitHub account and shares a short link to it. You stay the owner and can delete it any time. This needs a personal access token with only the <code>gist</code> scope.</p>
+      <form id="gistModalForm">
+        <label class="diff-label" for="gistTokenInput">Personal access token</label>
+        <input type="password" id="gistTokenInput" class="url-input" placeholder="ghp_..." autocomplete="off" spellcheck="false" required>
+        <p class="gist-help"><a href="https://github.com/settings/tokens/new?scopes=gist&description=MeowMD%20share%20links" target="_blank" rel="noopener">Create a token with the gist scope</a>, copy it, and paste it here. It is stored only in this browser.</p>
+        <label class="tool-check gist-remember"><input type="checkbox" id="gistRemember" checked> Remember on this device</label>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" id="gistForgetBtn">Forget token</button>
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Publish and copy link</button>
         </div>
       </form>
     </div>

@@ -114,7 +114,8 @@
       <h2 style="margin-top:3rem">3. Share links and the URL parameter</h2>
       <p>Any URL can be opened directly with the <code>url</code> parameter, which makes MeowMD easy to link from a README or an issue:</p>
       <pre><code>https://atharvatilewale.github.io/meowmd/mdviewer.html?url=https://github.com/user/repo/blob/main/README.md</code></pre>
-      <p>Point it at a repository instead of a file and every Markdown document in it loads into the sidebar. For notes that live nowhere, use <strong>Copy → Self-contained link</strong> inside the viewer: the whole document is compressed into the link itself.</p>
+      <p>Point it at a repository instead of a file and every Markdown document in it loads into the sidebar. Two compact forms also work: <code>?gh=owner/repo@branch/path/README.md</code> for files on GitHub and <code>?gist=ID</code> for Gists.</p>
+      <p>For notes that live nowhere yet, open <strong>Copy → Short link via Gist</strong> in the viewer. It saves the note as a secret Gist in your own GitHub account and gives you an 80-character link. If you would rather host nothing at all, <strong>Self-contained link</strong> packs the whole note into the URL, at the cost of length.</p>
       <div class="tool-links">
         <a class="btn btn-primary" href="mdviewer.html?url=https%3A%2F%2Fgithub.com%2FAtharvaTilewale%2Fmeowmd">Try it on the MeowMD repository</a>
         <a class="btn btn-outline" href="markdown-cheat-sheet.html">Markdown cheat sheet</a>

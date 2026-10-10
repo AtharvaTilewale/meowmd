@@ -10,7 +10,11 @@ class MeowViewer {
     this.md = null;
     this.fuse = null;
     // Read the share-link parameter before any render can rewrite the address bar
-    try { this.pendingUrl = new URLSearchParams(window.location.search).get('url') || ''; } catch (e) { this.pendingUrl = ''; }
+    try {
+      const q = new URLSearchParams(window.location.search);
+      const gh = q.get('gh'), gist = q.get('gist');
+      this.pendingUrl = q.get('url') || (gh ? 'gh:' + gh : '') || (gist ? 'gist:' + gist : '');
+    } catch (e) { this.pendingUrl = ''; }
     this.pendingHash = window.location.hash || '';
 
     this.initMarkdownParser();
@@ -169,8 +173,9 @@ class MeowViewer {
     bind('copyRichBtn', () => this.copyRichText());
     bind('copyLinkBtn', () => {
       const active = this.getActiveFile();
-      if (active && active.sourceUrl) copyToClipboard(this.shareLinkFor(active), 'Share link copied');
+      if (active && (active.sourceUrl || active.gistId)) copyToClipboard(this.shareLinkFor(active), 'Short link copied');
     });
+    bind('publishGistBtn', () => { if (this.publishGist) this.publishGist(); });
 
     // Export actions
     bind('exportPdfBtn', () => this.exportPDF());
@@ -307,6 +312,12 @@ class MeowViewer {
   }
 
   async openFromUrl(raw) {
+    raw = (raw || '').trim();
+    // Compact share forms: gh:owner/repo@ref/path and gist:id
+    const ghShort = raw.match(/^gh:([^/\s]+)\/([^/@\s]+)@([^/\s]+)\/(.+)$/);
+    if (ghShort) raw = 'https://raw.githubusercontent.com/' + ghShort[1] + '/' + ghShort[2] + '/' + ghShort[3] + '/' + ghShort[4];
+    const gistShort = raw.match(/^gist:([a-f0-9]{6,40})$/i);
+    if (gistShort && this.openGistById) { await this.openGistById(gistShort[1]); return; }
     const repo = this.parseRepoUrl ? this.parseRepoUrl(raw) : null;
     if (repo) {
       try { await this.openRepo(repo); } catch (err) { console.error(err); showToast(err.message || 'Could not open that repository', 'danger', 5000); }
@@ -359,15 +370,27 @@ class MeowViewer {
     this.syncAddressBar(this.getActiveFile());
   }
 
+  shortQueryFor(file) {
+    if (!file) return '';
+    if (file.gistId) return '?gist=' + file.gistId;
+    const u = file.sourceUrl || '';
+    const gh = u.match(/^https:\/\/raw\.githubusercontent\.com\/([^/]+)\/([^/]+)\/([^/]+)\/(.+)$/);
+    if (gh) return '?gh=' + gh[1] + '/' + gh[2] + '@' + gh[3] + '/' + gh[4].split('/').map(encodeURIComponent).join('/');
+    const gist = u.match(/^https:\/\/gist\.githubusercontent\.com\/[^/]+\/([a-f0-9]+)\/raw/i);
+    if (gist) return '?gist=' + gist[1];
+    return u ? '?url=' + encodeURIComponent(u) : '';
+  }
+
   shareLinkFor(file) {
-    return window.location.origin + window.location.pathname + '?url=' + encodeURIComponent(file.sourceUrl);
+    return window.location.origin + window.location.pathname + this.shortQueryFor(file);
   }
 
   syncAddressBar(file) {
-    if (this.pendingUrl) return; // keep ?url= until it has been opened
+    if (this.pendingUrl) return; // keep the share parameter until it has been opened
     try {
       const base = window.location.pathname;
-      const next = file && file.sourceUrl ? base + '?url=' + encodeURIComponent(file.sourceUrl) : base;
+      const q = this.shortQueryFor(file);
+      const next = q ? base + q : base;
       if (window.location.pathname + window.location.search !== next) history.replaceState(null, '', next);
     } catch (e) {}
   }
@@ -404,17 +427,37 @@ class MeowViewer {
   exportHTML() {
     const file = this.getActiveFile();
     if (!file || !this.contentEl) return;
-    const title = file.name.replace(/\.(md|markdown|txt)$/i, '');
+    const title = file.name.replace(/\.(md|markdown|txt|ipynb|csv)$/i, '');
+    const theme = document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
     const css = `
-      :root{color-scheme:light dark}
-      body{max-width:760px;margin:3rem auto;padding:0 1.25rem;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;color:#27272a;background:#fff}
-      h1,h2,h3,h4{line-height:1.25;letter-spacing:-.02em;color:#111113;margin:2em 0 .6em}h1{font-size:2rem;margin-top:0}h2{font-size:1.4rem;border-bottom:1px solid #eee;padding-bottom:.3rem}
-      a{color:#111113}pre{background:#f6f6f7;border:1px solid #e4e4e7;border-radius:8px;padding:1rem;overflow:auto;font-size:.85rem}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
-      :not(pre)>code{background:#f4f4f5;border:1px solid #eee;border-radius:4px;padding:.1em .35em}blockquote{border-left:2px solid #d4d4d8;margin:1.5rem 0;padding-left:1.25rem;color:#71717a}
-      table{border-collapse:collapse;width:100%;margin:1.5rem 0}th,td{padding:.6rem .85rem;border-bottom:1px solid #eee;text-align:left}th{font-size:.8rem;color:#71717a}img{max-width:100%;border-radius:8px}
-      .code-copy-btn{display:none}.mermaid-wrapper{display:flex;justify-content:center;margin:1.5rem 0}
-      @media(prefers-color-scheme:dark){body{background:#0c0c0d;color:#c9c9ce}h1,h2,h3,h4,a{color:#f4f4f5}pre{background:#151517;border-color:#26262a}:not(pre)>code{background:#161618;border-color:#26262a}th,td{border-color:#1e1e22}blockquote{border-color:#333338;color:#8a8a93}}`;
-    const doc = `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${this.escapeHTML(title)}</title><style>${css}</style></head><body>${this.contentEl.innerHTML}</body></html>`;
+      :root{--bg:#ffffff;--bg2:#f6f6f7;--bg3:#f4f4f5;--text:#27272a;--head:#111113;--muted:#71717a;--line:#e4e4e7;--line2:#ededf0;--btn:#111113;--btnfg:#fff;color-scheme:light}
+      :root[data-theme="dark"]{--bg:#0c0c0d;--bg2:#151517;--bg3:#161618;--text:#c9c9ce;--head:#f4f4f5;--muted:#8a8a93;--line:#26262a;--line2:#1e1e22;--btn:#f4f4f5;--btnfg:#0c0c0d;color-scheme:dark}
+      *{box-sizing:border-box}
+      body{margin:0;background:var(--bg);color:var(--text);font:16px/1.7 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+      main{max-width:760px;margin:0 auto;padding:4rem 1.25rem 5rem}
+      h1,h2,h3,h4,h5,h6{line-height:1.25;letter-spacing:-.02em;color:var(--head);margin:2.2em 0 .6em;font-weight:600}h1{font-size:2rem;margin-top:0}h2{font-size:1.4rem;border-bottom:1px solid var(--line2);padding-bottom:.4rem}h3{font-size:1.15rem}
+      p{margin:0 0 1.1em}a{color:var(--head);text-decoration:underline;text-decoration-color:var(--line);text-underline-offset:3px}
+      pre{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;overflow:auto;font-size:.85rem;line-height:1.6}
+      code{font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+      :not(pre)>code{background:var(--bg3);border:1px solid var(--line2);border-radius:4px;padding:.12em .35em;color:var(--head)}
+      blockquote{border-left:2px solid var(--line);margin:1.5rem 0;padding:.1rem 0 .1rem 1.25rem;color:var(--muted)}
+      table{border-collapse:collapse;width:100%;margin:1.5rem 0;font-size:.925rem}th,td{padding:.6rem .85rem;border-bottom:1px solid var(--line2);text-align:left;vertical-align:top}th{font-size:.8rem;color:var(--muted);font-weight:500;border-bottom-color:var(--line)}
+      img{max-width:100%;border-radius:8px}hr{border:0;border-top:1px solid var(--line);margin:2.5rem 0}
+      ul,ol{padding-left:1.5rem;margin:0 0 1.1em}li{margin-bottom:.3em}li::marker{color:var(--muted)}
+      .code-copy-btn{display:none}.mermaid-wrapper,.chart-wrapper,.csv-table{margin:1.5rem 0}.mermaid-wrapper{display:flex;justify-content:center;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:1.5rem;overflow-x:auto}
+      .chat-turn{border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:1rem 0}.chat-user{background:var(--bg3)}.chat-role{font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem}
+      .nb-cell{border-left:2px solid var(--line);padding-left:1rem;margin:1.25rem 0}.nb-label{font-family:ui-monospace,monospace;font-size:.7rem;color:var(--muted);margin:.5rem 0 .25rem}
+      .markdown-alert{border-left:2px solid var(--line);padding:.75rem 1rem;margin:1rem 0;background:var(--bg3);border-radius:0 6px 6px 0}.markdown-alert-title{font-weight:600;font-size:.8rem;margin:0 0 .3rem}
+      .katex-display{overflow-x:auto;overflow-y:hidden}
+      .theme-toggle{position:fixed;top:1rem;right:1rem;width:38px;height:38px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:var(--head);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px -4px rgba(0,0,0,.15)}
+      .theme-toggle:hover{background:var(--bg3)}
+      .export-meta{font-size:.78rem;color:var(--muted);margin-bottom:2rem;padding-bottom:1rem;border-bottom:1px solid var(--line2)}
+      @media print{.theme-toggle{display:none}main{padding:0}}`;
+    const script = `(function(){var k='meowmd_export_theme',r=document.documentElement;try{var s=localStorage.getItem(k);if(s==='light'||s==='dark')r.setAttribute('data-theme',s)}catch(e){}var b=document.getElementById('themeToggle');function paint(){b.textContent=r.getAttribute('data-theme')==='dark'?'\\u2600':'\\u263E';b.title=r.getAttribute('data-theme')==='dark'?'Switch to light':'Switch to dark'}b.onclick=function(){var n=r.getAttribute('data-theme')==='dark'?'light':'dark';r.setAttribute('data-theme',n);try{localStorage.setItem(k,n)}catch(e){}paint()};paint()})();`;
+    const when = new Date().toISOString().slice(0, 10);
+    const doc = `<!doctype html>
+<html lang="en" data-theme="${theme}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${this.escapeHTML(title)}</title><meta name="generator" content="MeowMD"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><style>${css}</style></head>
+<body><button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle theme"></button><main><div class="export-meta">${this.escapeHTML(file.name)} · exported ${when} with MeowMD</div>${this.contentEl.innerHTML}</main><script>${script}<\/script></body></html>`;
     const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -423,7 +466,7 @@ class MeowViewer {
     a.click();
     a.remove();
     URL.revokeObjectURL(a.href);
-    showToast('Exported ' + title + '.html', 'success');
+    showToast('Exported ' + title + '.html in ' + theme + ' theme, with a theme switch inside', 'success');
   }
 
   toggleSidebar() {
@@ -598,7 +641,7 @@ function render(markdown) {
 
       li.innerHTML = `
         <div class="file-item-name" title="${file.path}">
-          <i class="${file.kind === 'notebook' ? 'fa-solid fa-book' : file.kind === 'chat' ? 'fa-regular fa-comments' : file.kind === 'csv' ? 'fa-solid fa-table' : file.sourceUrl ? 'fa-solid fa-link' : 'fa-regular fa-file-lines'}"></i>
+          <i class="${file.kind === 'notebook' ? 'fa-solid fa-book' : file.kind === 'chat' ? 'fa-regular fa-comments' : file.kind === 'csv' ? 'fa-solid fa-table' : file.gistId ? 'fa-brands fa-github' : file.sourceUrl ? 'fa-solid fa-link' : 'fa-regular fa-file-lines'}"></i>
           <span>${file.name}</span>
         </div>
         <button class="file-item-delete" title="Delete file" onclick="event.stopPropagation(); window.viewerApp.deleteFile('${file.id}')">
@@ -680,7 +723,9 @@ function render(markdown) {
     // Outline, share link, address bar
     this.buildOutline();
     const linkBtn = document.getElementById('copyLinkBtn');
-    if (linkBtn) linkBtn.hidden = !file.sourceUrl;
+    if (linkBtn) linkBtn.hidden = !(file.sourceUrl || file.gistId);
+    const gistBtn = document.getElementById('publishGistBtn');
+    if (gistBtn) gistBtn.querySelector('span').textContent = file.gistId ? 'Update Gist link' : 'Short link via Gist';
     this.syncAddressBar(file);
 
     // Process Smart Extensions On-Demand (Lazy Loading)
@@ -793,7 +838,15 @@ function render(markdown) {
         html2canvas: { scale: 2, useCORS: true },
         jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
       };
-      await window.html2pdf().set(opt).from(this.contentEl).save();
+      const root = document.documentElement;
+      const prevTheme = root.getAttribute('data-theme');
+      root.setAttribute('data-theme', 'light');
+      try {
+        await new Promise((r) => setTimeout(r, 50));
+        await window.html2pdf().set(opt).from(this.contentEl).save();
+      } finally {
+        if (prevTheme) root.setAttribute('data-theme', prevTheme);
+      }
       showToast('PDF Export complete', 'success');
     } catch (err) {
       console.error('PDF export failed:', err);
