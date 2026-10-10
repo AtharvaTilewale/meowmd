@@ -165,7 +165,11 @@
         "Syntax highlighted code blocks",
         "3D molecular structure viewer for PDB and MOL files",
         "Export Markdown to PDF and HTML",
-        "Open .md files and whole folders, with fuzzy search across documents",
+        "Open .md files, whole folders, or any public GitHub or Gist URL, and share a link to it",
+      "Document outline with scroll tracking and fuzzy search across documents",
+      "Two-way live sync between the visual editor and Markdown source",
+      "Open and save Markdown files on disk, with drafts auto-saved locally",
+      "Copy as rich text for Google Docs, Gmail, Notion and Word",
         "Works offline as a Progressive Web App",
         "100% client-side: no upload, no account, no tracking",
         "Dark mode"
@@ -223,8 +227,8 @@
     <!-- Action Toolbar Header -->
     <div class="editor-header">
       <div class="editor-title">
-        <i class="fa-solid fa-pen-nib" style="color: var(--primary); font-size: 1.25rem;"></i>
         <h2>Markdown Editor</h2>
+        <span class="doc-name" id="editorDocName" title=""></span>
       </div>
 
       <!-- View Switcher Controls -->
@@ -241,19 +245,18 @@
       </div>
 
       <div class="editor-actions">
-        <label for="editorFileInput" class="btn btn-outline" title="Import Markdown or Text File">
-          <i class="fa-solid fa-arrow-up"></i> <span>Import</span>
-        </label>
-        <input type="file" id="editorFileInput" accept=".md,.markdown,.txt" />
-
-        <button class="btn btn-outline" id="clearEditorBtn" title="Clear Content">
-          <i class="fa-regular fa-trash-can"></i> <span>Clear</span>
+        <button class="btn btn-outline" id="clearEditorBtn" title="New document">
+          <i class="fa-regular fa-file"></i> <span>New</span>
         </button>
-        <button class="btn btn-outline" id="copyMdBtn" title="Copy Markdown to Clipboard">
+        <button class="btn btn-outline" id="openFileBtn" title="Open a Markdown file (Ctrl+O)">
+          <i class="fa-regular fa-folder-open"></i> <span>Open</span>
+        </button>
+        <input type="file" id="editorFileInput" accept=".md,.markdown,.txt" />
+        <button class="btn btn-outline" id="copyMdBtn" title="Copy Markdown to clipboard">
           <i class="fa-regular fa-copy"></i> <span>Copy</span>
         </button>
-        <button class="btn btn-primary" id="downloadMdBtn" title="Download .md File">
-          <i class="fa-solid fa-arrow-down"></i> <span>Download .md</span>
+        <button class="btn btn-primary" id="saveMdBtn" title="Save (Ctrl+S)">
+          <i class="fa-solid fa-arrow-down"></i> <span>Save</span>
         </button>
       </div>
     </div>
@@ -349,9 +352,7 @@
         <div class="pane-header">
           <span>Markdown output</span>
           <div class="pane-header-actions">
-            <button class="btn-subtle" id="syncToVisualBtn" title="Parse Markdown back into the visual editor">
-              <i class="fa-solid fa-rotate"></i> Sync to visual
-            </button>
+            <span class="pane-hint" title="Edit either side; the other updates as you type">Two-way live sync</span>
           </div>
         </div>
         <div class="pane-body">
@@ -369,7 +370,7 @@
         <span id="statLines">0 Lines</span>
       </div>
       <div class="status-indicator">
-        <span>Syncing</span>
+        <span id="saveStatus">Draft saved locally</span>
       </div>
     </div>
   </main>

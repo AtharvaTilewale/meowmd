@@ -9,11 +9,14 @@ class MeowViewer {
     this.autoSave = localStorage.getItem('meowmd_autosave') === 'true';
     this.md = null;
     this.fuse = null;
+    // Read the share-link parameter before any render can rewrite the address bar
+    try { this.pendingUrl = new URLSearchParams(window.location.search).get('url') || ''; } catch (e) { this.pendingUrl = ''; }
 
     this.initMarkdownParser();
     this.bindDOM();
     this.loadPersistedFiles();
     this.setupDragAndDrop();
+    this.handleUrlParam();
   }
 
   initMarkdownParser() {
@@ -109,45 +112,305 @@ class MeowViewer {
 
     // Search Box
     if (this.searchInput) {
-      this.searchInput.oninput = (e) => this.handleSearch(e.target.value);
+      this.searchInput.oninput = (e) => { this.setSidebarTab('files'); this.handleSearch(e.target.value); };
     }
 
-    // Top Bar Action Buttons
-    const copyMdBtn = document.getElementById('copyRawMdBtn');
-    if (copyMdBtn) {
-      copyMdBtn.onclick = () => {
-        const active = this.getActiveFile();
-        if (active) copyToClipboard(active.content, 'Raw Markdown copied');
+    // Sidebar tabs (files / outline)
+    this.outlineEl = document.getElementById('outlineList');
+    document.querySelectorAll('.sidebar-tab').forEach((btn) => {
+      btn.onclick = () => this.setSidebarTab(btn.dataset.tab);
+    });
+
+    // Open from URL
+    const openUrlBtn = document.getElementById('openUrlBtn');
+    if (openUrlBtn) {
+      openUrlBtn.onclick = () => {
+        this.openModal('urlModal');
+        const input = document.getElementById('urlInput');
+        if (input) { input.value = ''; setTimeout(() => input.focus(), 50); }
       };
     }
-
-    const copyHtmlBtn = document.getElementById('copyHtmlBtn');
-    if (copyHtmlBtn) {
-      copyHtmlBtn.onclick = () => {
-        if (this.contentEl) copyToClipboard(this.contentEl.innerHTML, 'Rendered HTML copied');
+    const urlForm = document.getElementById('urlModalForm');
+    if (urlForm) {
+      urlForm.onsubmit = (e) => {
+        e.preventDefault();
+        const value = document.getElementById('urlInput').value;
+        this.closeModal('urlModal');
+        this.openFromUrl(value);
       };
     }
+    document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+      overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.classList.remove('active'); });
+    });
+    document.querySelectorAll('.modal-close-btn').forEach((btn) => {
+      btn.addEventListener('click', () => { const m = btn.closest('.modal-overlay'); if (m) m.classList.remove('active'); });
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach((m) => m.classList.remove('active'));
+        this.closeMenus();
+      }
+    });
 
-    const exportPdfBtn = document.getElementById('exportPdfBtn');
-    if (exportPdfBtn) {
-      exportPdfBtn.onclick = () => this.exportPDF();
+    // Dropdown menus
+    this.setupMenus();
+
+    // Copy actions
+    const bind = (id, fn) => { const el = document.getElementById(id); if (el) el.onclick = fn; };
+    bind('copyRawMdBtn', () => {
+      const active = this.getActiveFile();
+      if (active) copyToClipboard(active.content, 'Markdown source copied');
+    });
+    bind('copyHtmlBtn', () => {
+      if (this.contentEl) copyToClipboard(this.contentEl.innerHTML, 'HTML copied');
+    });
+    bind('copyRichBtn', () => this.copyRichText());
+    bind('copyLinkBtn', () => {
+      const active = this.getActiveFile();
+      if (active && active.sourceUrl) copyToClipboard(this.shareLinkFor(active), 'Share link copied');
+    });
+
+    // Export actions
+    bind('exportPdfBtn', () => this.exportPDF());
+    bind('exportHtmlBtn', () => this.exportHTML());
+    bind('printDocBtn', () => window.print());
+
+    bind('fullScreenBtn', () => {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // Outline tracking while reading
+    const scroller = document.getElementById('contentScroll');
+    if (scroller) {
+      let ticking = false;
+      scroller.addEventListener('scroll', () => {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(() => { this.updateActiveHeading(); ticking = false; });
+      });
     }
+  }
 
-    const printBtn = document.getElementById('printDocBtn');
-    if (printBtn) {
-      printBtn.onclick = () => window.print();
+  /* ---------- Sidebar tabs & outline ---------- */
+
+  setSidebarTab(tab) {
+    document.querySelectorAll('.sidebar-tab').forEach((btn) => {
+      const on = btn.dataset.tab === tab;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    if (this.fileListEl) this.fileListEl.hidden = tab !== 'files';
+    if (this.outlineEl) this.outlineEl.hidden = tab !== 'outline';
+  }
+
+  buildOutline() {
+    if (!this.outlineEl || !this.contentEl) return;
+    const used = Object.create(null);
+    const headings = Array.from(this.contentEl.querySelectorAll('h1, h2, h3, h4'));
+    this.outline = headings.map((h) => {
+      let slug = h.textContent.trim().toLowerCase()
+        .replace(/[^\p{L}\p{N}\s-]/gu, '')
+        .replace(/\s+/g, '-')
+        .replace(/^-+|-+$/g, '') || 'section';
+      if (used[slug]) { used[slug] += 1; slug = slug + '-' + used[slug]; } else { used[slug] = 1; }
+      h.id = slug;
+      return { el: h, level: Number(h.tagName[1]), text: h.textContent.trim(), id: slug };
+    });
+
+    if (this.outline.length === 0) {
+      this.outlineEl.innerHTML = '<li class="outline-empty">No headings in this document</li>';
+      return;
     }
-
-    const fullScreenBtn = document.getElementById('fullScreenBtn');
-    if (fullScreenBtn) {
-      fullScreenBtn.onclick = () => {
-        if (!document.fullscreenElement) {
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
+    this.outlineEl.innerHTML = this.outline.map((item) =>
+      `<li class="outline-item level-${item.level}"><a href="#${item.id}" title="${this.escapeHTML(item.text)}">${this.escapeHTML(item.text)}</a></li>`
+    ).join('');
+    this.outlineEl.querySelectorAll('a').forEach((a, i) => {
+      a.onclick = (e) => {
+        e.preventDefault();
+        const target = this.outline[i].el;
+        const scroller = document.getElementById('contentScroll');
+        if (scroller && target) {
+          scroller.scrollTo({ top: target.offsetTop - 16, behavior: 'smooth' });
         }
+        if (this.isNarrow && this.isNarrow() && this.sidebar) this.sidebar.classList.add('collapsed');
       };
+    });
+    this.updateActiveHeading();
+  }
+
+  updateActiveHeading() {
+    if (!this.outline || !this.outline.length || !this.outlineEl) return;
+    const scroller = document.getElementById('contentScroll');
+    if (!scroller) return;
+    const top = scroller.getBoundingClientRect().top;
+    let activeIdx = 0;
+    for (let i = 0; i < this.outline.length; i++) {
+      if (this.outline[i].el.getBoundingClientRect().top - top <= 96) activeIdx = i; else break;
     }
+    const items = this.outlineEl.querySelectorAll('.outline-item');
+    items.forEach((li, i) => li.classList.toggle('active', i === activeIdx));
+    const active = items[activeIdx];
+    if (active && this.outlineEl.hidden === false) {
+      const r = active.getBoundingClientRect();
+      const box = this.outlineEl.getBoundingClientRect();
+      if (r.top < box.top || r.bottom > box.bottom) active.scrollIntoView({ block: 'nearest' });
+    }
+  }
+
+  /* ---------- Menus ---------- */
+
+  setupMenus() {
+    document.querySelectorAll('.menu').forEach((menu) => {
+      const trigger = menu.querySelector('.menu-trigger');
+      if (!trigger) return;
+      trigger.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const open = menu.classList.contains('open');
+        this.closeMenus();
+        if (!open) { menu.classList.add('open'); trigger.setAttribute('aria-expanded', 'true'); }
+      });
+      menu.querySelectorAll('.menu-item').forEach((item) => {
+        item.addEventListener('click', () => this.closeMenus());
+      });
+    });
+    document.addEventListener('click', () => this.closeMenus());
+  }
+
+  closeMenus() {
+    document.querySelectorAll('.menu.open').forEach((m) => {
+      m.classList.remove('open');
+      const t = m.querySelector('.menu-trigger');
+      if (t) t.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  openModal(id) { const m = document.getElementById(id); if (m) m.classList.add('active'); }
+  closeModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('active'); }
+
+  /* ---------- Open from URL & share links ---------- */
+
+  normalizeSourceUrl(raw) {
+    let url = (raw || '').trim();
+    if (!url) return '';
+    if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+    const blob = url.match(/^https?:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/(.+)$/i);
+    if (blob) return `https://raw.githubusercontent.com/${blob[1]}/${blob[2]}/${blob[3].split('?')[0]}`;
+    const gist = url.match(/^https?:\/\/gist\.github\.com\/([^/]+)\/([a-f0-9]+)\/?$/i);
+    if (gist) return `https://gist.githubusercontent.com/${gist[1]}/${gist[2]}/raw`;
+    return url;
+  }
+
+  async openFromUrl(raw) {
+    const url = this.normalizeSourceUrl(raw);
+    if (!url) return;
+    showToast('Fetching document', 'info', 1500);
+    try {
+      const res = await fetch(url, { mode: 'cors' });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      const text = await res.text();
+      let name = decodeURIComponent((url.split('#')[0].split('?')[0].split('/').pop() || '').trim()) || 'document.md';
+      if (!/\.(md|markdown|txt)$/i.test(name)) name += '.md';
+
+      const existing = this.files.find((f) => f.sourceUrl === url);
+      if (existing) {
+        existing.content = text;
+        existing.lastModified = Date.now();
+        this.activeFileId = existing.id;
+      } else {
+        const file = {
+          id: 'file_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6),
+          name, path: url, sourceUrl: url, content: text, size: text.length, lastModified: Date.now()
+        };
+        this.files = [file, ...this.files];
+        this.activeFileId = file.id;
+      }
+      if (this.autoSave) this.persistFiles();
+      this.renderFileList();
+      this.renderActiveFile();
+      showToast('Opened ' + name, 'success');
+    } catch (err) {
+      console.error('Open from URL failed:', err);
+      showToast('Could not load that URL. It must be a public raw Markdown file that allows cross-origin requests.', 'danger', 5000);
+    }
+  }
+
+  async handleUrlParam() {
+    const u = this.pendingUrl;
+    if (!u) return;
+    await this.openFromUrl(u);
+    this.pendingUrl = '';
+    this.syncAddressBar(this.getActiveFile());
+  }
+
+  shareLinkFor(file) {
+    return window.location.origin + window.location.pathname + '?url=' + encodeURIComponent(file.sourceUrl);
+  }
+
+  syncAddressBar(file) {
+    if (this.pendingUrl) return; // keep ?url= until it has been opened
+    try {
+      const base = window.location.pathname;
+      const next = file && file.sourceUrl ? base + '?url=' + encodeURIComponent(file.sourceUrl) : base;
+      if (window.location.pathname + window.location.search !== next) history.replaceState(null, '', next);
+    } catch (e) {}
+  }
+
+  /* ---------- Copy & export ---------- */
+
+  async copyRichText() {
+    if (!this.contentEl) return;
+    const html = this.contentEl.innerHTML;
+    const text = this.contentEl.innerText;
+    try {
+      if (navigator.clipboard && window.ClipboardItem) {
+        await navigator.clipboard.write([new ClipboardItem({
+          'text/html': new Blob([html], { type: 'text/html' }),
+          'text/plain': new Blob([text], { type: 'text/plain' })
+        })]);
+        showToast('Copied as rich text. Paste into Docs, Gmail, Notion or Word.', 'success');
+        return;
+      }
+    } catch (e) {
+      console.warn('Clipboard API write failed, falling back', e);
+    }
+    const range = document.createRange();
+    range.selectNodeContents(this.contentEl);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (e) {}
+    sel.removeAllRanges();
+    showToast(ok ? 'Copied as rich text' : 'Copy failed', ok ? 'success' : 'danger');
+  }
+
+  exportHTML() {
+    const file = this.getActiveFile();
+    if (!file || !this.contentEl) return;
+    const title = file.name.replace(/\.(md|markdown|txt)$/i, '');
+    const css = `
+      :root{color-scheme:light dark}
+      body{max-width:760px;margin:3rem auto;padding:0 1.25rem;font:16px/1.7 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,sans-serif;color:#27272a;background:#fff}
+      h1,h2,h3,h4{line-height:1.25;letter-spacing:-.02em;color:#111113;margin:2em 0 .6em}h1{font-size:2rem;margin-top:0}h2{font-size:1.4rem;border-bottom:1px solid #eee;padding-bottom:.3rem}
+      a{color:#111113}pre{background:#f6f6f7;border:1px solid #e4e4e7;border-radius:8px;padding:1rem;overflow:auto;font-size:.85rem}code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.9em}
+      :not(pre)>code{background:#f4f4f5;border:1px solid #eee;border-radius:4px;padding:.1em .35em}blockquote{border-left:2px solid #d4d4d8;margin:1.5rem 0;padding-left:1.25rem;color:#71717a}
+      table{border-collapse:collapse;width:100%;margin:1.5rem 0}th,td{padding:.6rem .85rem;border-bottom:1px solid #eee;text-align:left}th{font-size:.8rem;color:#71717a}img{max-width:100%;border-radius:8px}
+      .code-copy-btn{display:none}.mermaid-wrapper{display:flex;justify-content:center;margin:1.5rem 0}
+      @media(prefers-color-scheme:dark){body{background:#0c0c0d;color:#c9c9ce}h1,h2,h3,h4,a{color:#f4f4f5}pre{background:#151517;border-color:#26262a}:not(pre)>code{background:#161618;border-color:#26262a}th,td{border-color:#1e1e22}blockquote{border-color:#333338;color:#8a8a93}}`;
+    const doc = `<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${this.escapeHTML(title)}</title><style>${css}</style></head><body>${this.contentEl.innerHTML}</body></html>`;
+    const blob = new Blob([doc], { type: 'text/html;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = title + '.html';
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(a.href);
+    showToast('Exported ' + title + '.html', 'success');
   }
 
   toggleSidebar() {
@@ -312,7 +575,7 @@ function render(markdown) {
 
       li.innerHTML = `
         <div class="file-item-name" title="${file.path}">
-          <i class="fa-regular fa-file-lines"></i>
+          <i class="${file.sourceUrl ? 'fa-solid fa-link' : 'fa-regular fa-file-lines'}"></i>
           <span>${file.name}</span>
         </div>
         <button class="file-item-delete" title="Delete file" onclick="event.stopPropagation(); window.viewerApp.deleteFile('${file.id}')">
@@ -344,6 +607,11 @@ function render(markdown) {
       this.docTitleEl.innerText = 'No Document Selected';
       this.docTitleEl.removeAttribute('title');
       this.docMetaEl.innerHTML = '';
+      this.outline = [];
+      if (this.outlineEl) this.outlineEl.innerHTML = '<li class="outline-empty">No document open</li>';
+      const linkBtnEmpty = document.getElementById('copyLinkBtn');
+      if (linkBtnEmpty) linkBtnEmpty.hidden = true;
+      this.syncAddressBar(null);
       this.contentEl.innerHTML = `
         <div class="empty-state">
           <div class="empty-icon"><i class="fa-solid fa-file-circle-plus"></i></div>
@@ -382,9 +650,18 @@ function render(markdown) {
     }
 
     this.contentEl.innerHTML = html;
+    const scroller = document.getElementById('contentScroll');
+    if (scroller) scroller.scrollTop = 0;
+
+    // Outline, share link, address bar
+    this.buildOutline();
+    const linkBtn = document.getElementById('copyLinkBtn');
+    if (linkBtn) linkBtn.hidden = !file.sourceUrl;
+    this.syncAddressBar(file);
 
     // Process Smart Extensions On-Demand (Lazy Loading)
     await this.processSmartExtensions(file.content);
+    this.updateActiveHeading();
   }
 
   async processSmartExtensions(raw) {

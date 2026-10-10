@@ -14,6 +14,13 @@ class MeowEditor {
     this.isSyncing = false;
     this.activeView = 'split';
     this.savedRange = null;
+    this.fileHandle = null;
+    this.fileName = '';
+    this.lastSavedContent = null;
+    this.draftTimer = null;
+    this.mdSyncTimer = null;
+    this.scrollLock = null;
+    this.DRAFT_KEY = 'meowmd_editor_draft';
 
     this.initParsers();
     this.initEditorContent();
@@ -22,6 +29,8 @@ class MeowEditor {
     this.setupModals();
     this.syncVisualToMarkdown();
     this.updateStats();
+    this.setupScrollSync();
+    this.updateSaveState();
   }
 
   initParsers() {
@@ -321,6 +330,17 @@ class MeowEditor {
   initEditorContent() {
     if (!this.visualEditor) return;
 
+    const draft = this.loadDraft();
+    if (draft && (draft.md || draft.html)) {
+      this.visualEditor.innerHTML = draft.html || this.upgradeRenderedHtml(this.mdParser ? this.mdParser.render(draft.md) : '') || '<p><br></p>';
+      if (this.markdownOutput) this.markdownOutput.value = draft.md || '';
+      this.fileName = draft.fileName || '';
+      this.lastSavedContent = draft.lastSavedContent == null ? null : draft.lastSavedContent;
+      this.restoredDraft = true;
+      setTimeout(() => showToast(this.fileName ? 'Restored your draft of ' + this.fileName : 'Restored your unsaved draft', 'info', 2500), 300);
+      return;
+    }
+
     this.visualEditor.innerHTML = `
 <h1>Welcome to MeowMD Markdown Generator</h1>
 <p>Draft your technical documentation visually with real-time conversion to <strong>clean, standard GitHub Flavored Markdown</strong>.</p>
@@ -484,6 +504,8 @@ function formatMarkdown(doc) {
     if (this.markdownOutput) {
       this.markdownOutput.addEventListener('input', function () {
         self.updateStats();
+        clearTimeout(self.mdSyncTimer);
+        self.mdSyncTimer = setTimeout(function () { self.syncMarkdownToVisual(true); }, 300);
       });
     }
 
@@ -494,6 +516,19 @@ function formatMarkdown(doc) {
       };
     }
 
+    var openBtn = document.getElementById('openFileBtn');
+    if (openBtn) openBtn.onclick = function () { self.openFile(); };
+
+    var saveBtn = document.getElementById('saveMdBtn');
+    if (saveBtn) saveBtn.onclick = function () { self.saveFile(); };
+
+    document.addEventListener('keydown', function (e) {
+      var mod = e.ctrlKey || e.metaKey;
+      if (!mod) return;
+      if (e.key === 's' || e.key === 'S') { e.preventDefault(); self.saveFile(); }
+      else if (e.key === 'o' || e.key === 'O') { e.preventDefault(); self.openFile(); }
+    });
+
     var copyBtn = document.getElementById('copyMdBtn');
     if (copyBtn) {
       copyBtn.onclick = function () {
@@ -503,29 +538,16 @@ function formatMarkdown(doc) {
       };
     }
 
-    var downloadBtn = document.getElementById('downloadMdBtn');
-    if (downloadBtn) {
-      downloadBtn.onclick = function () {
-        self.downloadMarkdown();
-      };
-    }
-
     if (this.fileInput) {
       this.fileInput.onchange = function (e) {
         self.handleFileImport(e.target.files);
+        self.fileInput.value = '';
       };
     }
 
     var clearBtn = document.getElementById('clearEditorBtn');
     if (clearBtn) {
-      clearBtn.onclick = function () {
-        if (confirm('Clear all content from the editor?')) {
-          if (self.visualEditor) self.visualEditor.innerHTML = '<p><br></p>';
-          if (self.markdownOutput) self.markdownOutput.value = '';
-          self.updateStats();
-          showToast('Editor cleared', 'info');
-        }
-      };
+      clearBtn.onclick = function () { self.newDocument(); };
     }
 
     var splitBtn = document.getElementById('viewSplitBtn');
@@ -766,11 +788,185 @@ function formatMarkdown(doc) {
       }
 
       this.markdownOutput.value = md;
+      this.scheduleDraftSave();
     } catch (err) {
       console.error('Markdown sync error:', err);
     } finally {
       this.isSyncing = false;
     }
+  }
+
+  /* ---------- Drafts (local storage) ---------- */
+
+  loadDraft() {
+    try {
+      const raw = localStorage.getItem(this.DRAFT_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) { return null; }
+  }
+
+  scheduleDraftSave() {
+    clearTimeout(this.draftTimer);
+    this.draftTimer = setTimeout(() => this.saveDraft(), 400);
+  }
+
+  saveDraft() {
+    if (!this.markdownOutput || !this.visualEditor) return;
+    try {
+      const md = this.markdownOutput.value;
+      if (!md.trim() && !this.fileName) {
+        localStorage.removeItem(this.DRAFT_KEY);
+      } else {
+        localStorage.setItem(this.DRAFT_KEY, JSON.stringify({
+          md, html: this.visualEditor.innerHTML, fileName: this.fileName,
+          lastSavedContent: this.lastSavedContent, savedAt: Date.now()
+        }));
+      }
+    } catch (e) {
+      console.warn('Draft save failed', e);
+    }
+    this.updateSaveState();
+  }
+
+  clearDraft() {
+    try { localStorage.removeItem(this.DRAFT_KEY); } catch (e) {}
+  }
+
+  isDirty() {
+    const md = this.markdownOutput ? this.markdownOutput.value : '';
+    if (this.lastSavedContent == null) return md.trim().length > 0;
+    return md !== this.lastSavedContent;
+  }
+
+  updateSaveState() {
+    const status = document.getElementById('saveStatus');
+    const nameEl = document.getElementById('editorDocName');
+    const dirty = this.isDirty();
+    if (nameEl) {
+      nameEl.textContent = this.fileName || '';
+      nameEl.title = this.fileName || '';
+      nameEl.classList.toggle('dirty', Boolean(this.fileName) && dirty);
+    }
+    if (status) {
+      let text;
+      if (this.fileName) text = dirty ? 'Unsaved changes (draft kept locally)' : 'Saved';
+      else text = dirty ? 'Draft saved locally' : 'Ready';
+      status.textContent = text;
+      status.classList.toggle('is-dirty', Boolean(this.fileName) && dirty);
+    }
+  }
+
+  /* ---------- Files: open & save (File System Access API with fallbacks) ---------- */
+
+  get filePickerTypes() {
+    return [{ description: 'Markdown', accept: { 'text/markdown': ['.md', '.markdown'], 'text/plain': ['.txt'] } }];
+  }
+
+  async openFile() {
+    if (window.showOpenFilePicker) {
+      try {
+        const [handle] = await window.showOpenFilePicker({ types: this.filePickerTypes, multiple: false });
+        const file = await handle.getFile();
+        const text = await file.text();
+        this.fileHandle = handle;
+        this.loadText(text, file.name);
+        return;
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+        console.warn('File picker failed, using classic input', err);
+      }
+    }
+    if (this.fileInput) this.fileInput.click();
+  }
+
+  loadText(text, name) {
+    if (this.markdownOutput) this.markdownOutput.value = text;
+    this.fileName = name || 'document.md';
+    this.lastSavedContent = text;
+    this.syncMarkdownToVisual(true);
+    this.updateStats();
+    this.saveDraft();
+    showToast('Opened ' + this.fileName, 'success');
+  }
+
+  async saveFile() {
+    const content = this.markdownOutput ? this.markdownOutput.value : '';
+    if (!content.trim()) {
+      showToast('Nothing to save yet', 'info');
+      return;
+    }
+    try {
+      if (this.fileHandle) {
+        await this.writeHandle(this.fileHandle, content);
+      } else if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: this.fileName || 'document.md',
+          types: this.filePickerTypes
+        });
+        this.fileHandle = handle;
+        this.fileName = handle.name || this.fileName || 'document.md';
+        await this.writeHandle(handle, content);
+      } else {
+        this.downloadMarkdown();
+        this.lastSavedContent = content;
+        this.saveDraft();
+        return;
+      }
+      this.lastSavedContent = content;
+      this.saveDraft();
+      showToast('Saved ' + this.fileName, 'success');
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      console.error('Save failed:', err);
+      showToast('Could not write to the file. Downloading a copy instead.', 'danger');
+      this.downloadMarkdown();
+    }
+  }
+
+  async writeHandle(handle, content) {
+    if (handle.queryPermission) {
+      let perm = await handle.queryPermission({ mode: 'readwrite' });
+      if (perm !== 'granted' && handle.requestPermission) perm = await handle.requestPermission({ mode: 'readwrite' });
+      if (perm !== 'granted') throw new Error('Permission denied');
+    }
+    const writable = await handle.createWritable();
+    await writable.write(content);
+    await writable.close();
+  }
+
+  newDocument() {
+    if (this.isDirty() && !confirm('Start a new document? Your current draft will be discarded.')) return;
+    if (this.visualEditor) this.visualEditor.innerHTML = '<p><br></p>';
+    if (this.markdownOutput) this.markdownOutput.value = '';
+    this.fileHandle = null;
+    this.fileName = '';
+    this.lastSavedContent = null;
+    this.clearDraft();
+    this.updateStats();
+    this.updateSaveState();
+    if (this.visualEditor) this.visualEditor.focus();
+    showToast('New document', 'info', 1500);
+  }
+
+  /* ---------- Scroll sync between the two panes ---------- */
+
+  setupScrollSync() {
+    const visual = document.querySelector('#visualPane .pane-body');
+    const md = this.markdownOutput;
+    if (!visual || !md) return;
+    const link = (src, dst) => {
+      src.addEventListener('scroll', () => {
+        if (this.scrollLock && this.scrollLock !== src) return;
+        this.scrollLock = src;
+        const max = src.scrollHeight - src.clientHeight;
+        const ratio = max > 0 ? src.scrollTop / max : 0;
+        dst.scrollTop = ratio * (dst.scrollHeight - dst.clientHeight);
+        clearTimeout(this.scrollLockTimer);
+        this.scrollLockTimer = setTimeout(() => { this.scrollLock = null; }, 150);
+      }, { passive: true });
+    };
+    link(visual, md);
+    link(md, visual);
   }
 
   /* Undo escaping Turndown applies to syntax we deliberately keep (footnotes, task boxes). */
@@ -831,7 +1027,7 @@ function formatMarkdown(doc) {
     return tmp.innerHTML;
   }
 
-  syncMarkdownToVisual() {
+  syncMarkdownToVisual(silent) {
     if (!this.markdownOutput || !this.visualEditor) return;
     var mdText = this.markdownOutput.value;
     if (!this.mdParser) this.initParsers();
@@ -843,7 +1039,8 @@ function formatMarkdown(doc) {
         var html = this.upgradeRenderedHtml(this.mdParser.render(safeMd));
         this.visualEditor.innerHTML = html || '<p><br></p>';
         this.updateStats();
-        showToast('Visual Editor updated from Markdown', 'success');
+        this.scheduleDraftSave();
+        if (!silent) showToast('Visual editor updated from Markdown', 'success');
       } catch (err) {
         console.error('Markdown parse error:', err);
         showToast('Failed to sync markdown to visual editor', 'danger');
@@ -873,12 +1070,8 @@ function formatMarkdown(doc) {
     var file = fileList[0];
     try {
       var text = await file.text();
-      if (this.markdownOutput) {
-        this.markdownOutput.value = text;
-      }
-      this.syncMarkdownToVisual();
-      this.updateStats();
-      showToast('Imported ' + file.name, 'success');
+      this.fileHandle = null;
+      this.loadText(text, file.name);
     } catch (err) {
       console.error('File import error:', err);
       showToast('Failed to import file', 'danger');
@@ -895,12 +1088,14 @@ function formatMarkdown(doc) {
     var url = URL.createObjectURL(blob);
     var a = document.createElement('a');
     a.href = url;
-    a.download = 'document.md';
+    var name = this.fileName || 'document.md';
+    if (!/\.(md|markdown|txt)$/i.test(name)) name += '.md';
+    a.download = name;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('Downloaded document.md', 'success');
+    showToast('Downloaded ' + name, 'success');
   }
 
   /* ==========================================================================

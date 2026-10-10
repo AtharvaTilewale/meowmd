@@ -165,7 +165,11 @@
         "Syntax highlighted code blocks",
         "3D molecular structure viewer for PDB and MOL files",
         "Export Markdown to PDF and HTML",
-        "Open .md files and whole folders, with fuzzy search across documents",
+        "Open .md files, whole folders, or any public GitHub or Gist URL, and share a link to it",
+      "Document outline with scroll tracking and fuzzy search across documents",
+      "Two-way live sync between the visual editor and Markdown source",
+      "Open and save Markdown files on disk, with drafts auto-saved locally",
+      "Copy as rich text for Google Docs, Gmail, Notion and Word",
         "Works offline as a Progressive Web App",
         "100% client-side: no upload, no account, no tracking",
         "Dark mode"
@@ -236,8 +240,11 @@
         </div>
 
         <div class="sidebar-actions">
-          <label for="fileInput" class="btn btn-primary" title="Import Markdown Files">Files</label>
-          <label for="folderInput" class="btn btn-outline" title="Import Whole Folder">Folder</label>
+          <label for="fileInput" class="btn btn-primary" title="Open Markdown files">Files</label>
+          <label for="folderInput" class="btn btn-outline" title="Open a whole folder">Folder</label>
+          <button class="btn btn-outline btn-square" id="openUrlBtn" title="Open from URL (GitHub, Gist, any raw .md link)" aria-label="Open from URL">
+            <i class="fa-solid fa-link"></i>
+          </button>
           <button class="btn btn-danger" id="clearAllBtn" title="Clear Workspace" aria-label="Clear Workspace">
             <i class="fa-solid fa-trash-can"></i>
           </button>
@@ -254,7 +261,13 @@
         </div>
       </div>
 
-      <ul class="file-list" id="fileList"></ul>
+      <div class="sidebar-tabs" role="tablist" aria-label="Sidebar panels">
+        <button class="sidebar-tab active" data-tab="files" role="tab" aria-selected="true">Files</button>
+        <button class="sidebar-tab" data-tab="outline" role="tab" aria-selected="false">Outline</button>
+      </div>
+
+      <ul class="file-list" id="fileList" role="tabpanel"></ul>
+      <ul class="outline-list" id="outlineList" role="tabpanel" hidden></ul>
     </aside>
 
     <!-- Main Content Area -->
@@ -279,18 +292,31 @@
         </div>
 
         <div class="viewer-actions">
-          <button class="btn btn-outline" id="copyRawMdBtn" title="Copy Raw Markdown">
-            <i class="fa-regular fa-copy"></i> <span>Copy MD</span>
-          </button>
-          <button class="btn btn-outline" id="copyHtmlBtn" title="Copy Rendered HTML">
-            <i class="fa-solid fa-code"></i> <span>Copy HTML</span>
-          </button>
-          <button class="btn btn-primary" id="exportPdfBtn" title="Export as PDF">
-            <i class="fa-solid fa-arrow-down"></i> <span>Export PDF</span>
-          </button>
-          <button class="btn-icon" id="printDocBtn" title="Print Document" aria-label="Print Document">
-            <i class="fa-solid fa-print"></i>
-          </button>
+          <div class="menu">
+            <button class="btn btn-outline menu-trigger" aria-haspopup="true" aria-expanded="false" title="Copy">
+              <i class="fa-regular fa-copy"></i> <span>Copy</span> <i class="fa-solid fa-chevron-down menu-caret"></i>
+            </button>
+            <div class="menu-list" role="menu">
+              <button class="menu-item" id="copyRichBtn" role="menuitem">
+                <span>Rich text</span><small>Paste into Docs, Gmail, Notion, Word</small>
+              </button>
+              <button class="menu-item" id="copyRawMdBtn" role="menuitem"><span>Markdown source</span></button>
+              <button class="menu-item" id="copyHtmlBtn" role="menuitem"><span>HTML</span></button>
+              <button class="menu-item" id="copyLinkBtn" role="menuitem" hidden>
+                <span>Share link</span><small>Opens this document in MeowMD</small>
+              </button>
+            </div>
+          </div>
+          <div class="menu">
+            <button class="btn btn-primary menu-trigger" aria-haspopup="true" aria-expanded="false" title="Export">
+              <i class="fa-solid fa-arrow-down"></i> <span>Export</span> <i class="fa-solid fa-chevron-down menu-caret"></i>
+            </button>
+            <div class="menu-list" role="menu">
+              <button class="menu-item" id="exportPdfBtn" role="menuitem"><span>PDF</span></button>
+              <button class="menu-item" id="exportHtmlBtn" role="menuitem"><span>HTML file</span><small>Standalone page with styles</small></button>
+              <button class="menu-item" id="printDocBtn" role="menuitem"><span>Print</span></button>
+            </div>
+          </div>
           <button class="btn-icon" id="fullScreenBtn" title="Toggle Fullscreen" aria-label="Toggle Fullscreen">
             <i class="fa-solid fa-expand"></i>
           </button>
@@ -302,6 +328,21 @@
         <article class="markdown-body" id="markdownContent"></article>
       </div>
     </main>
+  </div>
+
+  <!-- Modal: Open from URL -->
+  <div class="modal-overlay" id="urlModal" role="dialog" aria-modal="true" aria-labelledby="urlModalTitle">
+    <div class="modal-content modal-left">
+      <h3 id="urlModalTitle">Open from URL</h3>
+      <p>Paste a link to a public Markdown file. GitHub file pages and Gists are converted to their raw form automatically.</p>
+      <form id="urlModalForm">
+        <input type="url" id="urlInput" class="url-input" placeholder="https://github.com/user/repo/blob/main/README.md" required autocomplete="off" spellcheck="false">
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline modal-close-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Open</button>
+        </div>
+      </form>
+    </div>
   </div>
 
   <!-- Performance Optimized Scripts (Deferred & Lazy Loaded) -->
