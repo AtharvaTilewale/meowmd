@@ -152,6 +152,17 @@ body {
   overflow-x: hidden;
 }
 
+/* App pages (viewer, editor): the document never scrolls, panels inside do */
+html:has(body.app-page) { height: 100%; overflow: hidden; }
+body.app-page {
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body.app-page > header { flex-shrink: 0; }
+
 ::selection {
   background-color: var(--text-main);
   color: var(--bg-surface);

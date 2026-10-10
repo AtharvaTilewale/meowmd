@@ -3,7 +3,7 @@
  * High-performance offline caching and instant page loads.
  */
 
-const CACHE_NAME = 'meowmd-v6';
+const CACHE_NAME = 'meowmd-v7';
 const PRECACHE_ASSETS = [
   './',
   './index.html',
@@ -47,33 +47,34 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  const requestUrl = new URL(event.request.url);
+  const req = event.request;
+  if (req.method !== 'GET') return;
+  const url = new URL(req.url);
+  const sameOrigin = url.origin === self.location.origin;
 
-  // Stale-While-Revalidate for app assets, Cache-First for Fonts/CDNs
-  event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      if (cachedResponse) {
-        // Fetch background update for precached assets
-        fetch(event.request).then((networkResponse) => {
-          if (networkResponse && networkResponse.status === 200) {
-            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, networkResponse));
-          }
-        }).catch(() => {});
-        return cachedResponse;
-      }
-
-      return fetch(event.request).then((networkResponse) => {
-        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
-          return networkResponse;
+  if (sameOrigin) {
+    // Network first for the app itself: new deployments appear on the next load,
+    // the cache is only used when offline.
+    event.respondWith(
+      fetch(req).then((res) => {
+        if (res && res.status === 200) {
+          const copy = res.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
         }
+        return res;
+      }).catch(() => caches.match(req).then((hit) => hit || (req.mode === 'navigate' ? caches.match('./index.html') : undefined)))
+    );
+    return;
+  }
 
-        const responseToCache = networkResponse.clone();
-        caches.open(CACHE_NAME).then((cache) => {
-          cache.put(event.request, responseToCache);
-        });
-
-        return networkResponse;
-      });
-    })
+  // Cache first for fonts and CDN libraries, which are versioned and immutable
+  event.respondWith(
+    caches.match(req).then((hit) => hit || fetch(req).then((res) => {
+      if (res && (res.status === 200 || res.type === 'opaque')) {
+        const copy = res.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
+      }
+      return res;
+    }))
   );
 });

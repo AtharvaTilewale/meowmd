@@ -4,8 +4,8 @@
 
 .app-container {
   display: flex;
-  flex: 1;
-  height: calc(100vh - var(--nav-height));
+  flex: 1 1 auto;
+  min-height: 0;
   overflow: hidden;
   position: relative;
 }
@@ -149,7 +149,8 @@ input:checked + .slider:before { transform: translateX(12px); }
 .file-list {
   list-style: none;
   overflow-y: auto;
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   padding: 0.5rem;
   min-width: 280px;
 }
@@ -204,6 +205,7 @@ input:checked + .slider:before { transform: translateX(12px); }
   background-color: var(--bg-surface);
   position: relative;
   min-width: 0;
+  min-height: 0;
 }
 
 .viewer-topbar {
@@ -282,8 +284,10 @@ input:checked + .slider:before { transform: translateX(12px); }
 
 /* Reading surface */
 .content-scroll {
-  flex: 1;
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   padding: 3rem 2rem 6rem;
   scroll-behavior: smooth;
 }
